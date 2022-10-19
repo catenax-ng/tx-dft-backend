@@ -21,6 +21,7 @@ It is necessary to inject the environment variables, credentials and URLs that c
 | digital-twins.authentication.clientSecret | DIGITAL-TWINS_AUTHENTICATION_CLIENTSECRET | client secret authentication for Digital Twins | 
 VrL8uSG5Tn3NrFiY39vs0klTmlvsRRmo |
 | digital-twins.authentication.granttype    | DIGITAL-TWINS_AUTHENTICATION_GRANTTYPE.   | grantType authentication for Digital Twins     | client_credentials
+
 The values are on the [Vault](https://vault.vault.demo.catena-x.net/).
 *<i><b>Must create a GitHub token to access</b></i>
 #### EDC variables:
