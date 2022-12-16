@@ -32,5 +32,5 @@ temp/
 */application-*.properties
 .github
 
-/helm/
-/.DS_Store
+#/helm/
+#/.DS_Store
