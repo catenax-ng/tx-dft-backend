@@ -63,8 +63,6 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}},value=v1.8.1
-          flavor: |
-              latest=true
               
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
