@@ -132,7 +132,7 @@ dftpostgresql:
     userPasswordKey: "password"
 
 configuration:
-  properties: |-
+  properties: |
     #Oauth 2 configuration with keycloak
     keycloak.clientid=
     spring.security.oauth2.resourceserver.jwt.issuer-uri=
