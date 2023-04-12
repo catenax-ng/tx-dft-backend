@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerDigitalTwinUseCaseException;
-import org.eclipse.tractusx.sde.common.exception.ServiceException;
+import org.eclipse.tractusx.sde.common.exception.CsvHandlerUseCaseException;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
 import org.eclipse.tractusx.sde.digitaltwins.entities.common.Endpoint;
 import org.eclipse.tractusx.sde.digitaltwins.entities.common.GlobalAssetId;
@@ -62,7 +63,8 @@ public class DigitalTwinsBatchCsvHandlerUseCase extends Step {
 		try {
 			return doRun(batch);
 		} catch (Exception e) {
-			throw new ServiceException(batch.getRowNumber() + ": DigitalTwins: " + e.getMessage());
+			throw new CsvHandlerUseCaseException(batch.getRowNumber(),
+					": DigitalTwins: " + e.getMessage());
 		}
 	}
 
@@ -113,9 +115,13 @@ public class DigitalTwinsBatchCsvHandlerUseCase extends Step {
 
 	private ShellLookupRequest getShellLookupRequest(Batch batch) {
 		ShellLookupRequest shellLookupRequest = new ShellLookupRequest();
-		shellLookupRequest.addLocalIdentifier(BatchConstants.BATCH_ID, batch.getBatchId());
+		shellLookupRequest.addLocalIdentifier(CommonConstants.PART_INSTANCE_ID, batch.getPartInstanceId());
 		shellLookupRequest.addLocalIdentifier(CommonConstants.MANUFACTURER_PART_ID, batch.getManufacturerPartId());
 		shellLookupRequest.addLocalIdentifier(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId());
+		
+		if (StringUtils.isNotBlank(batch.getBatchId())) {
+			shellLookupRequest.addLocalIdentifier(BatchConstants.BATCH_ID, batch.getBatchId());
+		}
 		
 		return shellLookupRequest;
 	}
@@ -147,9 +153,12 @@ public class DigitalTwinsBatchCsvHandlerUseCase extends Step {
 	}
 
 	private void setSpecifiers(final ArrayList<KeyValuePair> specificIdentifiers, Batch batch) {
-		specificIdentifiers.add(new KeyValuePair(BatchConstants.BATCH_ID, batch.getBatchId()));
+		specificIdentifiers.add(new KeyValuePair(CommonConstants.PART_INSTANCE_ID, batch.getPartInstanceId()));
 		specificIdentifiers.add(new KeyValuePair(CommonConstants.MANUFACTURER_PART_ID, batch.getManufacturerPartId()));
 		specificIdentifiers.add(new KeyValuePair(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId()));
-
+		
+		if (StringUtils.isNotBlank(batch.getBatchId())) {
+			specificIdentifiers.add(new KeyValuePair(BatchConstants.BATCH_ID, batch.getBatchId()));
+		}
 	}
 }

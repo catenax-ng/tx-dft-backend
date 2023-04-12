@@ -17,25 +17,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.sde.submodels.psiap.constants;
 
-import org.springframework.stereotype.Component;
-
-import lombok.Getter;
-
-@Getter
-@Component
-public class PartSiteInformationAsPlannedConstants {
-
+/** Insert permission ******/
+INSERT INTO sde_permission (sde_permission,description)
+	VALUES ('unified_bpn_validation','Allows user to validate BPN from CX network is it have valid partner network member');
 	
-	public static final String MANUFACTURER_PART_ID = "manufacturerPartId";
-	public static final String MANUFACTURER_ID = "manufacturerId";
-	public static final String CUSTOMER_PART_ID = "customerPartId";
-	public static final String ASSET_LIFECYCLE_PHASE = "assetLifecyclePhase";
-	public static final String AS_PLANNED = "AsPlanned";
-	public static final String HTTP = "HTTP";
-	public static final String HTTPS = "HTTPS";
-	public static final String ENDPOINT_PROTOCOL_VERSION = "0.0.1-SNAPSHOT";
-	public static final String PREFIX = "urn:uuid:";
-	public static final String DELETED_Y = "Y";
-}
+/** Insert role and permission mapping ******/
+INSERT INTO sde_role_permission_mapping (sde_permission,sde_role)
+	VALUES ('unified_bpn_validation','Creator');

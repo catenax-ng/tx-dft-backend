@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022 Contributors to the CatenaX (ng) GitHub Organisation
+ * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -35,13 +35,3 @@ DROP COLUMN datatype_uri;
 
 ALTER TABLE IF EXISTS aspect_relationship
 ADD COLUMN last_modified_on  			TEXT NULL;
-
-
-
-
-
-
-
-
-
-

@@ -21,10 +21,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/catenax-ng/tx-sde-autosetup-backend
+  repository: ghcr.io/catenax-ng/tx-dft-backend
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.9.0"
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -67,21 +67,17 @@ dftbackend:
       # -- The path mapping the "default" api is going to be exposed at
       path: /dftbackend 
           
-ingress:
-  - enabled: true
+ingresses:
+  - enabled: false
     className: "nginx"
     annotations: {}
 #      kubernetes.io/ingress.class: nginx
 #      kubernetes.io/tls-acme: "true"
-    hostname: ""
-    
+    hostname: ""  
     endpoints:
      - default
-
     tls: 
-
      enabled: true    
-
      secretName: ""
       # -- If present overwrites the default secret name
     certManager:
@@ -117,32 +113,63 @@ tolerations: []
 
 affinity: {}
 
+dftpostgresql:  
+  # -- PostgreSQL chart configuration
+  # Switch to enable or disable the PostgreSQL helm chart
+  enabled: true
+  fullnameOverride: "product-dft-backend-postgres"
+  auth:
+   username: "dftuser"
+   port: 5432
+   database: "dftdb"
+   existingSecret: "dft-postgresql-secrets"
+   secretKeys:
+    adminPasswordKey: "postgres-password"
+    userPasswordKey: "password"
+
 configuration:
   properties: |-
-    #PostgresDatabaseConfig 
+    keycloak.clientid=default
+    spring.security.oauth2.resourceserver.jwt.issuer-uri=default
+    management.endpoint.health.probes.enabled=true
+    management.health.readinessstate.enabled=true
+    management.health.livenessstate.enabled=true
+    management.endpoints.web.exposure.include=*
+    spring.lifecycle.timeout-per-shutdown-phase=30s
+    logging.level.org.springframework.security.web.csrf=INFO
+    spring.servlet.multipart.enabled=true
+    spring.main.allow-bean-definition-overriding=true
+    spring.servlet.multipart.file-size-threshold=2KB
+    spring.servlet.multipart.max-file-size=200MB
+    spring.servlet.multipart.max-request-size=215MB
+    server.servlet.context-path=/api
+    spring.flyway.baseline-on-migrate=true
+    spring.flyway.locations=classpath:/flyway
     spring.datasource.driver-class-name=org.postgresql.Driver
-    spring.datasource.url=
-    spring.datasource.username=
-    spring.datasource.password=
+    spring.jpa.hibernate.ddl-auto=update
     spring.jpa.open-in-view=false
-    #Digital-twinsConfig
-    digital-twins.hostname=
-    digital-twins.authentication.url=
-    digital-twins.authentication.clientId=
-    digital-twins.authentication.clientSecret=
-    #EDCConfig  
-    edc.enabled=true
-    edc.hostname=
-    edc.apiKeyHeader=
-    edc.apiKey=
-    #DFTConfig
-    dft.hostname=
-    dft.apiKeyHeader=
-    dft.apiKey=
-    ## Manufacturer Id
-    manufacturerId=
-    # consumer config
-    edc.consumer.hostname=
-    edc.consumer.apikeyheader=
-    edc.consumer.apikey=
-    edc.consumer.datauri=
+    file.upload-dir=./temp/
+    logging.level.org.apache.http=info
+    logging.level.root=info
+    digital-twins.hostname=default
+    digital-twins.authentication.url=default
+    digital-twins.authentication.clientId=default
+    digital-twins.authentication.clientSecret=default
+    digital-twins.authentication.grantType=client_credentials
+    edc.hostname=default
+    edc.apiKeyHeader=default
+    edc.apiKey=default
+    edc.consumer.hostname=default
+    edc.consumer.apikeyheader=default
+    edc.consumer.apikey=default
+    edc.consumer.datauri=/api/v1/ids/data
+    dft.hostname=default
+    dft.apiKeyHeader=default
+    dft.apiKey=default
+    manufacturerId=default
+    partner.pool.hostname=default
+    connector.discovery.token-url=default
+    connector.discovery.clientId=default
+    connector.discovery.clientSecret=default
+    portal.backend.hostname=default
+    springdoc.api-docs.path=/api-docs

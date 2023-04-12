@@ -23,9 +23,13 @@
 package org.eclipse.tractusx.sde.core.failurelog.repository;
 
 
+import java.util.List;
+
 import org.eclipse.tractusx.sde.core.failurelog.entity.FailureLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FailureLogRepository extends JpaRepository<FailureLogEntity, String> {
+
+	List<FailureLogEntity> findByProcessId(String id);
 
 }

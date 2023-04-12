@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022 T-Systems International GmbH
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,23 +17,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.sde.submodels.sluab.constants;
 
-import org.springframework.stereotype.Component;
+package org.eclipse.tractusx.sde.core.processreport.model;
 
-import lombok.Getter;
+import java.time.LocalDateTime;
 
-@Getter
-@Component
-public class SingleLevelUsageAsBuiltConstants {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-	public static final String MANUFACTURER_PART_ID = "manufacturerPartId";
-	public static final String MANUFACTURER_ID = "manufacturerId";
-	public static final String PART_INSTANCE_ID = "partInstanceId";
-	public static final String CUSTOMER_PART_ID = "customerPartId";
-	public static final String HTTP = "HTTP";
-	public static final String HTTPS = "HTTPS";
-	public static final String ENDPOINT_PROTOCOL_VERSION = "0.0.1-SNAPSHOT";
-	public static final String PREFIX = "urn:uuid:";
-	public static final String DELETED_Y = "Y";
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProcessFailureDetails {
+
+	private String uuid;
+	private String processId;
+	private String log;
+	private LocalDateTime dateTime;
+
 }

@@ -17,26 +17,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.sde.submodels.pap.constants;
+package org.eclipse.tractusx.sde.portal.api;
 
-import org.springframework.stereotype.Component;
+import org.eclipse.tractusx.sde.portal.model.LegalEntityData;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.Getter;
 
-@Getter
-@Component
-public class PartAsPlannedConstants {
-
-	
-	public static final String MANUFACTURER_PART_ID = "manufacturerPartId";
-	public static final String MANUFACTURER_ID = "manufacturerId";
-	public static final String CUSTOMER_PART_ID = "customerPartId";
-	public static final String ASSET_LIFECYCLE_PHASE = "assetLifecyclePhase";
-	public static final String AS_PLANNED = "AsPlanned";
-	public static final String HTTP = "HTTP";
-	public static final String HTTPS = "HTTPS";
-	public static final String ENDPOINT_PROTOCOL_VERSION = "0.0.1-SNAPSHOT";
-	public static final String PREFIX = "urn:uuid:";
-	public static final String DELETED_Y = "Y";
+@FeignClient(value = "IPartnerPoolExternalServiceApi", url = "${partner.pool.hostname}")
+public interface IPartnerPoolExternalServiceApi {
+    
+	@GetMapping(path = "/api/catena/legal-entities")
+    LegalEntityData fetchLegalEntityData(@RequestParam String name, @RequestParam Integer page, @RequestParam Integer size, @RequestHeader("Authorization") String bearerToken);
 
 }

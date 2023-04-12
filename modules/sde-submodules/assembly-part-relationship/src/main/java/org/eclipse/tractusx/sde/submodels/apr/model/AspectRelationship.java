@@ -49,6 +49,7 @@ public class AspectRelationship {
 	private String contractDefinationId;
 	private String deleted;
 	private String updated;
+	private String oldSubmodelIdforUpdateCase;
 
 	@JsonProperty(value = "row_number")
 	private int rowNumber;
@@ -118,6 +119,15 @@ public class AspectRelationship {
 				&& !this.getParentOptionalIdentifierKey().isBlank();
 		boolean hasValue = this.getParentOptionalIdentifierValue() != null
 				&& !this.getParentOptionalIdentifierValue().isBlank();
+
+		return hasKey && hasValue;
+	}
+	
+	public boolean hasOptionalChildIdentifier() {
+		boolean hasKey = this.getChildOptionalIdentifierKey() != null
+				&& !this.getChildOptionalIdentifierKey().isBlank();
+		boolean hasValue = this.getChildOptionalIdentifierValue() != null
+				&& !this.getChildOptionalIdentifierValue().isBlank();
 
 		return hasKey && hasValue;
 	}
