@@ -20,6 +20,10 @@
 
 package org.eclipse.tractusx.sde.edc.entities.request.policies;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,23 +37,27 @@ import lombok.SneakyThrows;
 @AllArgsConstructor
 @Data
 @Builder
+@JsonInclude(Include.NON_NULL)
 public class ConstraintRequest {
 
-    @JsonProperty("edctype")
-    private String edcType;
-    
-    @JsonProperty("leftExpression")
-    private Expression leftExpression;
-    
-    @JsonProperty("rightExpression")
-    private Expression rightExpression;
-    
-    @JsonProperty("operator")
-    private String operator;
+	@JsonProperty("edctype")
+	private String edcType;
 
-    @SneakyThrows
-    public String toJsonString() {
-        final ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(this);
-    }
+	@JsonProperty("leftExpression")
+	private Expression leftExpression;
+
+	@JsonProperty("rightExpression")
+	private Expression rightExpression;
+
+	@JsonProperty("operator")
+	private String operator;
+
+	@JsonProperty("constraints")
+	private List<ConstraintRequest> constraints;
+
+	@SneakyThrows
+	public String toJsonString() {
+		final ObjectMapper mapper = new ObjectMapper();
+		return mapper.writeValueAsString(this);
+	}
 }
