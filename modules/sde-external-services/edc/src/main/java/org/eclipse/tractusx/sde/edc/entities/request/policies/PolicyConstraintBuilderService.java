@@ -37,10 +37,8 @@ public class PolicyConstraintBuilderService {
 		List<ConstraintRequest> constraints = new ArrayList<>();
 
 		if (bpnNumbers != null && !bpnNumbers.isEmpty()) {
-			bpnNumbers.stream().forEach(bpnNumber -> {
-				AccessPolicyDTO accessPolicy = AccessPolicyDTO.builder().bpnNumber(bpnNumber).build();
-				constraints.add(accessPolicy.toConstraint());
-			});
+			AccessPolicyDTO accessPolicy = AccessPolicyDTO.builder().bpnNumbers(bpnNumbers).build();
+			constraints.add(accessPolicy.toConstraint());
 		}
 		return constraints;
 	}
