@@ -19,6 +19,7 @@ FROM eclipse-temurin:19-jdk-jammy
 
 ARG USERNAME=dftuser
 ARG USER_UID=1001
+ARG USER_GID=$USER_UID
 
 # Create the user
 
