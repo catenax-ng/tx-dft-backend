@@ -23,7 +23,7 @@ ARG USER_GID=$USER_UID
 
 # Create the user
 
-RUN useradd -rm -d /home/dftuser -s /bin/bash -u $USER_UID $USERNAME -U $USERNAME
+RUN useradd -rm -d /home/dftuser -s /bin/bash -u $USER_UID -U $USERNAME
 
 USER $USERNAME
 
