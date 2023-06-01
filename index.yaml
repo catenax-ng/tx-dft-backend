@@ -17,6 +17,7 @@ entries:
     - https://github.com/eclipse-tractusx/dft-backend
     type: application
     urls:
-    - https://catenax-ng.github.io/tx-dft-backend/dftbackend-2.0.1.tgz
+    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend
+/dftbackend-2.0.1.tgz
     version: 2.0.1
 generated: "2023-05-23T17:38:55.093173+05:30"
