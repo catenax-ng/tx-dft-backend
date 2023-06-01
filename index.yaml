@@ -3,7 +3,7 @@ entries:
   dftbackend:
   - apiVersion: v2
     appVersion: 2.0.1
-    created: "2023-05-23T17:38:55.103518+05:30"
+    created: "2023-06-01T12:14:18.459258+05:30"
     dependencies:
     - alias: dftpostgresql
       condition: dftpostgresql.enabled
@@ -17,7 +17,6 @@ entries:
     - https://github.com/eclipse-tractusx/dft-backend
     type: application
     urls:
-    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend
-/dftbackend-2.0.1.tgz
+    - https://catenax.github.io/tx-managed-simple-data-exchanger-backend/dftbackend-2.0.1.tgz
     version: 2.0.1
-generated: "2023-05-23T17:38:55.093173+05:30"
+generated: "2023-06-01T12:14:18.45096+05:30"
