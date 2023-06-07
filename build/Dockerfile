@@ -4,9 +4,6 @@ FROM maven:3.9.0-eclipse-temurin-19 as build
 # copy the project files
 COPY ../pom.xml ./pom.xml
 
-# build all dependencies
-#RUN mvn dependency:go-offline -B
-
 # copy your other files
 COPY ../modules ./modules
 
@@ -23,7 +20,8 @@ ARG USER_GID=$USER_UID
 
 # Create the user
 
-RUN useradd -rm -d /home/dftuser -s /bin/bash -u $USER_UID -U $USERNAME
+RUN useradd -rm -d /home/dftuser -s /bin/bash -u $USER_UID -U $USERNAME 
+
 
 USER $USERNAME
 
@@ -33,10 +31,6 @@ WORKDIR /home/user/dftuser/dftapp
 # copy over the built artifact from the maven image
 
 COPY --from=build modules/sde-core/target/*.jar ./app.jar
-
-#RUN chown ${UID}:${GID} /dft
-
-#USER ${UID}:${GID}
 
 EXPOSE 8080
 # set the startup command to run your binary
