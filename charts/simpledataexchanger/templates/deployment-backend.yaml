@@ -1,6 +1,6 @@
 #################################################################################
-# Copyright (c) 2021, 2022, 2023 T-Systems International GmbH
-# Copyright (c) 2021,2022,2023 Contributors to the Eclipse Foundation
+# Copyright (c) 2023 T-Systems International GmbH
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -21,54 +21,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dftbackend.fullname" . }}
+  name: {{ include "sde.fullname" . }}-backend
   namespace: {{ .Release.Namespace | default "default" | quote }}
   labels:
-    {{- include "dftbackend.labels" . | nindent 4 }}
+    {{- include "sde.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  {{- if not .Values.backend.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "dftbackend.selectorLabels" . | nindent 6 }}
+      {{- include "sde.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.backend.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "dftbackend.selectorLabels" . | nindent 8 }}
+        {{- include "sde.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.backend.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       automountServiceAccountToken: false
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.backend.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml .Values.backend.securityContext | nindent 12 }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
-          - containerPort: {{ .Values.portContainer }}
+          - containerPort: {{ .Values.backend.portContainer }}
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://{{ .Values.dftpostgresql.fullnameOverride }}:{{ .Values.dftpostgresql.auth.port }}/{{ .Values.dftpostgresql.auth.database }}"
+              value: "jdbc:postgresql://{{ .Values.sdepostgresql.fullnameOverride }}:{{ .Values.sdepostgresql.auth.port }}/{{ .Values.sdepostgresql.auth.database }}"
             - name: SPRING_DATASOURCE_USERNAME
-              value: {{ .Values.dftpostgresql.auth.username }}
+              value: {{ .Values.sdepostgresql.auth.username }}
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: dft-postgresql-secrets
+                  name: sde-postgresql-secrets 
                   key: password
           envFrom:
             - configMapRef:
-                name: {{ include "dftbackend.fullname" . }}-configmap
+                name: {{ include "sde.fullname" . }}-backend-configmap
           volumeMounts:
             - name: configuration
               mountPath: /app/configuration.properties
@@ -76,7 +76,7 @@ spec:
       volumes:
         - name: configuration
           configMap:
-            name: {{ include "dftbackend.fullname" . }}-configmap
+            name: {{ include "sde.fullname" . }}-backend-configmap
             items:
               - key: configuration.properties
                 path: configuration.properties

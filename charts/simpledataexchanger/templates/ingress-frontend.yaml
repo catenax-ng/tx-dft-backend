@@ -1,6 +1,6 @@
 #################################################################################
-# Copyright (c) 2021, 2022, 2023 T-Systems International GmbH
-# Copyright (c) 2021,2022,2023 Contributors to the Eclipse Foundation
+# Copyright (c) 2023 T-Systems International GmbH
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -17,12 +17,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 ################################################################################
-{{- $fullName := include "dftbackend.fullname" . }}
-{{- $labels := include "dftbackend.labels" . | nindent 4 }}
+{{- $fullName := include "sde.fullname" . }}-frontend
+{{- $labels := include "sde.labels" . | nindent 4 }}
 {{- $gitVersion := .Capabilities.KubeVersion.GitVersion }}
-{{- $dftbackendEndpoints := .Values.dftbackend.endpoints }}
+{{- $dftEndpoints := .Values.frontend.sde.endpoints }}
 {{- $namespace := .Release.Namespace }}
-{{- range .Values.ingresses }}
+{{- range .Values.frontend.ingresses }}
 {{- if and .enabled .endpoints }}
 {{- $ingressName := printf "%s-%s" $fullName .hostname }}
 ---
@@ -75,9 +75,9 @@ spec:
     - host: {{ .hostname }}
       http:
         paths:
-          {{- $ingressdftbackendEndpoints := .endpoints }}
-          {{- range  $name, $mapping := $dftbackendEndpoints }}
-          {{- if (has $name $ingressdftbackendEndpoints) }}
+          {{- $ingressdftEndpoints := .endpoints }}
+          {{- range  $name, $mapping := $dftEndpoints }}
+          {{- if (has $name $ingressdftEndpoints) }}
           - path: {{ $mapping.path }}
             pathType: Prefix
             backend:
@@ -94,4 +94,4 @@ spec:
   {{- end }}
   {{- end }}
 {{- end }}{{- /* end: if .enabled */}}
-{{- end }}{{- /* end: range .Values.ingresses */}}
+{{- end }}{{- /* end: range.Values.frontend.ingresses */}}
