@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 ################################################################################
-{{- $fullName := include "sde.fullname" . }}-backend
+{{- $fullName := include "sde.fullname" . }}
 {{- $labels := include "sde.labels" . | nindent 4 }}
 {{- $gitVersion := .Capabilities.KubeVersion.GitVersion }}
 {{- $sdeEndpoints := .Values.backend.backend.endpoints }}
@@ -83,12 +83,10 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $gitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}-backend
                 port:
                   number: {{ $mapping.port }}
               {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $mapping.port }}
               {{- end }}
         {{- end }}
   {{- end }}
