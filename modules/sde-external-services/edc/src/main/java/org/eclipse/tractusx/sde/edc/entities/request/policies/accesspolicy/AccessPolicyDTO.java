@@ -20,11 +20,7 @@
 
 package org.eclipse.tractusx.sde.edc.entities.request.policies.accesspolicy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.tractusx.sde.edc.entities.request.policies.ConstraintRequest;
-import org.eclipse.tractusx.sde.edc.entities.request.policies.Expression;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,43 +32,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AccessPolicyDTO {
-	private static final String DATASPACECONNECTOR_LITERALEXPRESSION = "dataspaceconnector:literalexpression";
 
-	private List<String> bpnNumbers;
+	String bpnNumber;
 
 	public ConstraintRequest toConstraint() {
-		if (bpnNumbers.size() > 1) {
-			List<ConstraintRequest> constraints = new ArrayList<>();
-			bpnNumbers.stream().forEach(bpnNumber -> constraints.add(prepareConstraint(bpnNumber)));
-			
-			return ConstraintRequest.builder()
-					.edcType("dataspaceconnector:orconstraint")
-					.constraints(constraints)
-					.build();
-		} else {
-			return prepareConstraint(bpnNumbers.get(0));
-		}
-
-	}
-
-	private ConstraintRequest prepareConstraint(String bpnNumber) {
-		Expression lExpression = Expression.builder()
-				.edcType(DATASPACECONNECTOR_LITERALEXPRESSION)
-				.value("BusinessPartnerNumber")
-				.build();
 
 		String operator = "EQ";
-
-		Expression rExpression = Expression.builder()
-				.edcType(DATASPACECONNECTOR_LITERALEXPRESSION)
-				.value(bpnNumber)
-				.build();
-
 		return ConstraintRequest.builder()
-				.edcType("AtomicConstraint")
-				.leftExpression(lExpression)
-				.rightExpression(rExpression)
+				.leftOperand("BusinessPartnerNumber")
 				.operator(operator)
+				.rightOperand(bpnNumber)
 				.build();
 	}
 }

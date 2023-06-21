@@ -82,6 +82,13 @@ public class DigitalTwinGateway {
 	@Value(value = "${digital-twins.authentication.url}")
 	private String tokenUrl;
 
+	private String ddtrUrl;
+
+	public void init(String ddtrUrl) {
+		this.ddtrUrl = ddtrUrl;
+		
+	}
+
 	public ShellLookupResponse shellLookup(ShellLookupRequest request) throws ServiceException {
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -92,7 +99,9 @@ public class DigitalTwinGateway {
 		Map<String, String> queryParameters = new HashMap<>();
 		queryParameters.put(ASSET_IDS_QUERY_PARAMETER, request.toJsonString());
 
-		String url = digitalTwinsHost + "/lookup/shells";
+		String dtURL = (this.ddtrUrl == null || this.ddtrUrl.length() < 0) ? digitalTwinsHost : ddtrUrl;
+		
+		String url = dtURL + "/lookup/shells";
 		String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).queryParam(ASSET_IDS_QUERY_PARAMETER, "{assetIds}")
 				.encode().toUriString();
 		ShellLookupResponse responseBody = null;
@@ -198,27 +207,32 @@ public class DigitalTwinGateway {
 
 	@SneakyThrows
 	private String getBearerToken() {
-		if (accessToken != null && isTokenValid()) {
+
+		try {
+			if (accessToken != null && isTokenValid()) {
+				return "Bearer " + accessToken;
+			}
+
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+			MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+			map.add(CLIENT_ID_TOKEN_QUERY_PARAMETER, clientId);
+			map.add(CLIENT_SECRET_TOKEN_QUERY_PARAMETER, clientSecret);
+			map.add(GRANT_TYPE_TOKEN_QUERY_PARAMETER, grantType);
+
+			HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
+			ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, entity, String.class);
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(response.getBody());
+			accessToken = node.path(ACCESS_TOKEN).asText();
+
 			return "Bearer " + accessToken;
+		} catch (Exception e) {
+			throw new ServiceException("Unable to process request: "+tokenUrl+", " + e.getMessage());
 		}
-
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add(CLIENT_ID_TOKEN_QUERY_PARAMETER, clientId);
-		map.add(CLIENT_SECRET_TOKEN_QUERY_PARAMETER, clientSecret);
-		map.add(GRANT_TYPE_TOKEN_QUERY_PARAMETER, grantType);
-
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-		ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, entity, String.class);
-
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode node = mapper.readTree(response.getBody());
-		accessToken = node.path(ACCESS_TOKEN).asText();
-
-		return "Bearer " + accessToken;
 	}
 
 	@SneakyThrows
@@ -234,5 +248,4 @@ public class DigitalTwinGateway {
 
 		return tokenExpirationTime - 20000 > currentTime;
 	}
-
 }

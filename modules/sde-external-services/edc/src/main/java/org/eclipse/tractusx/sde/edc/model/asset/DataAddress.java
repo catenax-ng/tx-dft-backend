@@ -1,7 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023 T-Systems International GmbH
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,18 +17,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
+package org.eclipse.tractusx.sde.edc.model.asset;
 
-package org.eclipse.tractusx.sde.edc.entities.request.policies;
-
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.tractusx.sde.edc.model.policies.Obligation;
-import org.eclipse.tractusx.sde.edc.model.policies.Prohibition;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
@@ -39,33 +33,19 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
-public class PolicyRequest {
+public class DataAddress {
+	
+private Map<String, String> properties;
+	
+    @SneakyThrows
+    public String toJsonString() {
+        final ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
+    }
 
-	@JsonProperty("@type")
-	@Builder.Default
-	private String type = "Policy";
-
-	@JsonProperty("odrl:permission")
-	private List<PermissionRequest> permissions;
-
-	@JsonProperty("odrl:prohibition")
-	private List<Prohibition> prohibitions;
-
-	@JsonProperty("odrl:obligation")
-	private List<Obligation> obligations;
-
-	private Map<String, String> extensibleProperties;
-
-	@JsonProperty("odrl:target")
-	private String target;
-
-	@SneakyThrows
-	public String toJsonString() {
-		final ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(this);
-	}
 }

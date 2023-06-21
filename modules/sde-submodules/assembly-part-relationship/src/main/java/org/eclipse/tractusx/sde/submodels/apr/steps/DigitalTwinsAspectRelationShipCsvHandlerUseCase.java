@@ -39,18 +39,26 @@ import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubModelResponse;
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubmodelDescriptionListResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsUtility;
 import org.eclipse.tractusx.sde.digitaltwins.gateways.external.DigitalTwinGateway;
+import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
+import org.eclipse.tractusx.sde.edc.services.ConsumerControlPanelService;
+import org.eclipse.tractusx.sde.portal.handler.PortalProxyService;
+import org.eclipse.tractusx.sde.portal.model.ConnectorInfo;
 import org.eclipse.tractusx.sde.submodels.apr.model.AspectRelationship;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 
 	private final DigitalTwinGateway gateway;
 	private final DigitalTwinsUtility digitalTwinsUtility;
+	private final PortalProxyService portalProxyService;
+	private final ConsumerControlPanelService consumerControlPanelService;
 
 	@SneakyThrows
 	public AspectRelationship run(AspectRelationship aspectRelationShip) throws CsvHandlerDigitalTwinUseCaseException {
@@ -182,29 +190,53 @@ public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 
 	@SneakyThrows
 	private CreateSubModelRequest getCreateSubModelRequest(AspectRelationship aspectRelationShip) {
+
 		ArrayList<String> value = new ArrayList<>();
 		value.add(getsemanticIdOfModel());
-
 		ShellLookupRequest shellLookupRequest = getShellLookupRequestforChild(aspectRelationShip);
-		ShellLookupResponse childshellIds = gateway.shellLookup(shellLookupRequest);
+
+		List<ConnectorInfo> connectorEndpoints = portalProxyService
+				.fetchConnectorInfo(List.of(aspectRelationShip.getChildManufacturerId()));
+
+		List<String> dtURls = getDDTRUrl(connectorEndpoints);
 
 		String childUUID = null;
 
-		if (childshellIds.isEmpty()) {
+		for (String ddtUrl : dtURls) {
+
+			gateway.init(ddtUrl);
+
+			ShellLookupResponse childshellIds = gateway.shellLookup(shellLookupRequest);
+
+			if (childshellIds.isEmpty()) {
+				log.warn(aspectRelationShip.getRowNumber() + ", " + ddtUrl + ", No child aspect found for "
+						+ shellLookupRequest.toJsonString());
+			}
+
+			if (childshellIds.size() > 1) {
+				log.warn(String.format("Multiple shell id's found for childAspect %s, %s", ddtUrl,
+						shellLookupRequest.toJsonString()));
+			}
+
+			if (childshellIds.size() == 1) {
+				SubmodelDescriptionListResponse shellDescriptorWithsubmodelDetails = gateway
+						.getShellDescriptorsWithSubmodelDetails(childshellIds);
+
+				for (ShellDescriptorResponse shellDescriptorResponse : shellDescriptorWithsubmodelDetails.getItems()) {
+					childUUID = shellDescriptorResponse.getGlobalAssetId().getValue().get(0);
+				}
+			}
+
+		}
+
+		if (dtURls.isEmpty()) {
+			throw new CsvHandlerUseCaseException(aspectRelationShip.getRowNumber(),
+					"No DTR registry found for child aspect look up");
+		}
+
+		if (childUUID == null) {
 			throw new CsvHandlerUseCaseException(aspectRelationShip.getRowNumber(),
 					"No child aspect found for " + shellLookupRequest.toJsonString());
-		}
-
-		if (childshellIds.size() > 1) {
-			throw new CsvHandlerDigitalTwinUseCaseException(
-					String.format("Multiple shell id's found for childAspect %s", shellLookupRequest.toJsonString()));
-		}
-
-		SubmodelDescriptionListResponse shellDescriptorWithsubmodelDetails = gateway
-				.getShellDescriptorsWithSubmodelDetails(childshellIds);
-
-		for (ShellDescriptorResponse shellDescriptorResponse : shellDescriptorWithsubmodelDetails.getItems()) {
-			childUUID = shellDescriptorResponse.getGlobalAssetId().getValue().get(0);
 		}
 
 		String identification = childUUID;
@@ -215,6 +247,36 @@ public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 
 		return CreateSubModelRequest.builder().idShort(getIdShortOfModel()).identification(identification)
 				.semanticId(semanticId).endpoints(endpoints).build();
+	}
+
+	private List<String> getDDTRUrl(List<ConnectorInfo> connectorInfos) {
+
+		List<String> dtURls = new ArrayList<>();
+
+		connectorInfos.stream().forEach(connectorInfo -> {
+			connectorInfo.getConnectorEndpoint().parallelStream().distinct().forEach(connector -> {
+				try {
+					List<QueryDataOfferModel> queryDataOfferModel = consumerControlPanelService
+							.queryOnDataOffers(connector, 10000, 0);
+
+					log.info("For Connector " + connector + ", found asset :" + queryDataOfferModel.size());
+
+					if (queryDataOfferModel != null && !queryDataOfferModel.isEmpty()) {
+
+						List<String> list = queryDataOfferModel.stream()
+								.filter(obj -> obj.getType().equals("data.core.digitalTwinRegistry"))
+								.map(QueryDataOfferModel::getPublisher).toList();
+
+						dtURls.addAll(list);
+					}
+				} catch (Exception e) {
+					log.error("Error while looking EDC catalog for digitaltwin registry url, " + connector
+							+ ", Exception :" + e.getMessage());
+				}
+			});
+		});
+
+		return dtURls;
 	}
 
 }

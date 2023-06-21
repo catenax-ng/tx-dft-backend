@@ -21,11 +21,13 @@
 package org.eclipse.tractusx.sde.edc.model.contractoffers;
 
 import org.eclipse.tractusx.sde.edc.model.asset.Asset;
+import org.eclipse.tractusx.sde.edc.model.asset.DataAddress;
 import org.eclipse.tractusx.sde.edc.model.policies.PolicyDefinition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,8 +43,12 @@ import lombok.SneakyThrows;
 @JsonInclude(Include.NON_NULL)
 public class ContractOffer {
 
+	@JsonProperty("@id")
 	private String id;
+	
 	private Asset asset;
+	
+	@JsonProperty("odrl:hasPolicy")
 	private PolicyDefinition policy;
 	private String policyId;
 	private String assetId;
@@ -52,6 +58,7 @@ public class ContractOffer {
 	private String offerEnd;
 	private String contractStart;
 	private String contractEnd;
+	private DataAddress dataAddress;
 
 	@SneakyThrows
 	public String toJsonString() {

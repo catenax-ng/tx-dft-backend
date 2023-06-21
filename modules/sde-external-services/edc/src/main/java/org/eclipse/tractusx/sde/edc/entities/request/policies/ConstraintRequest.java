@@ -40,20 +40,18 @@ import lombok.SneakyThrows;
 @JsonInclude(Include.NON_NULL)
 public class ConstraintRequest {
 
-	@JsonProperty("edctype")
-	private String edcType;
+	@JsonProperty("@type")
+	@Builder.Default
+	private String type = "Constraint";
 
-	@JsonProperty("leftExpression")
-	private Expression leftExpression;
+	@JsonProperty("odrl:leftOperand")
+	private String leftOperand;
 
-	@JsonProperty("rightExpression")
-	private Expression rightExpression;
+	@JsonProperty("odrl:rightOperand")
+	private String rightOperand;
 
-	@JsonProperty("operator")
+	@JsonProperty("odrl:operator")
 	private String operator;
-
-	@JsonProperty("constraints")
-	private List<ConstraintRequest> constraints;
 
 	@SneakyThrows
 	public String toJsonString() {
