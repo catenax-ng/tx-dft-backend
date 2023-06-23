@@ -20,7 +20,7 @@
 {{- $fullName := include "sde.fullname" . }}
 {{- $labels := include "sde.labels" . | nindent 4 }}
 {{- $gitVersion := .Capabilities.KubeVersion.GitVersion }}
-{{- $sdeEndpoints := .Values.backend.backend.endpoints }}
+{{- $sdeEndpoints := .Values.backend.endpoints }}
 {{- $namespace := .Release.Namespace }}
 {{- range .Values.backend.ingresses }}
 {{- if and .enabled .endpoints }}

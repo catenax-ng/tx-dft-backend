@@ -68,14 +68,14 @@ backend:
     port: 7070
     targetPort: 8080
 
-  backend:
-    endpoints:
+  #backend:
+  endpoints:
     ## Default api exposing health checks etc
-      default:
+    default:
     # -- The network port, which the "default" api is going to be exposed by the container, pod and service
-        port: "7070"
+      port: "7070"
     # -- The path mapping the "default" api is going to be exposed at
-        path: /backend
+      path: /backend
   ingresses:
     - enabled: false
       className: "nginx"
@@ -198,14 +198,14 @@ frontend:
     type: ClusterIP
     port: 80
     targetPort: 8080
-  sde:
-    endpoints:
+  #sde:
+  endpoints:
         ## Default api exposing health checks etc
-      default:
-          # -- The network port, which the "default" api is going to be exposed by the container, pod and service
-        port: "80"
-          # -- The path mapping the "default" api is going to be exposed at
-        path: /
+    default:
+      # -- The network port, which the "default" api is going to be exposed by the container, pod and service
+      port: "80"
+        # -- The path mapping the "default" api is going to be exposed at
+      path: /
   ingresses:
     - enabled: false
       className: "nginx"
