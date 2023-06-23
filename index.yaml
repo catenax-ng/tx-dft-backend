@@ -3,7 +3,7 @@ entries:
   sde:
   - apiVersion: v2
     appVersion: 2.0.2
-    created: "2023-06-23T12:55:32.68408+05:30"
+    created: "2023-06-23T12:57:10.335203+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -19,4 +19,4 @@ entries:
     urls:
     - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/sde-2.0.2.tgz
     version: 2.0.2
-generated: "2023-06-23T12:55:32.679871+05:30"
+generated: "2023-06-23T12:57:10.330754+05:30"
