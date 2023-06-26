@@ -40,6 +40,10 @@ spec:
       {{- end }}
       labels:
         {{- include "sde.backend.selectorLabels" . | nindent 8 }}
+        {{- with .Values.backend.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+
     spec:
       {{- with .Values.backend.imagePullSecrets }}
       imagePullSecrets:
