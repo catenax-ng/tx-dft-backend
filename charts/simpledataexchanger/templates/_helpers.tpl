@@ -46,7 +46,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 backend Common labels
 */}}
 {{- define "sde.backend.labels" -}}
-helm.sh/chart: {{ include "txdc.chart" . }}
+helm.sh/chart: {{ include "sde.chart" . }}
 {{ include "sde.backend.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -58,7 +58,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 frontend Common labels
 */}}
 {{- define "sde.frontend.labels" -}}
-helm.sh/chart: {{ include "txdc.chart" . }}
+helm.sh/chart: {{ include "sde.chart" . }}
 {{ include "sde.frontend.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -78,16 +78,16 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 backend Selector labels
 */}}
 {{- define "sde.backend.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "sde.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ include "sde.name" . }}-backend
+app.kubernetes.io/instance: {{ .Release.Name }}-backend
 {{- end }}
 
 {{/*
 frontend Selector labels
 */}}
 {{- define "sde.frontend.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "sde.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ include "sde.name" . }}-frontend
+app.kubernetes.io/instance: {{ .Release.Name }}-frontend
 {{- end }}
 
 {{/*

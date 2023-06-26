@@ -18,7 +18,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ################################################################################
 {{- $fullName := include "sde.fullname" . }}
-{{- $labels := include "sde.labels" . | nindent 4 }}
+{{- $labels := include "sde.backend.labels" . | nindent 4 }}
 {{- $gitVersion := .Capabilities.KubeVersion.GitVersion }}
 {{- $sdeEndpoints := .Values.backend.endpoints }}
 {{- $namespace := .Release.Namespace }}
