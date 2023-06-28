@@ -65,14 +65,16 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 
 	private final ContractOfferRequestFactory contractOfferRequestFactory;
 
-	public List<QueryDataOfferModel> queryOnDataOffers(String providerUrl, Integer limit, Integer offset) {
+	public List<QueryDataOfferModel> queryOnDataOffers(String providerUrl, Integer offset, Integer limit,
+			String filterExpression) {
 
 		String sproviderUrl = UtilityFunctions.removeLastSlashOfUrl(providerUrl);
 
 		List<QueryDataOfferModel> queryOfferResponse = new ArrayList<>();
 
-		JsonNode contractOfferCatalog = contractOfferCatalogApiProxy.getContractOffersCatalog(
-				contractOfferRequestFactory.getContractOfferRequest(providerUrl, limit, offset));
+		JsonNode contractOfferCatalog = contractOfferCatalogApiProxy
+				.getContractOffersCatalog(contractOfferRequestFactory
+						.getContractOfferRequest(providerUrl + protocolPath, limit, offset, filterExpression));
 
 		JsonNode jOffer = contractOfferCatalog.get("dcat:dataset");
 		if (jOffer.isArray()) {
@@ -91,19 +93,21 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 
 		JsonNode policy = offer.get("odrl:hasPolicy");
 
+		String edcstr = "edc:";
+		
 		QueryDataOfferModel build = QueryDataOfferModel.builder()
-				.assetId(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_ID))
+				.assetId(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_ID))
 				.connectorOfferUrl(sproviderUrl + File.separator + getFieldFromJsonNode(offer, "@id"))
 				.offerId(getFieldFromJsonNode(policy, "@id"))
-				.title(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_NAME))
-				.type(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_TYPE))
-				.description(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_DESCRIPTION))
-				.created(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_CREATED))
-				.modified(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_MODIFIED))
-				.publisher(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_PUBLISHER))
-				.version(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_VERSION))
-				.fileName(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_FILENAME))
-				.fileContentType(getFieldFromJsonNode(offer, EDCAssetConstant.ASSET_PROP_CONTENTTYPE))
+				.title(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_NAME))
+				.type(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_TYPE))
+				.description(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_DESCRIPTION))
+				.created(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_CREATED))
+				.modified(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_MODIFIED))
+				.publisher(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_PUBLISHER))
+				.version(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_VERSION))
+				.fileName(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_FILENAME))
+				.fileContentType(getFieldFromJsonNode(offer, edcstr + EDCAssetConstant.ASSET_PROP_CONTENTTYPE))
 				.connectorId(getFieldFromJsonNode(contractOfferCatalog, "edc:participantId")).build();
 
 		checkAndSetPolicyPermission(build, policy);
@@ -136,9 +140,7 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 			JsonNode jsonNode = constraints.get("odrl:and");
 
 			if (jsonNode != null && jsonNode.isArray()) {
-				jsonNode.forEach(constraint -> {
-					setConstraint(usagePolicies, bpnNumbers, constraint);
-				});
+				jsonNode.forEach(constraint -> setConstraint(usagePolicies, bpnNumbers, constraint));
 			} else if (jsonNode != null) {
 				setConstraint(usagePolicies, bpnNumbers, jsonNode);
 			}
@@ -186,7 +188,7 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 		}
 
 		ActionRequest action = policyConstraintBuilderService.getUsagePolicyConstraints(policies);
-		consumerRequest.getOffers().parallelStream().forEach((offer) -> {
+		consumerRequest.getOffers().parallelStream().forEach(offer -> {
 			try {
 
 				negotiateContractId.set(
