@@ -24,7 +24,7 @@ sdepostgresql:
 # -- PostgreSQL chart configuration
   # Switch to enable or disable the PostgreSQL helm chart
   enabled: true
-  fullnameOverride: "product-sde-postgres"
+  fullnameOverride: "product-sde-postgresql"
   global:
     postgresql:
       auth:
