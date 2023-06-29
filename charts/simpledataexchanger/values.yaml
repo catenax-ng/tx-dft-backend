@@ -25,14 +25,15 @@ sdepostgresql:
   # Switch to enable or disable the PostgreSQL helm chart
   enabled: true
   fullnameOverride: "product-sde-postgres"
-  auth:
-    username: "sdeuser"
-    port: 5432
-    database: "sdedb"
-#    existingSecret: "sde-postgresql-secrets"
-#    secretKeys:
-#      adminPasswordKey: "postgres-password"
-#     userPasswordKey: "password"
+  global:
+    postgresql:
+      auth:
+        postgresPassword: ""
+        username: "sdeuser"
+        password: ""
+        database: "sdedb"
+        port: 5432
+        existingSecret: "sde-postgresql-secrets"
 
 backend:
   image:

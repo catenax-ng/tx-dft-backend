@@ -62,7 +62,7 @@ spec:
           - containerPort: {{ .Values.backend.portContainer }}
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://{{ .Values.sdepostgresql.fullnameOverride }}:{{ .Values.sdepostgresql.auth.port }}/{{ .Values.sdepostgresql.auth.database }}"
+              value: "jdbc:postgresql://{{ .Values.sdepostgresql.fullnameOverride }}:{{ .Values.sdepostgresql.global.postgresql.auth.port }}/{{ .Values.sdepostgresql.global.postgresql.auth.database }}"
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.sdepostgresql.auth.username }}
             - name: SPRING_DATASOURCE_PASSWORD
