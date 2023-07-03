@@ -66,7 +66,7 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.sdepostgresql.auth.username }}
             - name: SPRING_DATASOURCE_PASSWORD
-              value: {{ .Values.sdepostgresql.auth.password }}
+              value: {{ .Values.sdepostgresql.auth.password | default ( randAlphaNum 32 | quote ) }}
           envFrom:
             - configMapRef:
                 name: {{ include "sde.fullname" . }}-backend-configmap
