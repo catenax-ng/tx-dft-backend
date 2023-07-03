@@ -33,7 +33,7 @@ sdepostgresql:
     database: "sdedb"
     existingSecret: ""
     port: 5432
-  postgresqlDataDir: /bitnami/postgresql/data-0
+  postgresqlDataDir: /bitnami/postgresql/data
   
 
 backend:
