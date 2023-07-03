@@ -28,9 +28,9 @@ sdepostgresql:
   auth:
     enablePostgresUser: true
     postgresPassword: ""
-    username: ""
+    username: "sdeuser"
     password: ""
-    database: ""
+    database: "sdedb"
     existingSecret: ""
     port: 5432
   postgresqlDataDir: /bitnami/postgresql/data-0
