@@ -31,7 +31,7 @@ sdepostgresql:
     username: "sdeuser"
     password: ""
     database: "sdedb"
-    existingSecret: "postgres-secret"
+    existingSecret: "sde-postgresql-secrets"
     port: 5432
 #  postgresqlDataDir: /bitnami/postgresql/data
   
