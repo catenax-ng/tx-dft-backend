@@ -65,8 +65,16 @@ spec:
               value: "jdbc:postgresql://{{ .Values.sdepostgresql.fullnameOverride }}:{{ .Values.sdepostgresql.auth.port }}/{{ .Values.sdepostgresql.auth.database }}"
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.sdepostgresql.auth.username }}
+          {{- if not (empty (include "Values.sdepostgresql.auth.existingSecret" .)) }} 
             - name: SPRING_DATASOURCE_PASSWORD
-              value: {{ .Values.sdepostgresql.auth.password | default ( randAlphaNum 32 | quote ) }}
+              valueFrom:
+                secretKeyRef:
+                  name: sde-postgresql-secrets 
+                  key: password            
+          {{- else }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: {{ .Values.sdepostgresql.auth.password }}
+          {{end}}
           envFrom:
             - configMapRef:
                 name: {{ include "sde.fullname" . }}-backend-configmap
