@@ -65,7 +65,7 @@ spec:
               value: "jdbc:postgresql://{{ .Values.sdepostgresql.fullnameOverride }}:{{ .Values.sdepostgresql.auth.port }}/{{ .Values.sdepostgresql.auth.database }}"
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.sdepostgresql.auth.username }}
-          {{- if .Values.sdepostgresql.auth.existingSecret  }} 
+          {{- if not .Values.sdepostgresql.auth.password  }} 
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
