@@ -27,9 +27,9 @@ sdepostgresql:
   fullnameOverride: "product-sde-postgres"
   auth:
     enablePostgresUser: true
-    postgresPassword: ""
+    postgresPassword: "default"
     username: "sdeuser"
-    password: ""
+    password: "default"
     database: "sdedb"
     port: 5432
   
