@@ -70,10 +70,7 @@ spec:
               value: {{ .Values.sdepostgresql.auth.password }}
           {{- else }} 
             - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sde-postgresql-secrets 
-                  key: password            
+              value: {{ .Values.sdepostgresql.auth.password | default ( randAlphaNum 32 | quote ) }}       
           {{end}}
           envFrom:
             - configMapRef:
