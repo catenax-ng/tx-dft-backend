@@ -27,13 +27,13 @@ sdepostgresql:
   fullnameOverride: "product-sde-postgres"
   auth:
     enablePostgresUser: true
-    postgresPassword: "default"
+    postgresPassword: ""
     username: "sdeuser"
-    password: "default"
+    password: ""
     database: "sdedb"
-    existingSecret: ""
+    existingSecret: "sde-postgresql-secrets"
     port: 5432
-  postgresqlDataDir: /bitnami/postgresql/data
+#  postgresqlDataDir: /bitnami/postgresql/data
   
 
 backend:
