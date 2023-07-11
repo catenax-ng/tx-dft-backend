@@ -14,26 +14,17 @@ RUN mvn clean install
 
 FROM eclipse-temurin:19-jdk-jammy
 
-ARG USERNAME=dftuser
+ARG USERNAME=sdeuser
 ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
 # Create the user
-
-RUN useradd -rm -d /home/dftuser -s /bin/bash -u $USER_UID -U $USERNAME 
-
-
+RUN useradd -rm -d /home/sdeuser -s /bin/bash -u $USER_UID -U $USERNAME 
 USER $USERNAME
-
 # set deployment directory
-WORKDIR /home/user/dftuser/dftapp
-
+WORKDIR /home/user/sdeuser/sdeapp
 # copy over the built artifact from the maven image
-
 COPY --from=build modules/sde-core/target/*.jar ./app.jar
-
 EXPOSE 8080
 # set the startup command to run your binary
-
 CMD ["java", "-jar", "./app.jar","--spring.config.location=file:/app/configuration.properties"]
-
