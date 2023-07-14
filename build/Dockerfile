@@ -12,7 +12,8 @@ RUN mvn clean install
 
 # our final base image
 
-FROM eclipse-temurin:19-jdk-jammy
+#FROM eclipse-temurin:19-jdk-jammy
+FROM eclipse-temurin:20.0.1_9-jdk
 
 ARG USERNAME=sdeuser
 ARG USER_UID=1001
