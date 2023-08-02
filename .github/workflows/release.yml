@@ -1,0 +1,75 @@
+#################################################################################
+# Copyright (c) 2023 T-Systems International GmbH
+# Copyright (c) 2023 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+################################################################################
+name: release
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  release:
+    if: github.event.action != 'labeled'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Bump version on merging Pull Requests with specific labels.
+      # (bump:major,bump:minor,bump:patch)
+      - id: bumpr
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: haya14busa/action-bumpr@v1
+
+      # Update corresponding major and minor tag.
+      # e.g. Update v1 and v1.2 when releasing v1.2.3
+      - uses: haya14busa/action-update-semver@v1
+        if: "!steps.bumpr.outputs.skip"
+        with:
+          tag: ${{ steps.bumpr.outputs.next_version }}
+
+      # Get tag name.
+      - id: tag
+        uses: haya14busa/action-cond@v1
+        with:
+          cond: "${{ startsWith(github.ref, 'refs/tags/') }}"
+          if_true: ${{ github.ref }}
+          if_false: ${{ steps.bumpr.outputs.next_version }}
+
+      # Create release
+      - if: "steps.tag.outputs.value != ''"
+        env:
+          TAG_NAME: ${{ steps.tag.outputs.value }}
+          BODY: ${{ steps.bumpr.outputs.message }}
+          # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${TAG_NAME}" -t "Release ${TAG_NAME/refs\/tags\//}" --notes "${BODY}"
+
+  release-check:
+    if: github.event.action == 'labeled'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Post bumpr status comment
+        uses: haya14busa/action-bumpr@v1
