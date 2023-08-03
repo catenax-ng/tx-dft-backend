@@ -9,22 +9,16 @@ on:
 name: Create Release
 
 jobs:
-  create_release:
-    name: Create Release
+  test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Create release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        files: '' # Optional. Comma-separated list of files to include in the release (e.g., "dist/*,docs/*")
-        body: '' # Optional. Release notes or description
-        tag_name: v1.1.2
-        draft: false
-        prerelease: false
+      - uses: actions/checkout@v2
+      - name: Set output
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
