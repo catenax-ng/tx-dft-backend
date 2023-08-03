@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v2.*'
+      - 'v*'
     branches:
       - tagging
 name: Create Release
@@ -25,6 +25,6 @@ jobs:
       with:
         files: '' # Optional. Comma-separated list of files to include in the release (e.g., "dist/*,docs/*")
         body: '' # Optional. Release notes or description
-        tag_name: ${{ github.refs/tags/* }}
+        tag_name: v1.1.2
         draft: false
         prerelease: false
