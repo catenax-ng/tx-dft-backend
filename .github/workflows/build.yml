@@ -17,12 +17,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 ################################################################################
-name: sdebuild
+name: build
 
 on:
   push:
     branches:
-      - 'main'
+      - '2.0.9'
     tags:
       - 'v*.*.*'
       - 'v*.*.*-*'
@@ -68,9 +68,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=v2.0.9
           flavor: |
             latest=true
               
