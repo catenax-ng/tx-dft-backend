@@ -22,7 +22,7 @@ name: build
 on:
   push:
     branches:
-      - 'main'
+      - 'DST_PIP9_ITR5'
     tags:
       - 'v*.*.*'
       - 'v*.*.*-*'
@@ -68,9 +68,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=v2.0.8
           flavor: |
             latest=true
               
