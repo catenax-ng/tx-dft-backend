@@ -17,41 +17,30 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.sde.submodels.pcf;
 
-import java.io.InputStream;
+package org.eclipse.tractusx.sde.submodels.pcf.steps;
 
-import org.eclipse.tractusx.sde.common.extensions.SubmodelExtension;
-import org.eclipse.tractusx.sde.common.model.Submodel;
-import org.springframework.stereotype.Component;
+import org.eclipse.tractusx.sde.common.submodel.executor.Step;
+import org.eclipse.tractusx.sde.submodels.pcf.entity.PcfEntity;
+import org.eclipse.tractusx.sde.submodels.pcf.mapper.PcfMapper;
+import org.eclipse.tractusx.sde.submodels.pcf.model.PcfAspect;
+import org.eclipse.tractusx.sde.submodels.pcf.repository.PcfRepository;
+import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
+@Service
+public class StorePcfCsvHandlerUseCase extends Step {
 
-@Component
-public class PcfSubmodel extends SubmodelExtension {
-	
-private Submodel submodel = null;
-	
-	
-	@PostConstruct
-	public void init() {
+	private final PcfRepository aspectRepository;
+	private final PcfMapper aspectMapper;
 
-		String resource = "pcf.json";
-		// this is the path within the jar file
-		InputStream input = this.getClass().getResourceAsStream("/resources/" + resource);
-		if (input == null) {
-			// this is how we load file within editor (eg eclipse)
-			input = this.getClass().getClassLoader().getResourceAsStream(resource);
-		}
-
-		submodel = loadSubmodel(input);
-		
-		submodel.addProperties("tableName", "pcf_aspect");
-	}
-	
-	@Override
-	public Submodel submodel() {
-		return submodel;
+	public StorePcfCsvHandlerUseCase(PcfRepository aspectRepository, PcfMapper mapper) {
+		this.aspectRepository = aspectRepository;
+		this.aspectMapper = mapper;
 	}
 
+	public PcfAspect run(PcfAspect input) {
+		PcfEntity entity = aspectMapper.mapFrom(input);
+		aspectRepository.save(entity);
+		return input;
+	}
 }
