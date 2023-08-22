@@ -15,6 +15,7 @@
 			"specVersion",
 			"companyId",
 			"companyName",
+			"manufacturer_part_id",
 			"created",
 			"extWBCSD_productCodeCpc",
 			"partialFullPcf",
@@ -35,21 +36,12 @@
 			"pcfExcludingBiogenic",
 			"extWBCSD_packagingGhgEmissions",
 			"precedingPfId",
-			"declaredUnit",
-			"unitaryProductAmount",
-			"productMassPerDeclaredUnit",
-			"exemptedEmissionsPercent",
-			"referencePeriodStart",
-			"referencePeriodEnd",
-			"crossSectoralStandardsUsed",
-			"extWBCSD_characterizationFactors",
-			"extTFS_allocationWasteIncineration",
 			"secondaryEmissionFactorSources"
 		],
 		"dependentRequired": {
 		},
 		"properties": {
-			"id": {
+			"uuid": {
 				"type": [
 					"string",
 					"null"
@@ -95,6 +87,36 @@
 					"My Corp"
 				]
 			},
+			"manufacturer_part_id": {
+				"type": [
+					"string"
+				],
+				"minLength": 1,
+				"title": "Manufacturer Part ID",
+				"description": "The ID of the type/catalog part (of which the serialized part is an instance of) from the manufacturer.",
+				"examples": [
+					"37754B7-76"
+				]
+			},
+			"assetLifeCyclePhase": {
+                "type": [
+                    "string"
+                ],
+                "enum": [
+                    "AsRequired",
+                    "AsDesigned",
+                    "AsPlanned",
+                    "AsBuilt",
+                    "AsMaintained",
+                    "AsRecycled"
+                ],
+                "minLength": 1,
+                "title": "Asset Life Cycle Phase",
+                "description": "The lifecycle context in which the child part was assembled into the parent part.",
+                "examples": [
+                    "lifecycle"
+                ]
+            },
 			"created": {
 				"type": [
 					"string"
@@ -188,6 +210,7 @@
 					"string",
 					"null"
 				],
+				"title": "Comment",
 				"description": "Additional information and instructions related to the calculation of the product (carbon) footprint as specified in the Catena-X PCF Rulebook in accordance with the technical specifications for PCF Data Exchange (Version 2.0.0) from the WBCSD (World Business Council for Sustainable Development)/ PACT initiative.",
 				"examples": [
 					"Comment for version 42."
@@ -440,6 +463,17 @@
 					"PEF"
 				]
 			},
+			"productOrSectorSpecificRulesName": {
+				"type": [
+					"string"
+				],
+				"title": "ProductOrSectorSpecificRulesName",
+				"minLength": 1,
+				"description": "Product Or Sector Specific Rules Name",
+				"examples": [
+					"PEF"
+				]
+			},
 			"ruleName": {
 				"type": [
 					"string"
@@ -517,7 +551,7 @@
 			},
 			"secondaryEmissionFactorSources": {
 				"type": [
-					"String"
+					"string"
 				],
 				"title": "SecondaryEmissionFactorSource",
 				"description": "Emission factors used for the PCF (Product Carbon Footprint) calculation as specified in the Catena-X PCF Rulebook in accordance with the technical specifications for PCF Data Exchange (Version 2.0.0) from the WBCSD (World Business Council for Sustainable Development)/ PACT initiative.",
@@ -597,8 +631,8 @@
 					"boolean"
 				],
 				"enum": [
-					"true",
-					"false"
+					true,
+					false
 				],
 				"title": "ExtWBCSD_packagingEmissionsIncluded",
 				"description": "Flag indicating whether packaging emissions are included in a PCF (Product Carbon Footprint) as specified in the technical specifications for PCF Data Exchange (Version 2.0.0) from the WBCSD (World Business Council for Sustainable Development)/ PACT initiative. WBCSD specific extension, in Catena-X for example value is \"TRUE\" per default.",
@@ -820,10 +854,12 @@
 	},
 	"examples": [
 		{
-			"id": "3893bb5d-da16-4dc1-9185-11d97476c254",
+			"uuid": "3893bb5d-da16-4dc1-9185-11d97476c254",
 			"specVersion": "2.0.1-20230314",
 			"companyId": "urn:uuid:51131FB5-42A2-4267-A402-0ECFEFAD1619",
 			"companyName": "My Corp",
+			"manufacturer_part_id":"37754B7-76",
+			"assetLifeCyclePhase":"AsPlanned",
 			"created": "2022-05-22T21:47:32Z",
 			"extWBCSD_pfStatus": "Active",
 			"extWBCSD_productCodeCpc": "011-99000",
@@ -844,11 +880,13 @@
 			"aircraftGhgEmissions": 0.0,
 			"productMassPerDeclaredUnit": 0.456,
 			"extWBCSD_operator": "PEF",
-			"productOrSectorSpecificRulesName": "urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0",
+			"productOrSectorSpecificRulesName": "PEF",
+			"ruleName": "urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0",
 			"extWBCSD_otherOperatorName": "NSF",
 			"extTFS_allocationWasteIncineration": "cut-off",
 			"pcfExcludingBiogenic": 2.0,
 			"referencePeriodEnd": "2022-12-31T23:59:59Z",
+			"crossSectoralStandardsUsed": "GHG Protocol Product standard",
 			"extWBCSD_characterizationFactors": "AR5",
 			"secondaryEmissionFactorSource": "ecoinvent 3.8",
 			"unitaryProductAmount": 1000.0,
@@ -863,6 +901,7 @@
 			"carbonContentTotal": 2.5,
 			"extTFS_distributionStageLuGhgEmissions": 1.1,
 			"primaryDataShare": 56.12,
+			"secondaryEmissionFactorSources": "ecoinvent 3.8",
 			"completenessDQR": 2.0,
 			"technologicalDQR": 2.0,
 			"geographicalDQR": 2.0,
@@ -882,7 +921,7 @@
 			"validityPeriodEnd": "2022-12-31T23:59:59Z",
 			"pcfLegalStatement": "This PCF (Product Carbon Footprint) is for information purposes only. It is based upon the standards mentioned above.",
 			"productDescription": "Ethanol, 95% solution",
-			"precedingPfid": "3893bb5d-da16-4dc1-9185-11d97476c254"
+			"precedingPfId": "3893bb5d-da16-4dc1-9185-11d97476c254"
 		}
 	]
 }

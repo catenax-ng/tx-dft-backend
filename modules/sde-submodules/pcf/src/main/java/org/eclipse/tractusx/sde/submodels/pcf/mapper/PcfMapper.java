@@ -55,7 +55,6 @@ public abstract class PcfMapper {
 	@Mapping(target = "subModelId", ignore = true)
 	public abstract PcfAspect mapFrom(PcfEntity aspect);
 
-	@Mapping(source = "optionalIdentifierKey", target = "optionalIdentifierKey", qualifiedByName = "prettyName")
 	public abstract PcfEntity mapFrom(PcfAspect aspect);
 
 	@SneakyThrows
@@ -77,39 +76,7 @@ public abstract class PcfMapper {
 			return null;
 		}
 
-		Set<LocalIdentifier> localIdentifiers = new HashSet<>();
-		localIdentifiers.add(new LocalIdentifier("PartInstanceID", entity.getPartInstanceId()));
-		localIdentifiers.add(new LocalIdentifier("ManufacturerPartID", entity.getManufacturerPartId()));
-		localIdentifiers.add(new LocalIdentifier("ManufacturerID", manufacturerId));
-		if (entity.getOptionalIdentifierKey() != null && entity.getOptionalIdentifierValue() != null) {
-			localIdentifiers
-					.add(new LocalIdentifier(entity.getOptionalIdentifierKey(), entity.getOptionalIdentifierValue()));
-		}
 
-		ManufacturingInformation manufacturingInformation = ManufacturingInformation.builder()
-				.country(entity.getManufacturingCountry()).date(entity.getManufacturingDate()).build();
-
-		PartTypeInformation partTypeInformation = PartTypeInformation.builder()
-				.manufacturerPartId(entity.getManufacturerPartId())
-				.customerPartId(entity.getCustomerPartId())
-				.classification(entity.getClassification())
-				.nameAtManufacturer(entity.getNameAtManufacturer())
-				.nameAtCustomer(entity.getNameAtCustomer())
-				.build();
-
-		return new Gson().toJsonTree(SubmodelResultResponse.builder().localIdentifiers(localIdentifiers)
-				.manufacturingInformation(manufacturingInformation).partTypeInformation(partTypeInformation)
-				.catenaXId(entity.getId())
-				.build()).getAsJsonObject();
-	}
-
-	@Named("prettyName")
-	String getPrettyName(String optionalIdentifierKey) {
-
-		Optional<OptionalIdentifierKeyEnum> findFirst = Stream.of(OptionalIdentifierKeyEnum.values())
-				.filter(v -> v.getPrettyName().equalsIgnoreCase(optionalIdentifierKey)).findFirst();
-		if (findFirst.isPresent())
-			return findFirst.get().getPrettyName();
 		return null;
 	}
 

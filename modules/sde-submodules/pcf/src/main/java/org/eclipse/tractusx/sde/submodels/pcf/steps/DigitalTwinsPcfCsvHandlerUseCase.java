@@ -122,9 +122,6 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 		specificIdentifiers.put(CommonConstants.PART_INSTANCE_ID, aspect.getPartInstanceId());
 		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, aspect.getManufacturerPartId());
 		specificIdentifiers.put(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId());
-		if (aspect.hasOptionalIdentifier()) {
-			specificIdentifiers.put(aspect.getOptionalIdentifierKey(), aspect.getOptionalIdentifierValue());
-		}
 
 		return specificIdentifiers;
 	}

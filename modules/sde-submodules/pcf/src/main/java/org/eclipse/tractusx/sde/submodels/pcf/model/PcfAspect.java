@@ -27,6 +27,7 @@ import org.eclipse.tractusx.sde.common.entities.UsagePolicies;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,78 +40,112 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PcfAspect {
 
-    @JsonProperty(value ="shell_id")
-    private String shellId;
-    
-    private String subModelId;
-    
-    @JsonProperty(value ="row_number")
-    private int rowNumber;
+	@JsonProperty(value = "shell_id")
+	private String shellId;
 
-    @JsonProperty(value ="bpn_numbers")
-    private List<String> bpnNumbers;
-    
-    @JsonProperty(value ="type_of_access")
-    private String typeOfAccess;
-    
-    @JsonProperty(value ="usage_policies")
-    private List<UsagePolicies> usagePolicies;
-    
-    @JsonProperty(value ="uuid")
-    private String uuid;
-    
-    @JsonProperty(value ="process_id")
-    private String processId;
-    
-    @JsonProperty(value ="part_instance_id")
-    private String partInstanceId;
-    
-    @JsonProperty(value ="manufacturing_date")
-    private String manufacturingDate;
-    
-    @JsonProperty(value ="manufacturing_country")
-    private String manufacturingCountry;
-    
-    @JsonProperty(value ="manufacturer_part_id")
-    private String manufacturerPartId;
-    
-    @JsonProperty(value ="customer_part_id")
-    private String customerPartId;
-    
-    @JsonProperty(value ="classification")
-    private String classification;
-    
-    @JsonProperty(value ="name_at_manufacturer")
-    private String nameAtManufacturer;
-    
-    @JsonProperty(value ="name_at_customer")
-    private String nameAtCustomer;
-    
-    @JsonProperty(value ="optional_identifier_key")
-    private String optionalIdentifierKey;
-    
-    @JsonProperty(value ="optional_identifier_value")
-    private String optionalIdentifierValue;
-    
-    @JsonProperty(value ="contract_defination_id")
-    private String contractDefinationId;
-    
-    @JsonProperty(value ="usage_policy_id")
-    private String usagePolicyId;
-    
-    @JsonProperty(value ="access_policy_id")
-    private String accessPolicyId;
-    
-    @JsonProperty(value ="asset_id")
-    private String assetId;
-    
+	private String subModelId;
+
+	@JsonProperty(value = "row_number")
+	private int rowNumber;
+
+	@JsonProperty(value = "bpn_numbers")
+	private List<String> bpnNumbers;
+
+	@JsonProperty(value = "type_of_access")
+	private String typeOfAccess;
+
+	@JsonProperty(value = "usage_policies")
+	private List<UsagePolicies> usagePolicies;
+
+	@JsonProperty(value = "uuid")
+	private String uuid;
+
+	@JsonProperty(value = "process_id")
+	private String processId;
+
+	@JsonProperty(value = "part_instance_id")
+	private String partInstanceId;
+
+	@JsonProperty(value = "manufacturer_part_id")
+	private String manufacturerPartId;
+
+	private String id;
+	private String specVersion;
+	private String companyId;
+	private String companyName;
+	private String created;
+	private String extWBCSDPfStatus;
+	private String extWBCSDProductCodeCpc;
+	private String productName;
+	private String version;
+	private String biogenicCarbonEmissionsOtherThanCO2;
+	private String distributionStagePcfExcludingBiogenic;
+	private String biogenicCarbonWithdrawal;
+	private String distributionStageBiogenicCarbonEmissionsOtherThanCO2;
+	private String extWBCSDAllocationRulesDescription;
+	private String exemptedEmissionsDescription;
+	private String distributionStageFossilGhgEmissions;
+	private String exemptedEmissionsPercent;
+	private String geographyCountrySubdivision;
+	private String extTFSLuGhgEmissions;
+	private String distributionStageBiogenicCarbonWithdrawal;
+	private String pcfIncludingBiogenic;
+	private String aircraftGhgEmissions;
+	private String productMassPerDeclaredUnit;
+	private String extWBCSDOperator;
+	private String productOrSectorSpecificRulesName;
+	private String extWBCSDOtherOperatorName;
+	private String extTFSAllocationWasteIncineration;
+	private String pcfExcludingBiogenic;
+	private String referencePeriodEnd;
+	private String extWBCSDCharacterizationFactors;
+	private String secondaryEmissionFactorSource;
+	private String unitaryProductAmount;
+	private String declaredUnit;
+	private String referencePeriodStart;
+	private String geographyRegionOrSubregion;
+	private String fossilGhgEmissions;
+	private String boundaryProcessesDescription;
+	private String geographyCountry;
+	private String extWBCSDPackagingGhgEmissions;
+	private String dlucGhgEmissions;
+	private String carbonContentTotal;
+	private String extTFSDistributionStageLuGhgEmissions;
+	private String primaryDataShare;
+	private String completenessDQR;
+	private String technologicalDQR;
+	private String geographicalDQR;
+	private String temporalDQR;
+	private String reliabilityDQR;
+	private String coveragePercent;
+	private String extWBCSDPackagingEmissionsIncluded;
+	private String extWBCSDFossilCarbonContent;
+	private String crossSectoralStandard;
+	private String extTFSDistributionStageDlucGhgEmissions;
+	private String distributionStagePcfIncludingBiogenic;
+	private String carbonContentBiogenic;
+	private String partialFullPcf;
+	private String productId;
+	private String validityPeriodStart;
+	private String comment;
+	private String validityPeriodEnd;
+	private String pcfLegalStatement;
+	private String productDescription;
+	private String precedingPfid;
+
+	@JsonProperty(value = "contract_defination_id")
+	private String contractDefinationId;
+
+	@JsonProperty(value = "usage_policy_id")
+	private String usagePolicyId;
+
+	@JsonProperty(value = "access_policy_id")
+	private String accessPolicyId;
+
+	@JsonProperty(value = "asset_id")
+	private String assetId;
+
 	@JsonProperty(value = "updated")
 	private String updated;
 
-    public boolean hasOptionalIdentifier() {
-        boolean hasKey = this.getOptionalIdentifierKey() != null && !this.getOptionalIdentifierKey().isBlank();
-        boolean hasValue = this.getOptionalIdentifierValue() != null && !this.getOptionalIdentifierValue().isBlank();
-
-        return hasKey && hasValue;
-    }
 }
