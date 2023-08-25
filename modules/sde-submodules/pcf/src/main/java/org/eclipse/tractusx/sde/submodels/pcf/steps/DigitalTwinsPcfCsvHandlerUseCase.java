@@ -52,17 +52,17 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 	private final DigitalTwinsUtility digitalTwinsUtility;
 
 	@SneakyThrows
-	public PcfAspect run(PcfAspect aspect) throws CsvHandlerDigitalTwinUseCaseException {
+	public PcfAspect run(PcfAspect pcfAspect) throws CsvHandlerDigitalTwinUseCaseException {
 		try {
-			return doRun(aspect);
+			return doRun(pcfAspect);
 		} catch (Exception e) {
-			throw new CsvHandlerUseCaseException(aspect.getRowNumber(), ": DigitalTwins: " + e.getMessage());
+			throw new CsvHandlerUseCaseException(pcfAspect.getRowNumber(), ": DigitalTwins: " + e.getMessage());
 		}
 	}
 
 	@SneakyThrows
-	private PcfAspect doRun(PcfAspect aspect) throws CsvHandlerDigitalTwinUseCaseException {
-		ShellLookupRequest shellLookupRequest = getShellLookupRequest(aspect);
+	private PcfAspect doRun(PcfAspect pcfAspect) throws CsvHandlerDigitalTwinUseCaseException {
+		ShellLookupRequest shellLookupRequest = getShellLookupRequest(pcfAspect);
 		List<String> shellIds = digitalTwinsFacilitator.shellLookup(shellLookupRequest);
 
 		String shellId;
@@ -70,7 +70,7 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 		if (shellIds.isEmpty()) {
 			logDebug(String.format("No shell id for '%s'", shellLookupRequest.toJsonString()));
 			ShellDescriptorRequest aasDescriptorRequest = digitalTwinsUtility
-					.getShellDescriptorRequest(getSpecificAssetIds(aspect), aspect);
+					.getShellDescriptorRequest(getSpecificAssetIds(pcfAspect), pcfAspect);
 			ShellDescriptorResponse result = digitalTwinsFacilitator.createShellDescriptor(aasDescriptorRequest);
 			shellId = result.getIdentification();
 			logDebug(String.format("Shell created with id '%s'", shellId));
@@ -83,44 +83,44 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 					String.format("Multiple ids found on aspect %s", shellLookupRequest.toJsonString()));
 		}
 
-		aspect.setShellId(shellId);
+		pcfAspect.setShellId(shellId);
 		SubModelListResponse subModelResponse = digitalTwinsFacilitator.getSubModels(shellId);
 		SubModelResponse foundSubmodel = null;
 		if (subModelResponse != null) {
 			foundSubmodel = subModelResponse.getResult().stream().filter(x -> getIdShortOfModel().equals(x.getIdShort()))
 					.findFirst().orElse(null);
 			if (foundSubmodel != null)
-				aspect.setSubModelId(foundSubmodel.getId());
+				pcfAspect.setSubModelId(foundSubmodel.getId());
 		}
 
 		if (subModelResponse == null || foundSubmodel == null) {
 			logDebug(String.format("No submodels for '%s'", shellId));
 			CreateSubModelRequest createSubModelRequest = digitalTwinsUtility
-					.getCreateSubModelRequest(aspect.getShellId(), getsemanticIdOfModel(), getIdShortOfModel());
+					.getCreateSubModelRequest(pcfAspect.getShellId(), getsemanticIdOfModel(), getIdShortOfModel());
 			digitalTwinsFacilitator.createSubModel(shellId, createSubModelRequest);
-			aspect.setSubModelId(createSubModelRequest.getId());
+			pcfAspect.setSubModelId(createSubModelRequest.getId());
 		} else {
-			aspect.setUpdated(CommonConstants.UPDATED_Y);
+			pcfAspect.setUpdated(CommonConstants.UPDATED_Y);
 			logDebug("Complete Digital Twins Update Update Digital Twins");
 		}
 
-		return aspect;
+		return pcfAspect;
 	}
 
-	private ShellLookupRequest getShellLookupRequest(PcfAspect aspect) {
+	private ShellLookupRequest getShellLookupRequest(PcfAspect pcfAspect) {
 		
 		ShellLookupRequest shellLookupRequest = new ShellLookupRequest();
-		getSpecificAssetIds(aspect).entrySet().stream()
+		getSpecificAssetIds(pcfAspect).entrySet().stream()
 				.forEach(entry -> 
 				shellLookupRequest.addLocalIdentifier(entry.getKey(), entry.getValue()));
 
 		return shellLookupRequest;
 	}
 
-	private Map<String, String> getSpecificAssetIds(PcfAspect aspect) {
+	private Map<String, String> getSpecificAssetIds(PcfAspect pcfAspect) {
 		Map<String, String> specificIdentifiers = new HashMap<>();
-		specificIdentifiers.put(CommonConstants.PART_INSTANCE_ID, aspect.getPartInstanceId());
-		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, aspect.getManufacturerPartId());
+		specificIdentifiers.put(CommonConstants.PART_INSTANCE_ID, pcfAspect.getPartInstanceId());
+		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartId());
 		specificIdentifiers.put(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId());
 
 		return specificIdentifiers;

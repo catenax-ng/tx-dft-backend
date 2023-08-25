@@ -33,8 +33,8 @@ public class StorePcfCsvHandlerUseCase extends Step {
 	private final PcfRepository aspectRepository;
 	private final PcfMapper aspectMapper;
 
-	public StorePcfCsvHandlerUseCase(PcfRepository aspectRepository, PcfMapper mapper) {
-		this.aspectRepository = aspectRepository;
+	public StorePcfCsvHandlerUseCase(PcfRepository pcfRepository, PcfMapper mapper) {
+		this.aspectRepository = pcfRepository;
 		this.aspectMapper = mapper;
 	}
 

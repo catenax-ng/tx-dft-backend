@@ -100,21 +100,21 @@ public class PcfExecutor extends SubmodelExecutor {
 		jsonRecordValidate.init(getSubmodelSchema());
 		jsonRecordValidate.run(rowIndex, jsonObject);
 
-		PcfAspect aspect = pcfMapper.mapFrom(jsonObject);
+		PcfAspect pcfAspect = pcfMapper.mapFrom(jsonObject);
 
 		digitalTwinsAspectCsvHandlerUseCase.init(getSubmodelSchema());
-		digitalTwinsAspectCsvHandlerUseCase.run(aspect);
+		digitalTwinsAspectCsvHandlerUseCase.run(pcfAspect);
 
 		eDCAspectHandlerUseCase.init(getSubmodelSchema());
-		eDCAspectHandlerUseCase.run(getNameOfModel(), aspect, processId);
+		eDCAspectHandlerUseCase.run(getNameOfModel(), pcfAspect, processId);
 		
-		if (StringUtils.isBlank(aspect.getUpdated())) {
+		if (StringUtils.isBlank(pcfAspect.getUpdated())) {
 			Map<String, String> bpnKeyMap = new HashMap<>();
-			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, aspect.getManufacturerPartId());
+			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartId());
 			bPNDiscoveryUseCaseHandler.run(bpnKeyMap);
 		}
 
-		storeAspectCsvHandlerUseCase.run(aspect);
+		storeAspectCsvHandlerUseCase.run(pcfAspect);
 	}
 
 	@Override

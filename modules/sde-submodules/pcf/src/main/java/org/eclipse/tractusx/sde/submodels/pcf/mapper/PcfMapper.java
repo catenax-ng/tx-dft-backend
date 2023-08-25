@@ -19,21 +19,10 @@
  ********************************************************************************/
 package org.eclipse.tractusx.sde.submodels.pcf.mapper;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import org.eclipse.tractusx.sde.common.enums.OptionalIdentifierKeyEnum;
-import org.eclipse.tractusx.sde.common.model.LocalIdentifier;
-import org.eclipse.tractusx.sde.common.model.ManufacturingInformation;
-import org.eclipse.tractusx.sde.common.model.PartTypeInformation;
-import org.eclipse.tractusx.sde.common.model.SubmodelResultResponse;
 import org.eclipse.tractusx.sde.submodels.pcf.entity.PcfEntity;
 import org.eclipse.tractusx.sde.submodels.pcf.model.PcfAspect;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
