@@ -22,7 +22,7 @@ name: sdebuild
 on:
   push:
     branches:
-      - '2.0.11-int'
+      - '2.1.0-int'
     tags:
       - 'v*.*.*'
       - 'v*.*.*-*'
