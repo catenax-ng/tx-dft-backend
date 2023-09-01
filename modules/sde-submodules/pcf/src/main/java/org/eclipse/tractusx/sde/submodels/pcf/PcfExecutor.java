@@ -39,16 +39,16 @@ import org.eclipse.tractusx.sde.submodels.pcf.service.PcfService;
 import org.eclipse.tractusx.sde.submodels.pcf.steps.DigitalTwinsPcfCsvHandlerUseCase;
 import org.eclipse.tractusx.sde.submodels.pcf.steps.EDCPcfHandlerUseCase;
 import org.eclipse.tractusx.sde.submodels.pcf.steps.StorePcfCsvHandlerUseCase;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
-@Service
-@RequiredArgsConstructor
+@Component
+@AllArgsConstructor
 public class PcfExecutor extends SubmodelExecutor {
 	
 	private final PcfMapper pcfMapper;
