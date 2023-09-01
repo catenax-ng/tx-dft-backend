@@ -17,67 +17,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-
 package org.eclipse.tractusx.sde.submodels.pcf.model;
 
 import java.util.List;
 
-import org.eclipse.tractusx.sde.common.entities.UsagePolicies;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Builder
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class PcfAspect {
-
-	@JsonProperty(value = "shell_id")
-	private String shellId;
-
-	private String subModelId;
-
-	@JsonProperty(value = "row_number")
-	private int rowNumber;
-
-	@JsonProperty(value = "bpn_numbers")
-	private List<String> bpnNumbers;
-
-	@JsonProperty(value = "type_of_access")
-	private String typeOfAccess;
-
-	@JsonProperty(value = "usage_policies")
-	private List<UsagePolicies> usagePolicies;
-
-	@JsonProperty(value = "process_id")
-	private String processId;
-
-	@JsonProperty(value = "manufacturer_part_id")
-	private String manufacturerPartId;
+public class Pcf {
 	
-	private String id;
-	
-	private String assetLifeCyclePhase;
-
-	private String specVersion;
-	private String companyId;
-	private String companyName;
-	private String created;
-	
-	@JsonProperty(value = "extWBCSD_pfStatus")
-	private String extWBCSDPfStatus;
-	
-	@JsonProperty(value = "extWBCSD_productCodeCpc")
-	private String extWBCSDProductCodeCpc;
-	private String productName;
-	private String version;
 	private String biogenicCarbonEmissionsOtherThanCO2;
 	private String distributionStagePcfExcludingBiogenic;
 	private String biogenicCarbonWithdrawal;
@@ -97,12 +51,7 @@ public class PcfAspect {
 	private String aircraftGhgEmissions;
 	private String productMassPerDeclaredUnit;
 	
-	@JsonProperty(value = "extWBCSD_operator")
-	private String extWBCSDOperator;
-	private String productOrSectorSpecificRuleName;
-	
-	@JsonProperty(value = "extWBCSD_otherOperatorName")
-	private String extWBCSDOtherOperatorName;
+	private List<ProductOrSectorSpecificRules> productOrSectorSpecificRules;
 	
 	@JsonProperty(value = "extTFS_allocationWasteIncineration")
 	private String extTFSAllocationWasteIncineration;
@@ -111,7 +60,9 @@ public class PcfAspect {
 	
 	@JsonProperty(value = "extWBCSD_characterizationFactors")
 	private String extWBCSDCharacterizationFactors;
-	private String secondaryEmissionFactorSource;
+	
+	private List<SecondaryEmissionFactorSources> secondaryEmissionFactorSources;
+	
 	private String unitaryProductAmount;
 	private String declaredUnit;
 	private String referencePeriodStart;
@@ -128,46 +79,20 @@ public class PcfAspect {
 	@JsonProperty(value = "extTFS_distributionStageLuGhgEmissions")
 	private String extTFSDistributionStageLuGhgEmissions;
 	private String primaryDataShare;
-	private String completenessDQR;
-	private String technologicalDQR;
-	private String geographicalDQR;
-	private String temporalDQR;
-	private String reliabilityDQR;
-	private String coveragePercent;
+	
+	private DataQualityRating dataQualityRating;
 	
 	@JsonProperty(value = "extWBCSD_packagingEmissionsIncluded")
 	private String extWBCSDPackagingEmissionsIncluded;
 	
 	@JsonProperty(value = "extWBCSD_fossilCarbonContent")
 	private String extWBCSDFossilCarbonContent;
-	private String crossSectoralStandard;
+	
+	private List<CrossSectoralStandardsUsed> crossSectoralStandardsUsed;
 	
 	@JsonProperty(value = "extTFS_distributionStageDlucGhgEmissions")
 	private String extTFSDistributionStageDlucGhgEmissions;
 	private String distributionStagePcfIncludingBiogenic;
 	private String carbonContentBiogenic;
-	private String partialFullPcf;
-	private String productId;
-	private String validityPeriodStart;
-	private String comment;
-	private String validityPeriodEnd;
-	private String pcfLegalStatement;
-	private String productDescription;
-	private String precedingPfId;
-
-	@JsonProperty(value = "contract_defination_id")
-	private String contractDefinationId;
-
-	@JsonProperty(value = "usage_policy_id")
-	private String usagePolicyId;
-
-	@JsonProperty(value = "access_policy_id")
-	private String accessPolicyId;
-
-	@JsonProperty(value = "asset_id")
-	private String assetId;
-
-	@JsonProperty(value = "updated")
-	private String updated;
 
 }

@@ -34,19 +34,16 @@ import lombok.Data;
 public class PcfEntity implements Serializable {
 
     @Id
-    @Column(name = "rowid")
-    private String rowid;
-    
+    private String id; //3893bb5d-da16-4dc1-9185-11d97476c254
+
     @Column(name = "process_id")
     private String processId;
-    
-    @Column(name = "part_instance_id")
-    private String partInstanceId;
     
     @Column(name = "manufacturer_part_id")
     private String manufacturerPartId;
     
-    private String id; //3893bb5d-da16-4dc1-9185-11d97476c254
+	private String assetLifeCyclePhase;
+    
 	private String specVersion; //2.0.1-20230314
 	private String companyId;//urn:uuid:51131FB5-42A2-4267-A402-0ECFEFAD1619
 	private String companyName;//My Corp
@@ -82,7 +79,7 @@ public class PcfEntity implements Serializable {
 	
 	@Column(name = "extWBCSD_operator")
 	private String extWBCSDOperator;//PEF
-	private String productOrSectorSpecificRulesName;//urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0
+	private String productOrSectorSpecificRuleName;//urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0
 	
 	@Column(name = "extWBCSD_otherOperatorName")
 	private String extWBCSDOtherOperatorName;//NSF
@@ -137,7 +134,7 @@ public class PcfEntity implements Serializable {
 	private String validityPeriodEnd;//2022-12-31T23:59:59Z
 	private String pcfLegalStatement;//This PCF (Product Carbon Footprint) is for information purposes only. It is based upon the standards mentioned above.
 	private String productDescription;//Ethanol, 95% solution
-	private String precedingPfid;//3893bb5d-da16-4dc1-9185-11d97476c254private String  
+	private String precedingPfId;//3893bb5d-da16-4dc1-9185-11d97476c254private String  
     
     @Column(name = "shell_id")
     private String shellId;
