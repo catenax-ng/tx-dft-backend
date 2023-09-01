@@ -43,7 +43,7 @@
 		"dependentRequired": {
 		},
 		"properties": {
-			"id": {
+			"uuid": {
 				"type": [
 					"string",
 					"null"
@@ -674,17 +674,17 @@
 			},
 			"extWBCSD_packagingEmissionsIncluded": {
 				"type": [
-					"boolean"
+					"string"
 				],
 				"enum": [
-					true,
-					false
+					"true",
+					"false"
 				],
 				"title": "ExtWBCSD_packagingEmissionsIncluded",
 				"description": "Flag indicating whether packaging emissions are included in a PCF (Product Carbon Footprint) as specified in the technical specifications for PCF Data Exchange (Version 2.0.0) from the WBCSD (World Business Council for Sustainable Development)/ PACT initiative. WBCSD specific extension, in Catena-X for example value is \"TRUE\" per default.",
 				"minLength": 1,
 				"examples": [
-					true
+					"true"
 				]
 			},
 			"extWBCSD_fossilCarbonContent": {
@@ -845,7 +845,7 @@
 	},
 	"examples": [
 		{
-			"id": "3893bb5d-da16-4dc1-9185-11d97476c254",
+			"uuid": "3893bb5d-da16-4dc1-9185-11d97476c254",
 			"specVersion": "2.0.1-20230314",
 			"companyId": "urn:uuid:51131FB5-42A2-4267-A402-0ECFEFAD1619",
 			"extWBCSD_productCodeCpc": "011-99000",
@@ -896,7 +896,7 @@
 			"temporalDQR": 2.0,
 			"reliabilityDQR": 2.0,
 			"coveragePercent": 100,
-			"extWBCSD_packagingEmissionsIncluded": true,
+			"extWBCSD_packagingEmissionsIncluded": "true",
 			"extWBCSD_fossilCarbonContent": 0.1,
 			"crossSectoralStandard": "GHG Protocol Product standard",
 			"extTFS_distributionStageDlucGhgEmissions": 1.0,

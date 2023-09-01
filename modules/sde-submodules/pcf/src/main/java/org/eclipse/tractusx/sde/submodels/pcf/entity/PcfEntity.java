@@ -34,7 +34,7 @@ import lombok.Data;
 public class PcfEntity implements Serializable {
 
     @Id
-    private String id; //3893bb5d-da16-4dc1-9185-11d97476c254
+    private String uuid; //3893bb5d-da16-4dc1-9185-11d97476c254
 
     @Column(name = "process_id")
     private String processId;

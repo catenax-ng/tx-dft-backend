@@ -155,7 +155,7 @@ public abstract class PcfMapper {
 				
 				.validityPeriodStart(entity.getValidityPeriodStart())
 				.comment(entity.getComment())
-				.id(entity.getId())
+				.id(entity.getUuid())
 				.validityPeriodEnd(entity.getValidityPeriodEnd())
 				.pcfLegalStatement(entity.getPcfLegalStatement())
 				.productDescription(entity.getProductDescription())

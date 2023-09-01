@@ -95,7 +95,7 @@ public class PcfExecutor extends SubmodelExecutor {
 	private void nextSteps(Integer rowIndex, ObjectNode jsonObject, String processId)
 			throws CsvHandlerDigitalTwinUseCaseException {
 
-		generateUrnUUID.run(jsonObject, processId);
+		generateUrnUUID.run(jsonObject);
 
 		jsonRecordValidate.init(getSubmodelSchema());
 		jsonRecordValidate.run(rowIndex, jsonObject);

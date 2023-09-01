@@ -62,7 +62,7 @@ public class PcfAspect {
 	@JsonProperty(value = "manufacturer_part_id")
 	private String manufacturerPartId;
 	
-	private String id;
+	private String uuid;
 	
 	private String assetLifeCyclePhase;
 
@@ -136,7 +136,7 @@ public class PcfAspect {
 	private String coveragePercent;
 	
 	@JsonProperty(value = "extWBCSD_packagingEmissionsIncluded")
-	private String extWBCSDPackagingEmissionsIncluded;
+	private boolean extWBCSDPackagingEmissionsIncluded;
 	
 	@JsonProperty(value = "extWBCSD_fossilCarbonContent")
 	private String extWBCSDFossilCarbonContent;

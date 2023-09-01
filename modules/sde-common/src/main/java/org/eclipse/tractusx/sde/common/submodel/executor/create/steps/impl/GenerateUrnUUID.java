@@ -43,5 +43,15 @@ public class GenerateUrnUUID extends Step {
 		}
 		return jsonObject;
 	}
+	
+	@SneakyThrows
+	public ObjectNode run(ObjectNode jsonObject) {
+
+		String id = jsonObject.get("uuid").asText();
+		if (id == null || id.isBlank() || id.equals("null")) {
+			jsonObject.put("uuid", UUIdGenerator.getNewUuid());
+		}
+		return jsonObject;
+	}
 
 }

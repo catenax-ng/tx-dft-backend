@@ -55,7 +55,7 @@ public class EDCPcfHandlerUseCase extends Step {
 		try {
 
 			AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest(submodel,
-					getSubmodelShortDescriptionOfModel(), shellId, subModelId, input.getId());
+					getSubmodelShortDescriptionOfModel(), shellId, subModelId, input.getUuid());
 			if (!edcGateway.assetExistsLookup(
 					assetEntryRequest.getAsset().getId())) {
 
@@ -77,7 +77,7 @@ public class EDCPcfHandlerUseCase extends Step {
 	@SneakyThrows
 	private void deleteEDCFirstForUpdate(String submodel, PcfAspect input, String processId) {
 		try {
-			PcfEntity entity = aspectService.readEntity(input.getId());
+			PcfEntity entity = aspectService.readEntity(input.getUuid());
 			aspectService.deleteEDCAsset(entity);
 		} catch (Exception e) {
 			if (!e.getMessage().contains("404 Not Found")) {

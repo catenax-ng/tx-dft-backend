@@ -42,4 +42,8 @@ public class UUIdGenerator {
         return getPrefixedUuid("");
     }
     
+    public static String getNewUuid() {
+        return UUID.randomUUID().toString();
+    }
+    
 }
