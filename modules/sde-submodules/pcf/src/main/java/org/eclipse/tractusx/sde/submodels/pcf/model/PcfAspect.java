@@ -59,11 +59,16 @@ public class PcfAspect {
 
 	@JsonProperty(value = "process_id")
 	private String processIdforPcf;
-
-	@JsonProperty(value = "manufacturer_part_id")
-	private String manufacturerPartIdforPcf;
+	
+	private String id;
 	
 	private String uuid;
+	
+	@JsonProperty(value = "manufacturer_part_id")
+	private String manufacturerPartId;
+	
+	@JsonProperty(value = "name_at_manufacturer")
+	private String nameAtManufacturer;
 	
 	private String assetLifeCyclePhase;
 
@@ -100,7 +105,8 @@ public class PcfAspect {
 	
 	@JsonProperty(value = "extWBCSD_operator")
 	private String extWBCSDOperator;
-	private String productOrSectorSpecificRuleName;
+	
+	private String ruleName;
 	
 	@JsonProperty(value = "extWBCSD_otherOperatorName")
 	private String extWBCSDOtherOperatorName;

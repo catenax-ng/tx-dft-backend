@@ -19,7 +19,7 @@
  ********************************************************************************/
 package org.eclipse.tractusx.sde.submodels.pcf.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,13 +30,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class ProductOrSectorSpecificRules {
 	
-	@JsonProperty(value = "extWBCSD_operator")
+	@SerializedName(value = "extWBCSD_operator")
 	private String extWBCSDOperator;
 	
-	@JsonProperty(value = "productOrSectorSpecificRules")
+	@SerializedName(value = "productOrSectorSpecificRules")
 	private ProductOrSectorSpecificRule productOrSectorSpecificRulesObj;
 	
-	@JsonProperty(value = "extWBCSD_otherOperatorName")
+	@SerializedName(value = "extWBCSD_otherOperatorName")
 	private String extWBCSDOtherOperatorName;
 
 }

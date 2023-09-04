@@ -21,7 +21,7 @@ package org.eclipse.tractusx.sde.submodels.pcf.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,14 +37,14 @@ public class Pcf {
 	private String biogenicCarbonWithdrawal;
 	private String distributionStageBiogenicCarbonEmissionsOtherThanCO2;
 	
-	@JsonProperty(value = "extWBCSD_allocationRulesDescription")
+	@SerializedName(value = "extWBCSD_allocationRulesDescription")
 	private String extWBCSDAllocationRulesDescription;
 	private String exemptedEmissionsDescription;
 	private String distributionStageFossilGhgEmissions;
 	private String exemptedEmissionsPercent;
 	private String geographyCountrySubdivision;
 
-	@JsonProperty(value = "extTFS_luGhgEmissions")
+	@SerializedName(value = "extTFS_luGhgEmissions")
 	private String extTFSLuGhgEmissions;
 	private String distributionStageBiogenicCarbonWithdrawal;
 	private String pcfIncludingBiogenic;
@@ -53,12 +53,12 @@ public class Pcf {
 	
 	private List<ProductOrSectorSpecificRules> productOrSectorSpecificRules;
 	
-	@JsonProperty(value = "extTFS_allocationWasteIncineration")
+	@SerializedName(value = "extTFS_allocationWasteIncineration")
 	private String extTFSAllocationWasteIncineration;
 	private String pcfExcludingBiogenic;
 	private String referencePeriodEnd;
 	
-	@JsonProperty(value = "extWBCSD_characterizationFactors")
+	@SerializedName(value = "extWBCSD_characterizationFactors")
 	private String extWBCSDCharacterizationFactors;
 	
 	private List<SecondaryEmissionFactorSources> secondaryEmissionFactorSources;
@@ -71,26 +71,26 @@ public class Pcf {
 	private String boundaryProcessesDescription;
 	private String geographyCountry;
 	
-	@JsonProperty(value = "extWBCSD_packagingGhgEmissions")
+	@SerializedName(value = "extWBCSD_packagingGhgEmissions")
 	private String extWBCSDPackagingGhgEmissions;
 	private String dlucGhgEmissions;
 	private String carbonContentTotal;
 	
-	@JsonProperty(value = "extTFS_distributionStageLuGhgEmissions")
+	@SerializedName(value = "extTFS_distributionStageLuGhgEmissions")
 	private String extTFSDistributionStageLuGhgEmissions;
 	private String primaryDataShare;
 	
 	private DataQualityRating dataQualityRating;
 	
-	@JsonProperty(value = "extWBCSD_packagingEmissionsIncluded")
+	@SerializedName(value = "extWBCSD_packagingEmissionsIncluded")
 	private String extWBCSDPackagingEmissionsIncluded;
 	
-	@JsonProperty(value = "extWBCSD_fossilCarbonContent")
+	@SerializedName(value = "extWBCSD_fossilCarbonContent")
 	private String extWBCSDFossilCarbonContent;
 	
 	private List<CrossSectoralStandardsUsed> crossSectoralStandardsUsed;
 	
-	@JsonProperty(value = "extTFS_distributionStageDlucGhgEmissions")
+	@SerializedName(value = "extTFS_distributionStageDlucGhgEmissions")
 	private String extTFSDistributionStageDlucGhgEmissions;
 	private String distributionStagePcfIncludingBiogenic;
 	private String carbonContentBiogenic;

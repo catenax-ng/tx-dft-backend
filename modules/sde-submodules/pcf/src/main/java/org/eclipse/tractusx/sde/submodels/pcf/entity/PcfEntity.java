@@ -33,14 +33,13 @@ import lombok.Data;
 @Data
 public class PcfEntity implements Serializable {
 
-    @Id
-    private String uuid; //3893bb5d-da16-4dc1-9185-11d97476c254
+	@Id
+    private String id; //3893bb5d-da16-4dc1-9185-11d97476c254
+    
+    private String uuid;//this for internal identifiaction in database as well
 
     @Column(name = "process_id")
     private String processIdforPcf;
-    
-    @Column(name = "manufacturer_part_id")
-    private String manufacturerPartId;
     
 	private String assetLifeCyclePhase;
     
@@ -79,7 +78,8 @@ public class PcfEntity implements Serializable {
 	
 	@Column(name = "extWBCSD_operator")
 	private String extWBCSDOperator;//PEF
-	private String productOrSectorSpecificRuleName;//urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0
+	
+	private String ruleName;//urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0
 	
 	@Column(name = "extWBCSD_otherOperatorName")
 	private String extWBCSDOtherOperatorName;//NSF

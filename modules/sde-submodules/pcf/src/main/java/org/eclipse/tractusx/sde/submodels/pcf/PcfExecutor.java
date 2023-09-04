@@ -95,13 +95,21 @@ public class PcfExecutor extends SubmodelExecutor {
 	private void nextStepsforPcf(Integer rowIndex, ObjectNode jsonObject, String processId)
 			throws CsvHandlerDigitalTwinUseCaseException {
 
-		generateUrnUUIDforPcf.run(jsonObject);
+		//Setting uuid for global asset id use
+		jsonObject.put("uuid", jsonObject.get("id").asText());
+		//setting this fields for digital twin shell short id generation
+		jsonObject.put("manufacturer_part_id", jsonObject.get("productId").asText());
+		jsonObject.put("name_at_manufacturer", jsonObject.get("companyName").asText());
+		
+		generateUrnUUIDforPcf.run(jsonObject, processId);
 
 		jsonRecordValidateforPcf.init(getSubmodelSchema());
 		jsonRecordValidateforPcf.run(rowIndex, jsonObject);
 
 		PcfAspect pcfAspect = pcfMapperforPcf.mapFrom(jsonObject);
 
+		
+		
 		digitalTwinsAspectCsvHandlerUseCaseforPcf.init(getSubmodelSchema());
 		digitalTwinsAspectCsvHandlerUseCaseforPcf.run(pcfAspect);
 
@@ -110,7 +118,7 @@ public class PcfExecutor extends SubmodelExecutor {
 		
 		if (StringUtils.isBlank(pcfAspect.getUpdatedforPcf())) {
 			Map<String, String> bpnKeyMap = new HashMap<>();
-			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartIdforPcf());
+			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getProductId());
 			bPNDiscoveryUseCaseHandlerforPcf.run(bpnKeyMap);
 		}
 

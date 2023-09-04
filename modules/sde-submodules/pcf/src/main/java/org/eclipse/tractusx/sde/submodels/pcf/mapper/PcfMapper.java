@@ -95,7 +95,7 @@ public abstract class PcfMapper {
 				.productOrSectorSpecificRules(List.of(ProductOrSectorSpecificRules.builder()
 						.extWBCSDOperator(entity.getExtWBCSDOperator())
 						.productOrSectorSpecificRulesObj(ProductOrSectorSpecificRule.builder()
-								.ruleName(entity.getProductOrSectorSpecificRuleName())
+								.ruleName(entity.getRuleName())
 								.build())
 						.extWBCSDOtherOperatorName(entity.getExtWBCSDOtherOperatorName())
 						.build()))
@@ -155,7 +155,7 @@ public abstract class PcfMapper {
 				
 				.validityPeriodStart(entity.getValidityPeriodStart())
 				.comment(entity.getComment())
-				.id(entity.getUuid())
+				.id(entity.getId())
 				.validityPeriodEnd(entity.getValidityPeriodEnd())
 				.pcfLegalStatement(entity.getPcfLegalStatement())
 				.productDescription(entity.getProductDescription())
