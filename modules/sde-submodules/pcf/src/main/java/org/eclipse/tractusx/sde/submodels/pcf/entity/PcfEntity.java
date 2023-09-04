@@ -37,7 +37,7 @@ public class PcfEntity implements Serializable {
     private String uuid; //3893bb5d-da16-4dc1-9185-11d97476c254
 
     @Column(name = "process_id")
-    private String processId;
+    private String processIdforPcf;
     
     @Column(name = "manufacturer_part_id")
     private String manufacturerPartId;
@@ -137,19 +137,19 @@ public class PcfEntity implements Serializable {
 	private String precedingPfId;//3893bb5d-da16-4dc1-9185-11d97476c254private String  
     
     @Column(name = "shell_id")
-    private String shellId;
+    private String shellIdforPcf;
     @Column(name = "sub_model_id")
-    private String subModelId;
+    private String subModelIdforPcf;
     @Column(name = "contract_defination_id")
-    private String contractDefinationId;
+    private String contractDefinationIdforPcf;
     @Column(name = "usage_policy_id")
-    private String usagePolicyId;
+    private String usagePolicyIdforPcf;
     @Column(name = "access_policy_id")
-    private String accessPolicyId;
+    private String accessPolicyIdforPcf;
     @Column(name = "asset_id")
-    private String assetId;
+    private String assetIdforPcf;
     @Column(name = "deleted")
-    private String deleted;
+    private String deletedforPcf;
     @Column(name = "updated")
-    private String updated;
+    private String updatedforPcf;
 }

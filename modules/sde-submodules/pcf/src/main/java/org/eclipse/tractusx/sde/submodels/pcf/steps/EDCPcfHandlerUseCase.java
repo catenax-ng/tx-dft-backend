@@ -49,8 +49,8 @@ public class EDCPcfHandlerUseCase extends Step {
 
 	@SneakyThrows
 	public PcfAspect run(String submodel, PcfAspect input, String processId) {
-		String shellId = input.getShellId();
-		String subModelId = input.getSubModelId();
+		String shellId = input.getShellIdforPcf();
+		String subModelId = input.getSubModelIdforPcf();
 
 		try {
 
@@ -65,12 +65,12 @@ public class EDCPcfHandlerUseCase extends Step {
 
 				deleteEDCFirstForUpdate(submodel, input, processId);
 				edcProcessingforAspect(assetEntryRequest, input);
-				input.setUpdated(CommonConstants.UPDATED_Y);
+				input.setUpdatedforPcf(CommonConstants.UPDATED_Y);
 			}
 
 			return input;
 		} catch (Exception e) {
-			throw new CsvHandlerUseCaseException(input.getRowNumber(), "EDC: " + e.getMessage());
+			throw new CsvHandlerUseCaseException(input.getRowNumberforPcf(), "EDC: " + e.getMessage());
 		}
 	}
 
@@ -90,13 +90,13 @@ public class EDCPcfHandlerUseCase extends Step {
 	private void edcProcessingforAspect(AssetEntryRequest assetEntryRequest, PcfAspect input) {
 
 		Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest,
-				input.getBpnNumbers(), input.getUsagePolicies());
+				input.getBpnNumbersforPcf(), input.getUsagePoliciesforPcf());
 
 		// EDC transaction information for DB
-		input.setAssetId(assetEntryRequest.getAsset().getId());
-		input.setAccessPolicyId(createEDCAsset.get("accessPolicyId"));
-		input.setUsagePolicyId(createEDCAsset.get("usagePolicyId"));
-		input.setContractDefinationId(createEDCAsset.get("contractDefinitionId"));
+		input.setAssetIdforPcf(assetEntryRequest.getAsset().getId());
+		input.setAccessPolicyIdforPcf(createEDCAsset.get("accessPolicyId"));
+		input.setUsagePolicyIdforPcf(createEDCAsset.get("usagePolicyId"));
+		input.setContractDefinationIdforPcf(createEDCAsset.get("contractDefinitionId"));
 	}
 
 }

@@ -56,7 +56,7 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 		try {
 			return doRun(pcfAspect);
 		} catch (Exception e) {
-			throw new CsvHandlerUseCaseException(pcfAspect.getRowNumber(), ": DigitalTwins: " + e.getMessage());
+			throw new CsvHandlerUseCaseException(pcfAspect.getRowNumberforPcf(), ": DigitalTwins: " + e.getMessage());
 		}
 	}
 
@@ -83,24 +83,24 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 					String.format("Multiple ids found on aspect %s", shellLookupRequest.toJsonString()));
 		}
 
-		pcfAspect.setShellId(shellId);
+		pcfAspect.setShellIdforPcf(shellId);
 		SubModelListResponse subModelResponse = digitalTwinsFacilitator.getSubModels(shellId);
 		SubModelResponse foundSubmodel = null;
 		if (subModelResponse != null) {
 			foundSubmodel = subModelResponse.getResult().stream().filter(x -> getIdShortOfModel().equals(x.getIdShort()))
 					.findFirst().orElse(null);
 			if (foundSubmodel != null)
-				pcfAspect.setSubModelId(foundSubmodel.getId());
+				pcfAspect.setSubModelIdforPcf(foundSubmodel.getId());
 		}
 
 		if (subModelResponse == null || foundSubmodel == null) {
 			logDebug(String.format("No submodels for '%s'", shellId));
 			CreateSubModelRequest createSubModelRequest = digitalTwinsUtility
-					.getCreateSubModelRequest(pcfAspect.getShellId(), getsemanticIdOfModel(), getIdShortOfModel());
+					.getCreateSubModelRequest(pcfAspect.getShellIdforPcf(), getsemanticIdOfModel(), getIdShortOfModel());
 			digitalTwinsFacilitator.createSubModel(shellId, createSubModelRequest);
-			pcfAspect.setSubModelId(createSubModelRequest.getId());
+			pcfAspect.setSubModelIdforPcf(createSubModelRequest.getId());
 		} else {
-			pcfAspect.setUpdated(CommonConstants.UPDATED_Y);
+			pcfAspect.setUpdatedforPcf(CommonConstants.UPDATED_Y);
 			logDebug("Complete Digital Twins Update Update Digital Twins");
 		}
 
@@ -119,7 +119,7 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 
 	private Map<String, String> getSpecificAssetIds(PcfAspect pcfAspect) {
 		Map<String, String> specificIdentifiers = new HashMap<>();
-		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartId());
+		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartIdforPcf());
 		specificIdentifiers.put(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId());
 		specificIdentifiers.put(CommonConstants.ASSET_LIFECYCLE_PHASE, pcfAspect.getAssetLifeCyclePhase());
 

@@ -51,90 +51,90 @@ import lombok.SneakyThrows;
 @AllArgsConstructor
 public class PcfExecutor extends SubmodelExecutor {
 	
-	private final PcfMapper pcfMapper;
+	private final PcfMapper pcfMapperforPcf;
 
-	private final CsvParse csvParseStep;
+	private final CsvParse csvParseStepforPcf;
 
-	private final JsonRecordFormating jsonRecordformater;
+	private final JsonRecordFormating jsonRecordformaterforPcf;
 
-	private final GenerateUrnUUID generateUrnUUID;
+	private final GenerateUrnUUID generateUrnUUIDforPcf;
 
-	private final JsonRecordValidate jsonRecordValidate;
+	private final JsonRecordValidate jsonRecordValidateforPcf;
 
-	private final DigitalTwinsPcfCsvHandlerUseCase digitalTwinsAspectCsvHandlerUseCase;
+	private final DigitalTwinsPcfCsvHandlerUseCase digitalTwinsAspectCsvHandlerUseCaseforPcf;
 
-	private final EDCPcfHandlerUseCase eDCAspectHandlerUseCase;
+	private final EDCPcfHandlerUseCase eDCAspectHandlerUseCaseforPcf;
 
-	private final StorePcfCsvHandlerUseCase storeAspectCsvHandlerUseCase;
+	private final StorePcfCsvHandlerUseCase storeAspectCsvHandlerUseCaseforPcf;
 	
-	private final BPNDiscoveryUseCaseHandler bPNDiscoveryUseCaseHandler; 
+	private final BPNDiscoveryUseCaseHandler bPNDiscoveryUseCaseHandlerforPcf; 
 
-	private final PcfService aspectService;
+	private final PcfService aspectServiceforPcf;
 
 	@SneakyThrows
 	public void executeCsvRecord(RowData rowData, ObjectNode jsonObject, String processId) {
 
-		csvParseStep.init(getSubmodelSchema());
-		csvParseStep.run(rowData, jsonObject, processId);
+		csvParseStepforPcf.init(getSubmodelSchema());
+		csvParseStepforPcf.run(rowData, jsonObject, processId);
 
-		nextSteps(rowData.position(), jsonObject, processId);
+		nextStepsforPcf(rowData.position(), jsonObject, processId);
 
 	}
 
 	@SneakyThrows
 	public void executeJsonRecord(Integer rowIndex, ObjectNode jsonObject, String processId) {
 
-		jsonRecordformater.init(getSubmodelSchema());
-		jsonRecordformater.run(rowIndex, jsonObject, processId);
+		jsonRecordformaterforPcf.init(getSubmodelSchema());
+		jsonRecordformaterforPcf.run(rowIndex, jsonObject, processId);
 
-		nextSteps(rowIndex, jsonObject, processId);
+		nextStepsforPcf(rowIndex, jsonObject, processId);
 
 	}
 
 	@SneakyThrows
-	private void nextSteps(Integer rowIndex, ObjectNode jsonObject, String processId)
+	private void nextStepsforPcf(Integer rowIndex, ObjectNode jsonObject, String processId)
 			throws CsvHandlerDigitalTwinUseCaseException {
 
-		generateUrnUUID.run(jsonObject);
+		generateUrnUUIDforPcf.run(jsonObject);
 
-		jsonRecordValidate.init(getSubmodelSchema());
-		jsonRecordValidate.run(rowIndex, jsonObject);
+		jsonRecordValidateforPcf.init(getSubmodelSchema());
+		jsonRecordValidateforPcf.run(rowIndex, jsonObject);
 
-		PcfAspect pcfAspect = pcfMapper.mapFrom(jsonObject);
+		PcfAspect pcfAspect = pcfMapperforPcf.mapFrom(jsonObject);
 
-		digitalTwinsAspectCsvHandlerUseCase.init(getSubmodelSchema());
-		digitalTwinsAspectCsvHandlerUseCase.run(pcfAspect);
+		digitalTwinsAspectCsvHandlerUseCaseforPcf.init(getSubmodelSchema());
+		digitalTwinsAspectCsvHandlerUseCaseforPcf.run(pcfAspect);
 
-		eDCAspectHandlerUseCase.init(getSubmodelSchema());
-		eDCAspectHandlerUseCase.run(getNameOfModel(), pcfAspect, processId);
+		eDCAspectHandlerUseCaseforPcf.init(getSubmodelSchema());
+		eDCAspectHandlerUseCaseforPcf.run(getNameOfModel(), pcfAspect, processId);
 		
-		if (StringUtils.isBlank(pcfAspect.getUpdated())) {
+		if (StringUtils.isBlank(pcfAspect.getUpdatedforPcf())) {
 			Map<String, String> bpnKeyMap = new HashMap<>();
-			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartId());
-			bPNDiscoveryUseCaseHandler.run(bpnKeyMap);
+			bpnKeyMap.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartIdforPcf());
+			bPNDiscoveryUseCaseHandlerforPcf.run(bpnKeyMap);
 		}
 
-		storeAspectCsvHandlerUseCase.run(pcfAspect);
+		storeAspectCsvHandlerUseCaseforPcf.run(pcfAspect);
 	}
 
 	@Override
 	public void executeDeleteRecord(JsonObject jsonObject, String delProcessId, String refProcessId) {
-		aspectService.deleteAllDataBySequence(jsonObject);
+		aspectServiceforPcf.deleteAllDataBySequence(jsonObject);
 	}
 
 	@Override
 	public List<JsonObject> readCreatedTwinsforDelete(String refProcessId) {
-		return aspectService.readCreatedTwinsforDelete(refProcessId);
+		return aspectServiceforPcf.readCreatedTwinsforDelete(refProcessId);
 	}
 
 	@Override
 	public JsonObject readCreatedTwinsDetails(String uuid) {
-		return aspectService.readCreatedTwinsDetails(uuid);
+		return aspectServiceforPcf.readCreatedTwinsDetails(uuid);
 	}
 
 	@Override
 	public int getUpdatedRecordCount(String processId) {
-		return aspectService.getUpdatedData(processId);
+		return aspectServiceforPcf.getUpdatedData(processId);
 	}
 
 
