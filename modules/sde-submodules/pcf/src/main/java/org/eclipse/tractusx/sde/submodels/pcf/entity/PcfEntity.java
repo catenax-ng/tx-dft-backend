@@ -55,26 +55,26 @@ public class PcfEntity implements Serializable {
 	private String extWBCSDProductCodeCpc;//011-99000
 	
 	private String productName;//My Product Name
-	private String version; //0,
-	private String biogenicCarbonEmissionsOtherThanCO2; // 1.0,
-	private String distributionStagePcfExcludingBiogenic; // 1.5,
-	private String biogenicCarbonWithdrawal; // 0.0,
-	private String distributionStageBiogenicCarbonEmissionsOtherThanCO2; // 1.0,
+	private double version; //0,
+	private double biogenicCarbonEmissionsOtherThanCO2; // 1.0,
+	private double distributionStagePcfExcludingBiogenic; // 1.5,
+	private double biogenicCarbonWithdrawal; // 0.0,
+	private double distributionStageBiogenicCarbonEmissionsOtherThanCO2; // 1.0,
 	
 	@Column(name = "extWBCSD_allocationRulesDescription")
 	private String extWBCSDAllocationRulesDescription;//In accordance with Catena-X PCF Rulebook
 	
 	private String exemptedEmissionsDescription;//No exemption
-	private String distributionStageFossilGhgEmissions; // 0.5,
-	private String exemptedEmissionsPercent; // 0.0,
+	private double distributionStageFossilGhgEmissions; // 0.5,
+	private double exemptedEmissionsPercent; // 0.0,
 	private String geographyCountrySubdivision;//US-NY
 	
 	@Column(name = "extTFS_luGhgEmissions")
-	private String extTFSLuGhgEmissions; // 0.3,
-	private String distributionStageBiogenicCarbonWithdrawal; // 0.5,
-	private String pcfIncludingBiogenic; // 1.0,
-	private String aircraftGhgEmissions; // 0.0,
-	private String productMassPerDeclaredUnit; // 0.456,
+	private double extTFSLuGhgEmissions; // 0.3,
+	private double distributionStageBiogenicCarbonWithdrawal; // 0.5,
+	private double pcfIncludingBiogenic; // 1.0,
+	private double aircraftGhgEmissions; // 0.0,
+	private double productMassPerDeclaredUnit; // 0.456,
 	
 	@Column(name = "extWBCSD_operator")
 	private String extWBCSDOperator;//PEF
@@ -86,47 +86,47 @@ public class PcfEntity implements Serializable {
 	
 	@Column(name = "extTFS_allocationWasteIncineration")
 	private String extTFSAllocationWasteIncineration;//cut-off
-	private String pcfExcludingBiogenic; // 2.0,
+	private double pcfExcludingBiogenic; // 2.0,
 	private String referencePeriodEnd;//2022-12-31T23:59:59Z
 	
 	@Column(name = "extWBCSD_characterizationFactors")
 	private String extWBCSDCharacterizationFactors;//AR5
 	private String secondaryEmissionFactorSource;//ecoinvent 3.8
-	private String unitaryProductAmount; // 1000.0,
+	private double unitaryProductAmount; // 1000.0,
 	private String declaredUnit;//liter
 	private String referencePeriodStart;//2022-01-01T00:00:01Z
 	private String geographyRegionOrSubregion;//Africa
-	private String fossilGhgEmissions; // 0.5,
+	private double fossilGhgEmissions; // 0.5,
 	private String boundaryProcessesDescription;//Electricity consumption included as an input in the production phase
 	private String geographyCountry;//DE
 	
 	@Column(name = "extWBCSD_packagingGhgEmissions")
-	private String extWBCSDPackagingGhgEmissions; // 0,
-	private String dlucGhgEmissions; // 0.4,
-	private String carbonContentTotal; // 2.5,
+	private double extWBCSDPackagingGhgEmissions; // 0,
+	private double dlucGhgEmissions; // 0.4,
+	private double carbonContentTotal; // 2.5,
 	
 	@Column(name = "extTFS_distributionStageLuGhgEmissions")
-	private String extTFSDistributionStageLuGhgEmissions; // 1.1,
-	private String primaryDataShare; // 56.12,
-	private String completenessDQR; // 2.0,
-	private String technologicalDQR; // 2.0,
-	private String geographicalDQR; // 2.0,
-	private String temporalDQR; // 2.0,
-	private String reliabilityDQR; // 2.0,
-	private String coveragePercent; // 100,
+	private double extTFSDistributionStageLuGhgEmissions; // 1.1,
+	private double primaryDataShare; // 56.12,
+	private double completenessDQR; // 2.0,
+	private double technologicalDQR; // 2.0,
+	private double geographicalDQR; // 2.0,
+	private double temporalDQR; // 2.0,
+	private double reliabilityDQR; // 2.0,
+	private double coveragePercent; // 100,
 	
 	@Column(name = "extWBCSD_packagingEmissionsIncluded")
 	private String extWBCSDPackagingEmissionsIncluded;//true
 	
 	@Column(name = "extWBCSD_fossilCarbonContent")
-	private String extWBCSDFossilCarbonContent; // 0.1,
+	private double extWBCSDFossilCarbonContent; // 0.1,
 	
 	private String crossSectoralStandard;//GHG Protocol Product standard
 	
 	@Column(name = "extTFS_distributionStageDlucGhgEmissions")
-	private String extTFSDistributionStageDlucGhgEmissions; // 1.0,
-	private String distributionStagePcfIncludingBiogenic; // 0.0,
-	private String carbonContentBiogenic; // 0.0,
+	private double extTFSDistributionStageDlucGhgEmissions; // 1.0,
+	private double distributionStagePcfIncludingBiogenic; // 0.0,
+	private double carbonContentBiogenic; // 0.0,
 	private String partialFullPcf;//Cradle-to-gate
 	private String productId;//urn:gtin:4712345060507
 	private String validityPeriodStart;//2022-01-01T00:00:01Z

@@ -41,7 +41,7 @@ public class PcfSubmodelResponse {
 	@SerializedName(value = "extWBCSD_pfStatus")
 	private String extWBCSDPfStatus;
 	private String productName;
-	private String version;
+	private double version;
 	private Pcf pcf;
 	private String partialFullPcf;
 	private ProductIds productIds;
