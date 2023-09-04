@@ -1,7 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023 T-Systems International GmbH
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,31 +18,23 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.utils;
+package org.eclipse.tractusx.sde.submodels.pcf.repository;
 
-import java.util.UUID;
+import java.util.List;
 
-public class UUIdGenerator {
+import org.eclipse.tractusx.sde.submodels.pcf.entity.PcfEntity;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-    public static final String URN_UUID_PREFIX = "urn:uuid:";
+public interface PcfRepository extends CrudRepository<PcfEntity, String> {
 
-    private UUIdGenerator() {
-    }
+	PcfEntity findByUuid(String id);
 
-    public static String getUrnUuid() {
-        return getPrefixedUuid(URN_UUID_PREFIX);
-    }
+	List<PcfEntity> findByProcessId(String processId);
 
-    private static String getPrefixedUuid(String prefix) {
-        return String.format("%s%s", prefix, UUID.randomUUID());
-    }
+	@Query("select count(ae) from PcfEntity ae where ae.updated = ?1 and ae.processId = ?2")
+	long countByUpdatedAndProcessId(String updated, String processId);
+	
+	
 
-    public static String getUuid() {
-        return getPrefixedUuid("");
-    }
-    
-    public static String getNewUuid() {
-        return UUID.randomUUID().toString();
-    }
-    
 }

@@ -1,7 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023 T-Systems International GmbH
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,32 +17,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
+package org.eclipse.tractusx.sde.submodels.pcf.model;
 
-package org.eclipse.tractusx.sde.common.utils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-public class UUIdGenerator {
+@Builder
+@Data
+@AllArgsConstructor
+public class ProductOrSectorSpecificRules {
+	
+	@JsonProperty(value = "extWBCSD_operator")
+	private String extWBCSDOperator;
+	
+	private ProductOrSectorSpecificRule productOrSectorSpecificRules;
+	
+	@JsonProperty(value = "extWBCSD_otherOperatorName")
+	private String extWBCSDOtherOperatorName;
 
-    public static final String URN_UUID_PREFIX = "urn:uuid:";
-
-    private UUIdGenerator() {
-    }
-
-    public static String getUrnUuid() {
-        return getPrefixedUuid(URN_UUID_PREFIX);
-    }
-
-    private static String getPrefixedUuid(String prefix) {
-        return String.format("%s%s", prefix, UUID.randomUUID());
-    }
-
-    public static String getUuid() {
-        return getPrefixedUuid("");
-    }
-    
-    public static String getNewUuid() {
-        return UUID.randomUUID().toString();
-    }
-    
 }
