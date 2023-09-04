@@ -94,7 +94,7 @@ public abstract class PcfMapper {
 				.productMassPerDeclaredUnit(entity.getProductMassPerDeclaredUnit())
 				.productOrSectorSpecificRules(List.of(ProductOrSectorSpecificRules.builder()
 						.extWBCSDOperator(entity.getExtWBCSDOperator())
-						.productOrSectorSpecificRules(ProductOrSectorSpecificRule.builder()
+						.productOrSectorSpecificRulesObj(ProductOrSectorSpecificRule.builder()
 								.ruleName(entity.getProductOrSectorSpecificRuleName())
 								.build())
 						.extWBCSDOtherOperatorName(entity.getExtWBCSDOtherOperatorName())
