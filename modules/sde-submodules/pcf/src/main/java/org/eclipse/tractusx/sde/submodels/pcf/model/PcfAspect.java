@@ -40,27 +40,28 @@ import lombok.NoArgsConstructor;
 public class PcfAspect {
 
 	@JsonProperty(value = "shell_id")
-	private String shellId;
+	private String shellIdforPcf;
 
-	private String subModelId;
+	@JsonProperty(value = "sub_model_id")
+	private String subModelIdforPcf;
 
 	@JsonProperty(value = "row_number")
-	private int rowNumber;
+	private int rowNumberforPcf;
 
 	@JsonProperty(value = "bpn_numbers")
-	private List<String> bpnNumbers;
+	private List<String> bpnNumbersforPcf;
 
 	@JsonProperty(value = "type_of_access")
-	private String typeOfAccess;
+	private String typeOfAccessforPcf;
 
 	@JsonProperty(value = "usage_policies")
-	private List<UsagePolicies> usagePolicies;
+	private List<UsagePolicies> usagePoliciesforPcf;
 
 	@JsonProperty(value = "process_id")
-	private String processId;
+	private String processIdforPcf;
 
 	@JsonProperty(value = "manufacturer_part_id")
-	private String manufacturerPartId;
+	private String manufacturerPartIdforPcf;
 	
 	private String uuid;
 	
@@ -156,18 +157,18 @@ public class PcfAspect {
 	private String precedingPfId;
 
 	@JsonProperty(value = "contract_defination_id")
-	private String contractDefinationId;
+	private String contractDefinationIdforPcf;
 
 	@JsonProperty(value = "usage_policy_id")
-	private String usagePolicyId;
+	private String usagePolicyIdforPcf;
 
 	@JsonProperty(value = "access_policy_id")
-	private String accessPolicyId;
+	private String accessPolicyIdforPcf;
 
 	@JsonProperty(value = "asset_id")
-	private String assetId;
+	private String assetIdforPcf;
 
 	@JsonProperty(value = "updated")
-	private String updated;
+	private String updatedforPcf;
 
 }

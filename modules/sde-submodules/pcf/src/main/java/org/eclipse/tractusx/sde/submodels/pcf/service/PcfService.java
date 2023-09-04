@@ -56,7 +56,7 @@ public class PcfService {
 						.filter(a -> !a.isEmpty())
 						.orElseThrow(() -> new NoDataFoundException(
 								String.format("No data found for processid %s ", refProcessId)))
-						.stream().filter(e -> !DELETED_Y.equals(e.getDeleted())).map(pcfMapper::mapFromEntity)
+						.stream().filter(e -> !DELETED_Y.equals(e.getDeletedforPcf())).map(pcfMapper::mapFromEntity)
 						.toList())
 				.filter(a -> !a.isEmpty()).orElseThrow(
 						() -> new NoDataFoundException("No data founds for deletion, All records are already deleted"));
@@ -69,24 +69,24 @@ public class PcfService {
 
 		deleteEDCAsset(pcfEntity);
 
-		deleteDigitalTwinsFacilitator.deleteSubmodelfromShellById(pcfEntity.getShellId(), pcfEntity.getSubModelId());
+		deleteDigitalTwinsFacilitator.deleteSubmodelfromShellById(pcfEntity.getShellIdforPcf(), pcfEntity.getSubModelIdforPcf());
 
 		saveAspectWithDeleted(pcfEntity);
 	}
 
 	public void deleteEDCAsset(PcfEntity pcfEntity) {
 
-		deleteEDCFacilitator.deleteContractDefination(pcfEntity.getContractDefinationId());
+		deleteEDCFacilitator.deleteContractDefination(pcfEntity.getContractDefinationIdforPcf());
 
-		deleteEDCFacilitator.deleteAccessPolicy(pcfEntity.getAccessPolicyId());
+		deleteEDCFacilitator.deleteAccessPolicy(pcfEntity.getAccessPolicyIdforPcf());
 
-		deleteEDCFacilitator.deleteUsagePolicy(pcfEntity.getUsagePolicyId());
+		deleteEDCFacilitator.deleteUsagePolicy(pcfEntity.getUsagePolicyIdforPcf());
 
-		deleteEDCFacilitator.deleteAssets(pcfEntity.getAssetId());
+		deleteEDCFacilitator.deleteAssets(pcfEntity.getAssetIdforPcf());
 	}
 
 	private void saveAspectWithDeleted(PcfEntity pcfEntity) {
-		pcfEntity.setDeleted(DELETED_Y);
+		pcfEntity.setDeletedforPcf(DELETED_Y);
 		pcfRepository.save(pcfEntity);
 	}
 
