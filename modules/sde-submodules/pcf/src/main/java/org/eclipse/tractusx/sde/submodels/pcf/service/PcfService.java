@@ -95,9 +95,9 @@ public class PcfService {
 	}
 
 	public PcfEntity readEntity(String uuid) {
-		Optional<PcfEntity> entity = Optional.ofNullable(pcfRepository.findById(uuid))
+		return Optional.ofNullable(pcfRepository.findByUuid(uuid))
 				.orElseThrow(() -> new NoDataFoundException("No data found uuid " + uuid));
-		return entity.get();
+
 	}
 
 	public int getUpdatedData(String refProcessId) {
