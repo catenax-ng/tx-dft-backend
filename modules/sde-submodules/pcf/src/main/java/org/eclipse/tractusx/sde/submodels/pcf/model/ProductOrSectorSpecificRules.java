@@ -33,7 +33,8 @@ public class ProductOrSectorSpecificRules {
 	@JsonProperty(value = "extWBCSD_operator")
 	private String extWBCSDOperator;
 	
-	private ProductOrSectorSpecificRule productOrSectorSpecificRules;
+	@JsonProperty(value = "productOrSectorSpecificRules")
+	private ProductOrSectorSpecificRule productOrSectorSpecificRulesObj;
 	
 	@JsonProperty(value = "extWBCSD_otherOperatorName")
 	private String extWBCSDOtherOperatorName;
