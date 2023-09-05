@@ -21,7 +21,7 @@ package org.eclipse.tractusx.sde.submodels.pcf.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,67 +32,77 @@ import lombok.Data;
 @AllArgsConstructor
 public class Pcf {
 	
-	private String biogenicCarbonEmissionsOtherThanCO2;
-	private String distributionStagePcfExcludingBiogenic;
-	private String biogenicCarbonWithdrawal;
-	private String distributionStageBiogenicCarbonEmissionsOtherThanCO2;
-	
-	@JsonProperty(value = "extWBCSD_allocationRulesDescription")
-	private String extWBCSDAllocationRulesDescription;
-	private String exemptedEmissionsDescription;
-	private String distributionStageFossilGhgEmissions;
-	private String exemptedEmissionsPercent;
-	private String geographyCountrySubdivision;
-
-	@JsonProperty(value = "extTFS_luGhgEmissions")
-	private String extTFSLuGhgEmissions;
-	private String distributionStageBiogenicCarbonWithdrawal;
-	private String pcfIncludingBiogenic;
-	private String aircraftGhgEmissions;
-	private String productMassPerDeclaredUnit;
-	
 	private List<ProductOrSectorSpecificRules> productOrSectorSpecificRules;
-	
-	@JsonProperty(value = "extTFS_allocationWasteIncineration")
-	private String extTFSAllocationWasteIncineration;
-	private String pcfExcludingBiogenic;
-	private String referencePeriodEnd;
-	
-	@JsonProperty(value = "extWBCSD_characterizationFactors")
-	private String extWBCSDCharacterizationFactors;
-	
 	private List<SecondaryEmissionFactorSources> secondaryEmissionFactorSources;
-	
-	private String unitaryProductAmount;
-	private String declaredUnit;
-	private String referencePeriodStart;
-	private String geographyRegionOrSubregion;
-	private String fossilGhgEmissions;
-	private String boundaryProcessesDescription;
-	private String geographyCountry;
-	
-	@JsonProperty(value = "extWBCSD_packagingGhgEmissions")
-	private String extWBCSDPackagingGhgEmissions;
-	private String dlucGhgEmissions;
-	private String carbonContentTotal;
-	
-	@JsonProperty(value = "extTFS_distributionStageLuGhgEmissions")
-	private String extTFSDistributionStageLuGhgEmissions;
-	private String primaryDataShare;
 	
 	private DataQualityRating dataQualityRating;
 	
-	@JsonProperty(value = "extWBCSD_packagingEmissionsIncluded")
-	private String extWBCSDPackagingEmissionsIncluded;
-	
-	@JsonProperty(value = "extWBCSD_fossilCarbonContent")
-	private String extWBCSDFossilCarbonContent;
-	
 	private List<CrossSectoralStandardsUsed> crossSectoralStandardsUsed;
 	
-	@JsonProperty(value = "extTFS_distributionStageDlucGhgEmissions")
-	private String extTFSDistributionStageDlucGhgEmissions;
-	private String distributionStagePcfIncludingBiogenic;
-	private String carbonContentBiogenic;
+	private double biogenicCarbonEmissionsOtherThanCO2; // 1.0,
+	private double distributionStagePcfExcludingBiogenic; // 1.5,
+	private double biogenicCarbonWithdrawal; // 0.0,
+	private double distributionStageBiogenicCarbonEmissionsOtherThanCO2; // 1.0,
+	
+	@SerializedName("extWBCSD_allocationRulesDescription")
+	private String extWBCSDAllocationRulesDescription;//In accordance with Catena-X PCF Rulebook
+	
+	private String exemptedEmissionsDescription;//No exemption
+	private double distributionStageFossilGhgEmissions; // 0.5,
+	private double exemptedEmissionsPercent; // 0.0,
+	private String geographyCountrySubdivision;//US-NY
+	
+	@SerializedName("extTFS_luGhgEmissions")
+	private double extTFSLuGhgEmissions; // 0.3,
+	private double distributionStageBiogenicCarbonWithdrawal; // 0.5,
+	private double pcfIncludingBiogenic; // 1.0,
+	private double aircraftGhgEmissions; // 0.0,
+	private double productMassPerDeclaredUnit; // 0.456,
+	
+	@SerializedName("extWBCSD_operator")
+	private String extWBCSDOperator;//PEF
+	
+	private String ruleName;//urn:tfs-initiative.com:PCR:The Product Carbon Footprint Guideline for the Chemical Industry:version:v2.0
+	
+	@SerializedName("extWBCSD_otherOperatorName")
+	private String extWBCSDOtherOperatorName;//NSF
+	
+	@SerializedName("extTFS_allocationWasteIncineration")
+	private String extTFSAllocationWasteIncineration;//cut-off
+	private double pcfExcludingBiogenic; // 2.0,
+	private String referencePeriodEnd;//2022-12-31T23:59:59Z
+	
+	@SerializedName("extWBCSD_characterizationFactors")
+	private String extWBCSDCharacterizationFactors;//AR5
+	private String secondaryEmissionFactorSource;//ecoinvent 3.8
+	private double unitaryProductAmount; // 1000.0,
+	private String declaredUnit;//liter
+	private String referencePeriodStart;//2022-01-01T00:00:01Z
+	private String geographyRegionOrSubregion;//Africa
+	private double fossilGhgEmissions; // 0.5,
+	private String boundaryProcessesDescription;//Electricity consumption included as an input in the production phase
+	private String geographyCountry;//DE
+	
+	@SerializedName("extWBCSD_packagingGhgEmissions")
+	private double extWBCSDPackagingGhgEmissions; // 0,
+	private double dlucGhgEmissions; // 0.4,
+	private double carbonContentTotal; // 2.5,
+	
+	@SerializedName("extTFS_distributionStageLuGhgEmissions")
+	private double extTFSDistributionStageLuGhgEmissions; // 1.1,
+	private double primaryDataShare; // 56.12,
+	
+	@SerializedName("extWBCSD_packagingEmissionsIncluded")
+	private boolean extWBCSDPackagingEmissionsIncluded;//true
+	
+	@SerializedName("extWBCSD_fossilCarbonContent")
+	private double extWBCSDFossilCarbonContent; // 0.1,
+	
+	private String crossSectoralStandard;//GHG Protocol Product standard
+	
+	@SerializedName("extTFS_distributionStageDlucGhgEmissions")
+	private double extTFSDistributionStageDlucGhgEmissions; // 1.0,
+	private double distributionStagePcfIncludingBiogenic; // 0.0,
+	private double carbonContentBiogenic; // 0.0,
 
 }

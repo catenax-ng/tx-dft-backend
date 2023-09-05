@@ -38,7 +38,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class PcfService {
-	
+
 	private final PcfRepository pcfRepository;
 
 	private final PcfMapper pcfMapper;
@@ -52,8 +52,7 @@ public class PcfService {
 	public List<JsonObject> readCreatedTwinsforDelete(String refProcessId) {
 
 		return Optional
-				.ofNullable(Optional.ofNullable(pcfRepository.findByProcessId(refProcessId))
-						.filter(a -> !a.isEmpty())
+				.ofNullable(Optional.ofNullable(pcfRepository.findByProcessIdforPcf(refProcessId)).filter(a -> !a.isEmpty())
 						.orElseThrow(() -> new NoDataFoundException(
 								String.format("No data found for processid %s ", refProcessId)))
 						.stream().filter(e -> !DELETED_Y.equals(e.getDeletedforPcf())).map(pcfMapper::mapFromEntity)
@@ -69,7 +68,8 @@ public class PcfService {
 
 		deleteEDCAsset(pcfEntity);
 
-		deleteDigitalTwinsFacilitator.deleteSubmodelfromShellById(pcfEntity.getShellIdforPcf(), pcfEntity.getSubModelIdforPcf());
+		deleteDigitalTwinsFacilitator.deleteSubmodelfromShellById(pcfEntity.getShellIdforPcf(),
+				pcfEntity.getSubModelIdforPcf());
 
 		saveAspectWithDeleted(pcfEntity);
 	}
@@ -94,10 +94,11 @@ public class PcfService {
 		return pcfMapper.mapToResponse(readEntity(uuid));
 	}
 
-	public PcfEntity readEntity(String uuid) {
-		return Optional.ofNullable(pcfRepository.findByUuid(uuid))
-				.orElseThrow(() -> new NoDataFoundException("No data found uuid " + uuid));
-
+	public PcfEntity readEntity(String id) {
+		Optional<PcfEntity> findById = pcfRepository.findById(id);
+		if (!findById.isPresent())
+			throw new NoDataFoundException("No data found uuid " + id);
+		return findById.get();
 	}
 
 	public int getUpdatedData(String refProcessId) {

@@ -19,7 +19,7 @@
  ********************************************************************************/
 package org.eclipse.tractusx.sde.submodels.pcf.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,15 +33,15 @@ public class PcfSubmodelResponse {
 	private String specVersion;
 	private CompanyIds companyIds;
 	
-	@JsonProperty(value = "extWBCSD_productCodeCpc")
+	@SerializedName(value = "extWBCSD_productCodeCpc")
 	private String extWBCSDProductCodeCpc;
 	private String created;
 	private String companyName;
 	
-	@JsonProperty(value = "extWBCSD_pfStatus")
+	@SerializedName(value = "extWBCSD_pfStatus")
 	private String extWBCSDPfStatus;
 	private String productName;
-	private String version;
+	private double version;
 	private Pcf pcf;
 	private String partialFullPcf;
 	private ProductIds productIds;

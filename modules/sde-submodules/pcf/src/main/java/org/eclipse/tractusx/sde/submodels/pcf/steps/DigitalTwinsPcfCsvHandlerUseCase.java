@@ -119,7 +119,7 @@ public class DigitalTwinsPcfCsvHandlerUseCase extends Step {
 
 	private Map<String, String> getSpecificAssetIds(PcfAspect pcfAspect) {
 		Map<String, String> specificIdentifiers = new HashMap<>();
-		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getManufacturerPartIdforPcf());
+		specificIdentifiers.put(CommonConstants.MANUFACTURER_PART_ID, pcfAspect.getProductId());
 		specificIdentifiers.put(CommonConstants.MANUFACTURER_ID, digitalTwinsUtility.getManufacturerId());
 		specificIdentifiers.put(CommonConstants.ASSET_LIFECYCLE_PHASE, pcfAspect.getAssetLifeCyclePhase());
 
