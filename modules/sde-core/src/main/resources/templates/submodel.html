@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<th:block th:insert="~{fragments/header.html :: headerfiles}" />
+	<script type="text/javascript" th:src="@{/js/helm.value.generator.js}"></script>
+	<script type="text/javascript" th:src="@{/webjars/jquery-ui/jquery-ui.js}"></script>
+</head>
+
+<body>
+	<div class="container">
+		<th:block th:insert="~{fragments/menu.html :: menu}" />
+		<strong>Configure/Register new Submodel in SDE</strong>
+
+		<hr />
+		<form id="submodelform">
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="submodel">Select Submodel</label>
+					<select id="submodel" name="submodel" class="form-control"></select>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="version">version</label>
+					<input type="text" id="version" name="version" class="form-control" />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="title">Title</label>
+					<input type="text" id="submodel" name="submodel" class="form-control" />
+				</div>
+				<div class="form-group col-md-6">
+					<label for="submodelIdShort">Submodel idShort</label>
+					<input type="text" id="submodelIdShort" name="submodelIdShort" class="form-control" />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="shortDescription">shortDescription</label>
+					<textarea id="shortDescription" name="shortDescription" class="form-control"></textarea>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="inputZip">description</label>
+					<textarea id="description" name="description" class="form-control"></textarea>
+				</div>
+			</div>
+
+			<div class="form-row dyanamicdiv">
+				<div class="form-group col-md-6">
+					<label for="examplePayload"><strong>Example Payload</strong></label>
+					<pre id="examplePayloadPre" class="form-control" style="height: auto;font-size: 11px;"></pre>
+					<input type="hidden" id="examplePayload" name="examplePayload" class="form-control"
+						style="height: auto;font-size: 11px;"></input>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="csvFields"><strong>CSV Fields List</strong></label>
+					<select id="csvFields" name="csvFields" multiple class="mydropdwon"></select>
+				</div>
+			</div>
+			<div class="form-row dyanamicdiv">
+				<div class="form-group col-md-6">
+					<label for="digitalTwin"><strong>Digital Twin</strong></label>
+					<pre id="digitalTwinPre" class="form-control" style="height: auto;font-size: 11px;"></pre>
+					<input type="hidden" id="digitalTwin" name="digitalTwin" class="form-control"
+						style="height: auto;font-size: 11px;"></input>
+				</div>
+				<div class="col-md-6">
+					<div class="form-row">
+						<div class="form-group col-md-12">
+							<label for="globalAssetId"><strong>Global Asset Id</strong></label>
+							<select id="globalAssetId" name="globalAssetId" class="mydropdwon"
+								placeholder="-- Select Option--">
+							</select>
+						</div>
+						<div class="form-group col-md-12">
+							<label for="localIdentifier"><strong>Local Identifier</strong></label>
+							<select id="localIdentifier" name="localIdentifier" multiple class="mydropdwon"
+								placeholder="-- Select Option--"></select>
+						</div>
+						<div class="form-group col-md-12">
+							<label for="specificAssetIds"><strong>Specific Asset Ids</strong></label>
+							<select id="specificAssetIds" name="specificAssetIds" multiple class="mydropdwon"
+								placeholder="-- Select Option--"></select>
+						</div>
+						<div class="form-group col-md-12">
+							<label for="shellIdShortId"><strong>Shell idShort</strong></label>
+							<select id="shellIdShortId" name="shellIdShortId" multiple class="mydropdwon"
+								placeholder="-- Select Option--"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary" id="formbutton" value="Register Submodel" />
+		</form>
+		<th:block th:insert="~{fragments/footer.html :: footer}" />
+	</div>
+	<!-- Modal -->
+
+	<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="waitingModel"
+		aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="waitingModelLabel">please wait to complete background process</h5>
+				</div>
+				<div class="modal-body">
+					<img th:src="@{/img/loading.gif}" alt="" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+
+		$("#submodelform").on("submit", function (e) {
+			e.preventDefault();
+			const form = $(e.target);
+			const json = convertFormToJSON(form);
+			console.log(json);
+			$.ajax({
+				type: "POST",
+				url: '/api/save-submodel',
+				data: JSON.stringify(json),
+				contentType: "application/json"
+			})
+				.done(function (data, textStatus, jqXHR) {
+					alert(data)
+					console.log("Ajax completed: " + data);
+				})
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log("Ajax problem: " + textStatus + ". " + errorThrown);
+				});
+
+
+		});
+
+
+		function convertFormToJSON(form) {
+			return $(form)
+				.serializeArray()
+				.reduce(function (json, {name, value}) {
+					json[name] = value;
+					return json;
+				}, {});
+		}
+	</script>
+	<link rel="stylesheet" th:href="@{/css/selectize.default.min.css}" />
+	<script type="text/javascript" th:src="@{/js/selectize.min.js}"></script>
+
+</body>
+
+</html>

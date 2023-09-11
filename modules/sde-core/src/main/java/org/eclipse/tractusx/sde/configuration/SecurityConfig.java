@@ -96,7 +96,7 @@ public class SecurityConfig {
 	@SneakyThrows
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, Jwt2AuthenticationConverter authenticationConverter,
-			ServerProperties serverProperties) {
+			ServerProperties serverProperties, KeycloakLogoutHandler keycloakLogoutHandler) {
 
 		// Enable OAuth2 with custom authorities mapping
 		http.oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter)));
@@ -108,22 +108,24 @@ public class SecurityConfig {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
 		// State-less session (state in access-token only)
-		http.sessionManagement(
-				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		//http.sessionManagement(
+		//		sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		// Disable CSRF because of state-less session-management
 		http.csrf(AbstractHttpConfigurer::disable);
 
 		// Route security: authenticated to all routes but actuator and Swagger-UI
 		// @formatter:off
-		        http.authorizeHttpRequests(authz -> authz
+		http.authorizeHttpRequests(authz -> authz
 		        		.requestMatchers(PUBLIC_URL).permitAll()
 		                .anyRequest().authenticated());
 		            
-		        // @formatter:on
+		http.oauth2Login().and().logout().addLogoutHandler(keycloakLogoutHandler).logoutSuccessUrl("/");
+		
+		// @formatter:on
 		http.headers(headers -> headers
 				.xssProtection(xssProtection -> xssProtection.headerValue(HeaderValue.ENABLED_MODE_BLOCK))
-				.contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self'; script-src 'self'"))
+				.contentSecurityPolicy(policy -> policy.policyDirectives("default-src 'self';img-src 'self' data:;  style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"))
 				.httpStrictTransportSecurity(httStrict -> httStrict.includeSubDomains(true).maxAgeInSeconds(15724800)));
 
 		return http.build();

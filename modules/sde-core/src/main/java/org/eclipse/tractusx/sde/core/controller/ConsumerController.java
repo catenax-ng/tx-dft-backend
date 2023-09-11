@@ -83,7 +83,7 @@ public class ConsumerController {
 
 	@GetMapping(value = "/download-data-offers")
 	@PreAuthorize("hasPermission('','consumer_download_data')")
-	public ResponseEntity<Object> downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(@RequestParam List<String> assetIdList)
+	public ResponseEntity<Object> downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(@RequestBody List<String> assetIdList)
 			throws Exception {
 		log.info("Request received : /api/download-data-using-edr");
 		return consumerService.downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(assetIdList);

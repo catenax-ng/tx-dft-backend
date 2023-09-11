@@ -25,9 +25,12 @@ import java.util.Map;
 
 import org.eclipse.tractusx.sde.core.registry.UsecaseRegistration;
 import org.eclipse.tractusx.sde.core.service.SubmodelService;
+import org.eclipse.tractusx.sde.sematichub.proxy.SematichubModel;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,6 +65,11 @@ public class SubmodelController {
 	@GetMapping("/usecases")
 	public List<Map<Object, Object>> getAllUsecases() {
 		return usecaseRegistry.getUsecases();
+	}
+	
+	@PostMapping("/save-submodel")
+	public List<Map<Object, Object>> savesubmodel(@RequestBody SematichubModel sematichubModel) {
+		return submodelService.saveSubmodel();
 	}
 
 }

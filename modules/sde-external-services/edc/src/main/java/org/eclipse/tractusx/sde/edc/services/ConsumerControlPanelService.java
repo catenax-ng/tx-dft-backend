@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.tractusx.sde.common.entities.UsagePolicies;
 import org.eclipse.tractusx.sde.common.enums.PolicyAccessEnum;
 import org.eclipse.tractusx.sde.common.enums.UsagePolicyEnum;
+import org.eclipse.tractusx.sde.common.exception.ServiceException;
 import org.eclipse.tractusx.sde.edc.api.ContractOfferCatalogApi;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConstant;
 import org.eclipse.tractusx.sde.edc.entities.database.ContractNegotiationInfoEntity;
@@ -54,6 +55,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.FeignException;
 import jakarta.validation.Valid;
@@ -74,6 +76,8 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 	private final PolicyConstraintBuilderService policyConstraintBuilderService;
 
 	private final ContractOfferRequestFactory contractOfferRequestFactory;
+	
+	ObjectMapper mapper=new ObjectMapper();
 
 	public List<QueryDataOfferModel> queryOnDataOffers(String providerUrl, Integer offset, Integer limit,
 			String filterExpression) {
@@ -240,7 +244,7 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 	}
 
 	public Map<String, Object> subscribeAndDownloadDataOffers(@Valid ConsumerRequest consumerRequest) {
-
+		
 		HashMap<String, String> extensibleProperty = new HashMap<>();
 		Map<String, Object> response = new ConcurrentHashMap<>();
 
@@ -262,7 +266,6 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 						offer.getAssetId(), action, extensibleProperty);
 
 				EDRCachedResponse checkContractNegotiationStatus = verifyEDRRequestStatus(offer.getAssetId());
-
 				response.put(offer.getAssetId(), downloadFile(checkContractNegotiationStatus));
 			} catch (FeignException e) {
 				log.error("RequestBody: " + e.request());
@@ -290,12 +293,14 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 			do {
 				Thread.sleep(5000);
 				eDRCachedResponseList = edrRequestHelper.getEDRCachedByAsset(assetId);
+				
+				if (eDRCachedResponseList != null && !eDRCachedResponseList.isEmpty())
+					eDRCachedResponse = eDRCachedResponseList.get(0);
+				
 				counter++;
-			} while (eDRCachedResponseList != null && !eDRCachedResponseList.isEmpty()
-					&& !eDRCachedResponseList.get(0).getEdrState().equals("NEGOTIATED") && counter <= retry);
+			} while ((eDRCachedResponse == null && counter <= retry)
+					|| (eDRCachedResponse != null && !eDRCachedResponse.getEdrState().equals("NEGOTIATED")));
 
-			if (eDRCachedResponseList != null && !eDRCachedResponseList.isEmpty())
-				eDRCachedResponse = eDRCachedResponseList.get(0);
 		} catch (InterruptedException ie) {
 			log.error("Exception in verifyEDRRequestStatus" + ie.getMessage());
 			Thread.currentThread().interrupt();
@@ -304,6 +309,10 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 			log.error("Exception in verifyEDRRequestStatus" + e.getMessage());
 			throw e;
 		}
+		
+		if(eDRCachedResponse ==null)
+			throw new ServiceException("Unable to negotiated contract for asset "+assetId);
+		
 		return eDRCachedResponse;
 	}
 
@@ -343,7 +352,7 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 		errorMaps.put("error", errorMsg);
 		return errorMaps;
 	}
-
+	@SneakyThrows
 	private Object downloadFile(EDRCachedResponse verifyEDRRequestStatus) {
 		if (verifyEDRRequestStatus != null) {
 			EDRCachedByIdResponse authorizationToken = getAuthorizationTokenForDataDownload(

@@ -100,4 +100,9 @@ public class SubmodelService {
 		return submodelRegistration.getModels();
 	}
 
+	public List<Map<Object, Object>> saveSubmodel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

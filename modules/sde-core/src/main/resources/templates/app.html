@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<th:block th:insert="~{fragments/header.html :: headerfiles}" />
+</head>
+
+<body>
+	<div class="container">
+		<th:block th:insert="~{fragments/menu.html :: menu}" />
+		<h3>Create New Apps</h3>
+		<hr />
+		<form>
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="type">Type</label>
+					<select id="type" class="form-control">
+						<option selected>Choose...</option>
+						<option value="app">App</option>
+						<option value="service">Service</option>
+					</select>
+				</div>
+				<div class="form-group col-md-5">
+					<label for="availpackage">Name</label>
+					<input type="text" id="name" class="form-control" />
+				</div>
+				<div class="form-group col-md-4">
+					<label for="inputZip">Description</label>
+					<textarea id="description" class="form-control"></textarea>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Save Component</button>
+		</form>
+		<th:block th:insert="~{fragments/footer.html :: footer}" />
+	</div>
+
+</body>
+
+</html>
