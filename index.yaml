@@ -3,7 +3,25 @@ entries:
   sde:
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2023-09-13T14:33:05.397272+05:30"
+    created: "2023-09-14T09:55:52.362514+05:30"
+    dependencies:
+    - alias: sdepostgresql
+      condition: sdepostgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.x.x
+    description: A Helm chart for Kubernetes
+    digest: 35621e6ff7dbab3eae95907cedc15a254a8a9eb9391a078c2bcd56969536dc4b
+    name: sde
+    sources:
+    - https://github.com/eclipse-tractusx/managed-simple-data-exchanger
+    type: application
+    urls:
+    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/sde-2.2.3.tgz
+    version: 2.2.3
+  - apiVersion: v2
+    appVersion: 2.2.0
+    created: "2023-09-14T09:55:52.358654+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -21,7 +39,7 @@ entries:
     version: 2.2.2
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2023-09-13T14:33:05.393348+05:30"
+    created: "2023-09-14T09:55:52.354583+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -39,7 +57,7 @@ entries:
     version: 2.2.0
   - apiVersion: v2
     appVersion: 2.1.0
-    created: "2023-09-13T14:33:05.384719+05:30"
+    created: "2023-09-14T09:55:52.350095+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -57,7 +75,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 2.0.9
-    created: "2023-09-13T14:33:05.380782+05:30"
+    created: "2023-09-14T09:55:52.346109+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -75,7 +93,7 @@ entries:
     version: 2.0.9
   - apiVersion: v2
     appVersion: 2.0.8
-    created: "2023-09-13T14:33:05.375927+05:30"
+    created: "2023-09-14T09:55:52.341408+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -93,7 +111,7 @@ entries:
     version: 2.0.8
   - apiVersion: v2
     appVersion: 2.0.3
-    created: "2023-09-13T14:33:05.371998+05:30"
+    created: "2023-09-14T09:55:52.337431+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -111,7 +129,7 @@ entries:
     version: 2.0.3
   - apiVersion: v2
     appVersion: 2.0.2
-    created: "2023-09-13T14:33:05.367069+05:30"
+    created: "2023-09-14T09:55:52.332588+05:30"
     dependencies:
     - alias: sdepostgresql
       condition: sdepostgresql.enabled
@@ -127,4 +145,4 @@ entries:
     urls:
     - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/sde-2.0.2.tgz
     version: 2.0.2
-generated: "2023-09-13T14:33:05.362699+05:30"
+generated: "2023-09-14T09:55:52.327971+05:30"
