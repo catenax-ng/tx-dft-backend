@@ -13,10 +13,10 @@ spec:
   ingressClassName: {{ .Values.console.ingress.className }}
   tls:
     - hosts:
-        - {{ .Values.console.ingress.host }}
+        - {{ .Values.console.ingress.hostname }}
       secretName: {{ include "minio-operator.console-fullname" . }}-tls
   rules:
-    - host: {{ .Values.console.ingress.host }}
+    - host: {{ .Values.console.ingress.hostname }}
       http:
         paths:
           - path: /

@@ -91,16 +91,31 @@ console:
   containerSecurityContext:
     runAsUser: 1000
     runAsNonRoot: true
+  console:
+    endpoints:
+        ## Default api exposing health checks etc
+      default:
+          # -- The network port, which the "default" api is going to be exposed by the container, pod and service
+        port: "80"
+          # -- The path mapping the "default" api is going to be exposed at
+        path: /
   ingress:
     enabled: false
     ingressClassName: "nginx"
-    host: ""
-    annotations: 
-        nginx.ingress.kubernetes.io/backend-protocol: HTTP
-        cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        nginx.ingress.kubernetes.io/affinity: "cookie"
-        nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
-        nginx.ingress.kubernetes.io/enable-cors: 'false'
+    hostname: ""
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    endpoints:
+      - default
+    tls:
+      enabled: true
+      secretName: ""
+          # -- If present overwrites the default secret name
+    certManager:
+          # -- If preset enables certificate generation via cert-manager namespace scoped issuer
+      # issuer: ""
+          # -- If preset enables certificate generation via cert-manager cluster-wide issuer
+      clusterIssuer: "letsencrypt-prod"
 
   volumes: [ ]
   volumeMounts: [ ]
