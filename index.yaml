@@ -2,8 +2,29 @@ apiVersion: v1
 entries:
   operator:
   - apiVersion: v2
+    appVersion: v0.0.3
+    created: "2023-09-24T21:10:39.474744+05:30"
+    description: A Helm chart for MinIO Operator
+    digest: 0bce366971165e93085347a5dc7b905fcffd9dea9e94d3c399444a611d503e7f
+    home: https://min.io
+    icon: https://min.io/resources/img/logo/MINIO_wordmark.png
+    keywords:
+    - storage
+    - object-storage
+    - S3
+    maintainers:
+    - email: dev@minio.io
+      name: MinIO, Inc
+    name: operator
+    sources:
+    - https://github.com/minio/operator
+    type: application
+    urls:
+    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/operator-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
     appVersion: v0.0.2
-    created: "2023-09-24T20:56:07.811265+05:30"
+    created: "2023-09-24T21:10:39.471669+05:30"
     description: A Helm chart for MinIO Operator
     digest: ff8b638891b458cacd80e048bb073533d446ec30b0c513ef26f71839852b60ea
     home: https://min.io
@@ -24,7 +45,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: v0.0.1
-    created: "2023-09-24T20:56:07.810001+05:30"
+    created: "2023-09-24T21:10:39.470299+05:30"
     description: A Helm chart for MinIO Operator
     digest: 748f3c91e17f400793d6de2407b1ce733973dfb4da16887444fa131e48b5783b
     home: https://min.io
@@ -43,4 +64,4 @@ entries:
     urls:
     - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/operator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-09-24T20:56:07.808566+05:30"
+generated: "2023-09-24T21:10:39.468768+05:30"
