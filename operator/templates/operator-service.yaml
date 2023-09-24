@@ -7,7 +7,6 @@ spec:
   type: ClusterIP
   ports:
     - port: 4221
-      name: http
   selector:
     operator: leader
     {{- include "minio-operator.selectorLabels" . | nindent 4 }}
