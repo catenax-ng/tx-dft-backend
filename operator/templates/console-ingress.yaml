@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.console.ingress.hostname }}
-      secretName: {{ include "minio-operator.console-fullname" . }}-tls
+      secretName: {{ i.Values.console.ingress.tls.secretName }}-tls
   rules:
     - host: {{ .Values.console.ingress.hostname }}
       http:
