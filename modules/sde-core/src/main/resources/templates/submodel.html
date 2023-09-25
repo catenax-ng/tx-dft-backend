@@ -44,7 +44,14 @@
 					<textarea id="description" name="description" class="form-control"></textarea>
 				</div>
 			</div>
-
+			
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="usecase"><strong>Use case aplicable for Submodel</strong></label>
+					<select id="usecase" name="usecase" multiple class="mydropdwon"></select>
+				</div>
+			</div>
+			
 			<div class="form-row dyanamicdiv">
 				<div class="form-group col-md-6">
 					<label for="examplePayload"><strong>Example Payload</strong></label>
@@ -90,7 +97,7 @@
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-primary" id="formbutton" value="Register Submodel" />
+			<button type="submit" class="btn btn-primary" id="formbutton" value="Register Submodel">Register Submodel</button>
 		</form>
 		<th:block th:insert="~{fragments/footer.html :: footer}" />
 	</div>

@@ -56,8 +56,8 @@ $(document).ready(function() {
 
 	$(".dyanamicdiv").hide();
 
-	$('#waitingModel').modal('show');
-	
+	//$('#waitingModel').modal('show');
+
 	$('#submodel').change(function() {
 
 		$.getJSON('/api/hub/models/' + encodeURIComponent($(this).val()) + '/example-payload', function(dataSet) {
@@ -79,17 +79,27 @@ $(document).ready(function() {
 			.fail(function(ex) { alert('failed, ' + ex); });
 
 	});
-	
+
 	$.getJSON('/api/hub/models?status=RELEASED&pageSize=1000&page=0', function(dataSet) {
 		$("#submodel").append('<option value="">-- Select Option--</option>');
 		$.each(dataSet.items, function(index, item) {
 			$("#submodel").append('<option value="' + item.urn + '">' + item.name + '-' + item.version + '</option>');
 		});
-		$('#waitingModel').modal('hide');
+		//$('#waitingModel').modal('hide');
 	})
 		.fail(function(ex) { alert('failed, ' + ex); });
 
-	
+
+	$.getJSON('/api/usecases', function(dataSet) {
+		$("#usecase").append('<option value="">-- Select Option--</option>');
+		$.each(dataSet, function(index, item) {
+			$("#usecase").append('<option value="' + item.id + '">' + item.title + '</option>');
+		});
+		$('#usecase').selectize(optionsWithOutCreate);
+	})
+		.fail(function(ex) { alert('failed, ' + ex); });
+
+
 
 
 });
