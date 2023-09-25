@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  sftp:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-09-25T13:09:56.546695+05:30"
+    description: A Helm chart to deploy SFTP
+    digest: 41ca96cd78f3647b234778b30183bba40d12b0bf3f07d32245aeea6d09373616
+    keywords:
+    - sftp
+    - openssh
+    - files
+    - storage
+    - ftp
+    maintainers:
+    - email: helm-charts@emberstack.com
+      name: winromulus
+    name: sftp
+    sources:
+    - https://github.com/EmberStack/docker-sftp
+    type: application
+    urls:
+    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/sftp-1.0.0.tgz
+    version: 1.0.0
+generated: "2023-09-25T13:09:56.545879+05:30"

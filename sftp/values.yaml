@@ -1,0 +1,53 @@
+affinity: {}
+configuration: null
+fullnameOverride: ""
+image:
+  pullPolicy: Always
+  repository: adgajbhi/sftp
+  tag: ""
+imagePullSecrets: []
+initContainers: []
+nameOverride: ""
+nodeSelector: {}
+podSecurityContext: {}
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  port: 22
+  type: ClusterIP 
+  
+serviceAccount:
+  annotations: {}
+  create: true
+  name: null
+storage:
+  volumeMounts: []
+  volumes: []
+tolerations: []
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    kubernetes.io/tls-acme: "true"
+  host: "sftp-srv.cx.dih-cloud.com"
+  tls:
+    enabled: false
+    secretName: ""
+  certManager:
+      # -- If preset enables certificate generation via cert-manager namespace scoped issuer
+      # issuer: ""
+      # -- If preset enables certificate generation via cert-manager cluster-wide issuer
+        clusterIssuer: "letsencrypt-prod"
+  #    hosts:
+  #      - chart-example.local 
+      
+resources:
+  limits:
+    cpu: 600m
+    memory: 400Mi
+  requests:
+    cpu: 200m
+    memory: 400Mi
