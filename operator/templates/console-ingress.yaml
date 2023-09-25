@@ -1,4 +1,5 @@
 {{- if .Values.console.ingress.enabled }}
+{{- $fullName := include "minio-operator.console-fullname" . }}
 {{- $ingressName := printf "%s-%s" $fullName .hostname }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
