@@ -1,5 +1,4 @@
 {{- if .Values.console.ingress.enabled }}
-{{- $ingressName := printf "%s-%s" .hostname }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,7 +14,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.console.ingress.hostname }}
-      secretName: {{ $ingressName }}-tls
+      secretName: {{ .hostname  }}-tls
   rules:
     - host: {{ .Values.console.ingress.hostname }}
       http:
