@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.console.ingress.hostname }}
-      secretName: {{ .hostname  }}-tls
+      secretName: {{ .Values.console.ingress.tls.secretName }}
   rules:
     - host: {{ .Values.console.ingress.hostname }}
       http:
