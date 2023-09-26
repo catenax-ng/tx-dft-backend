@@ -2,8 +2,29 @@ apiVersion: v1
 entries:
   operator:
   - apiVersion: v2
+    appVersion: v0.3.0
+    created: "2023-09-26T13:28:49.788977+05:30"
+    description: A Helm chart for MinIO Operator
+    digest: 40d99eb6e22fb3340e66610bf38f427ccd9a50c0c1677771d4d3fd64820cbbac
+    home: https://min.io
+    icon: https://min.io/resources/img/logo/MINIO_wordmark.png
+    keywords:
+    - storage
+    - object-storage
+    - S3
+    maintainers:
+    - email: dev@minio.io
+      name: MinIO, Inc
+    name: operator
+    sources:
+    - https://github.com/minio/operator
+    type: application
+    urls:
+    - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/operator-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     appVersion: v0.2.0
-    created: "2023-09-26T13:08:56.851863+05:30"
+    created: "2023-09-26T13:28:49.78741+05:30"
     description: A Helm chart for MinIO Operator
     digest: 8f8a25af342e38da2e442fc7a26a05199dca0d821302279e9f07b173f6891d91
     home: https://min.io
@@ -24,7 +45,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2023-09-26T13:08:56.850639+05:30"
+    created: "2023-09-26T13:28:49.786156+05:30"
     description: A Helm chart for MinIO Operator
     digest: 3985bb584fbd047244a1a9f6b2d323968b838e245c9bd6973597cf3907506338
     home: https://min.io
@@ -45,7 +66,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: v0.0.11
-    created: "2023-09-26T13:08:56.799286+05:30"
+    created: "2023-09-26T13:28:49.774944+05:30"
     description: A Helm chart for MinIO Operator
     digest: 3709b5c5ccf2c2586406e7ac93a858f6216e536a1c44fa0c426e229ea1d16afe
     home: https://min.io
@@ -66,7 +87,7 @@ entries:
     version: 0.0.11
   - apiVersion: v2
     appVersion: v0.0.10
-    created: "2023-09-26T13:08:56.790893+05:30"
+    created: "2023-09-26T13:28:49.773957+05:30"
     description: A Helm chart for MinIO Operator
     digest: 3a8f80908554dce157efd5646bf618cf887613b059e69fe843b12351b58b181d
     home: https://min.io
@@ -87,7 +108,7 @@ entries:
     version: 0.0.10
   - apiVersion: v2
     appVersion: v0.0.9
-    created: "2023-09-26T13:08:56.844214+05:30"
+    created: "2023-09-26T13:28:49.785246+05:30"
     description: A Helm chart for MinIO Operator
     digest: 880fdc9c8b807195239c4ff22dcf8e1e59a4ba82aecb46c97293384150dc7e5d
     home: https://min.io
@@ -108,7 +129,7 @@ entries:
     version: 0.0.9
   - apiVersion: v2
     appVersion: v0.0.8
-    created: "2023-09-26T13:08:56.838085+05:30"
+    created: "2023-09-26T13:28:49.784318+05:30"
     description: A Helm chart for MinIO Operator
     digest: 9846db0fb08d11cfc4fc63d53eeb340df12ee2f9fad8ba7a7fc3462d937ddb66
     home: https://min.io
@@ -129,7 +150,7 @@ entries:
     version: 0.0.8
   - apiVersion: v2
     appVersion: v0.0.7
-    created: "2023-09-26T13:08:56.833136+05:30"
+    created: "2023-09-26T13:28:49.783206+05:30"
     description: A Helm chart for MinIO Operator
     digest: ad4935fc63848374b55a7c32dcdfc0cc0231c607478dff808d2686c0f0c742a5
     home: https://min.io
@@ -150,7 +171,7 @@ entries:
     version: 0.0.7
   - apiVersion: v2
     appVersion: v0.0.6
-    created: "2023-09-26T13:08:56.827438+05:30"
+    created: "2023-09-26T13:28:49.781423+05:30"
     description: A Helm chart for MinIO Operator
     digest: 87b95b27aae1644a7dbf396c51d1c83d66b5962904bee7606a9bd90fd248084a
     home: https://min.io
@@ -171,7 +192,7 @@ entries:
     version: 0.0.6
   - apiVersion: v2
     appVersion: v0.0.5
-    created: "2023-09-26T13:08:56.820363+05:30"
+    created: "2023-09-26T13:28:49.780517+05:30"
     description: A Helm chart for MinIO Operator
     digest: a65d2a7ad969f49253b54ac2179aeae2c6426a3f6b2533c1eb2d2f184461d6d3
     home: https://min.io
@@ -192,7 +213,7 @@ entries:
     version: 0.0.5
   - apiVersion: v2
     appVersion: v0.0.4
-    created: "2023-09-26T13:08:56.816512+05:30"
+    created: "2023-09-26T13:28:49.779574+05:30"
     description: A Helm chart for MinIO Operator
     digest: 14c34838de71d869ed3db0854202229a718299b3285d5774dea6daf3ba1b22d0
     home: https://min.io
@@ -213,7 +234,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: v0.0.3
-    created: "2023-09-26T13:08:56.811401+05:30"
+    created: "2023-09-26T13:28:49.7786+05:30"
     description: A Helm chart for MinIO Operator
     digest: 0bce366971165e93085347a5dc7b905fcffd9dea9e94d3c399444a611d503e7f
     home: https://min.io
@@ -234,7 +255,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: v0.0.2
-    created: "2023-09-26T13:08:56.806112+05:30"
+    created: "2023-09-26T13:28:49.777602+05:30"
     description: A Helm chart for MinIO Operator
     digest: ff8b638891b458cacd80e048bb073533d446ec30b0c513ef26f71839852b60ea
     home: https://min.io
@@ -255,7 +276,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: v0.0.1
-    created: "2023-09-26T13:08:56.785782+05:30"
+    created: "2023-09-26T13:28:49.772947+05:30"
     description: A Helm chart for MinIO Operator
     digest: 748f3c91e17f400793d6de2407b1ce733973dfb4da16887444fa131e48b5783b
     home: https://min.io
@@ -274,4 +295,4 @@ entries:
     urls:
     - https://catenax-ng.github.io/tx-managed-simple-data-exchanger-backend/operator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-09-26T13:08:56.779281+05:30"
+generated: "2023-09-26T13:28:49.771612+05:30"
