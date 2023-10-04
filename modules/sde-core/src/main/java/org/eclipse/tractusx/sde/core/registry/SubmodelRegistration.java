@@ -27,6 +27,9 @@ import org.eclipse.tractusx.sde.common.extensions.SubmodelExtension;
 import org.eclipse.tractusx.sde.common.model.Submodel;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.JsonObject;
+
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -44,6 +47,18 @@ public class SubmodelRegistration {
 		Submodel submodel = subomdelService.submodel();
 		log.info(submodel.toString());
 		submodelList.add(submodel);
+	}
+	
+	@SneakyThrows
+	public void register(JsonObject schema) {
+		Submodel build = Submodel.builder()
+				.id(schema.get("id").getAsString())
+				.name(schema.get("title").getAsString())
+				.version(schema.get("version").getAsString())
+				.semanticId(schema.get("semantic_id").getAsString())
+				.schema(schema).build();
+		log.info(build.toString());
+		submodelList.add(build);
 	}
 
 	public List<Submodel> getModels() {

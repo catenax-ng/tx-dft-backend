@@ -67,9 +67,14 @@ public class SubmodelController {
 		return usecaseRegistry.getUsecases();
 	}
 	
+	@GetMapping("/readSubmodels")
+	public List<Map<Object, Object>> readSubmodels() {
+		return submodelService.readSubmodels();
+	}
+	
 	@PostMapping("/save-submodel")
-	public List<Map<Object, Object>> savesubmodel(@RequestBody SematichubModel sematichubModel) {
-		return submodelService.saveSubmodel();
+	public Map<Object, Object> savesubmodel(@RequestBody SematichubModel sematichubModel) {
+		return submodelService.saveSubmodel(sematichubModel);
 	}
 
 }

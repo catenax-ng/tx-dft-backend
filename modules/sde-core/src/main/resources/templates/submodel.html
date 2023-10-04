@@ -5,6 +5,38 @@
 	<th:block th:insert="~{fragments/header.html :: headerfiles}" />
 	<script type="text/javascript" th:src="@{/js/helm.value.generator.js}"></script>
 	<script type="text/javascript" th:src="@{/webjars/jquery-ui/jquery-ui.js}"></script>
+	<style type="text/css">
+		.descriptionview {
+			word-wrap: break-word;
+			min-width: 160px;
+			max-width: 100%;
+			white-space: pre-wrap;
+		}
+
+		table th,
+		table td {
+			width: 100px;
+			padding: 5px;
+			border: 1px solid #ccc;
+		}
+
+		.selected {
+			background-color: #666;
+			color: #fff;
+		}
+
+		td textarea {
+			font-size: 12px;
+			line-height: 21px;
+			color: #444;
+			border: 1px solid #e1e1e1;
+			width: 100%;
+			max-width: 100%;
+			height: 168px;
+			min-height: 168px;
+			padding: 6px 9px;
+		}
+	</style>
 </head>
 
 <body>
@@ -20,15 +52,26 @@
 					<select id="submodel" name="submodel" class="form-control"></select>
 				</div>
 				<div class="form-group col-md-6">
-					<label for="version">version</label>
-					<input type="text" id="version" name="version" class="form-control" />
+					<label for="usecases"><strong>Use case aplicable for Submodel</strong></label>
+					<select id="usecases" name="usecases" multiple class="mydropdwon"></select>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="version">Submodel Version</label>
+					<input type="text" id="version" name="version" readonly class="form-control" />
+				</div>
+				<div class="form-group col-md-6">
+					<label for="submodelIdShort">Submodel Semantic Id</label>
+					<input type="text" id="semanticId" name="semanticId" readonly class="form-control" />
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="title">Title</label>
-					<input type="text" id="submodel" name="submodel" class="form-control" />
+					<input type="text" id="title" name="title" class="form-control" />
 				</div>
+
 				<div class="form-group col-md-6">
 					<label for="submodelIdShort">Submodel idShort</label>
 					<input type="text" id="submodelIdShort" name="submodelIdShort" class="form-control" />
@@ -36,40 +79,52 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<label for="shortDescription">shortDescription</label>
-					<textarea id="shortDescription" name="shortDescription" class="form-control"></textarea>
+					<label for="shortDescription">Short Description
+					</label>
+					<em><br />e.g. BoM &lt;categoty&gt; - Submodel &lt;submodel&gt;</em>
+					<input type="text" id="shortDescription" name="shortDescription" class="form-control" />
 				</div>
 				<div class="form-group col-md-6">
-					<label for="inputZip">description</label>
+					<label for="description">Description</label>
 					<textarea id="description" name="description" class="form-control"></textarea>
 				</div>
 			</div>
-			
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label for="usecase"><strong>Use case aplicable for Submodel</strong></label>
-					<select id="usecase" name="usecase" multiple class="mydropdwon"></select>
+		</form>
+		<form id="submodelform_csv">
+			<div class="form-row dyanamicdiv">
+				<div class="form-group col-md-12">
+					<label for="csvFields"><strong>CSV Fields List</strong></label>
+					<img src="./img/plus.png" alt="add image" id="addbutton-csvFieldsTable"
+						onclick="addNewRow(this.id)" />
+					<input type="hidden" name="hidden-csvFieldsTable" id="hidden-csvFieldsTable" value="1" />
+					<div class="table-responsive text-wrap">
+						<table id="tabelname-csvFieldsTable" class="table table-bordered">
+							<caption>CSV fields Table</caption>
+							<tr>
+								<th style="width:5%">Sr.No.</th>
+								<th style="width:40%">Field Details</th>
+								<th style="width:65%">Schema Details</th>
+							</tr>
+						</table>
+					</div>
 				</div>
 			</div>
-			
+		</form>
+		<form id="submodelform_other">
 			<div class="form-row dyanamicdiv">
 				<div class="form-group col-md-6">
 					<label for="examplePayload"><strong>Example Payload</strong></label>
-					<pre id="examplePayloadPre" class="form-control" style="height: auto;font-size: 11px;"></pre>
-					<input type="hidden" id="examplePayload" name="examplePayload" class="form-control"
-						style="height: auto;font-size: 11px;"></input>
+					<pre id="examplePayload" class="form-control" style="height: auto;font-size: 11px;"></pre>
 				</div>
 				<div class="form-group col-md-6">
-					<label for="csvFields"><strong>CSV Fields List</strong></label>
-					<select id="csvFields" name="csvFields" multiple class="mydropdwon"></select>
+					<label for="examples"><strong>Examples</strong></label>
+					<pre id="examples" class="form-control" style="height: auto;font-size: 11px;"></pre>
 				</div>
 			</div>
 			<div class="form-row dyanamicdiv">
 				<div class="form-group col-md-6">
 					<label for="digitalTwin"><strong>Digital Twin</strong></label>
-					<pre id="digitalTwinPre" class="form-control" style="height: auto;font-size: 11px;"></pre>
-					<input type="hidden" id="digitalTwin" name="digitalTwin" class="form-control"
-						style="height: auto;font-size: 11px;"></input>
+					<pre id="digitalTwin" class="form-control" style="height: auto;font-size: 11px;"></pre>
 				</div>
 				<div class="col-md-6">
 					<div class="form-row">
@@ -79,25 +134,51 @@
 								placeholder="-- Select Option--">
 							</select>
 						</div>
+
 						<div class="form-group col-md-12">
-							<label for="localIdentifier"><strong>Local Identifier</strong></label>
-							<select id="localIdentifier" name="localIdentifier" multiple class="mydropdwon"
+							<label for="shellIdShortId"><strong>Shell idShort</strong></label>
+							<i><br />All selected mutiple fields will be use as field1_field2_field3_BPNNumber</i>
+							<select id="shellIdShortId" name="shellIdShortId" multiple class="mydropdwon"
 								placeholder="-- Select Option--"></select>
 						</div>
 						<div class="form-group col-md-12">
 							<label for="specificAssetIds"><strong>Specific Asset Ids</strong></label>
-							<select id="specificAssetIds" name="specificAssetIds" multiple class="mydropdwon"
-								placeholder="-- Select Option--"></select>
-						</div>
-						<div class="form-group col-md-12">
-							<label for="shellIdShortId"><strong>Shell idShort</strong></label>
-							<select id="shellIdShortId" name="shellIdShortId" multiple class="mydropdwon"
-								placeholder="-- Select Option--"></select>
+							<img src="./img/plus.png" alt="add image" id="addbutton-specificAssetIdstbl"
+								onclick="addRows(this.id,'1','1','1')" />
+							<em><br />For same Key and value will generate field name and value combination, <br />
+								In Twin, The specificAssetIds key will be CSV field name and value will be user
+								enter/selected value</em>
+							<table id="tabelname-specificAssetIdstbl" class="table table-bordered">
+								<caption>Specific Asset Ids table</caption>
+								<tr>
+									<th style="width:45%">Key
+										<input type="hidden" name="hidden-specificAssetIdstbl"
+											id="hidden-specificAssetIdstbl" value="1" />
+									</th>
+									<th style="width:45%">Value</th>
+									<th style="width:10%"></th>
+								</tr>
+								<tr id="tr-specificAssetIdstbl_1">
+									<td>
+										<select id="key-specificAssetIdstbl_1" name="specificAssetIds_key"
+											class="form-control" placeholder="-- Select Option--"></select>
+									</td>
+									<td><select id="value-specificAssetIdstbl_1" name="specificAssetIds_value"
+											class="form-control" placeholder="-- Select Option--"></select></td>
+									<td>
+										<img src="./img/remove.png" alt="remove image"
+											id="delbutton-specificAssetIdstbl_1"
+											onclick="deleteSingleRow(this.id, '1')" />
+									</td>
+								</tr>
+							</table>
+
 						</div>
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-primary" id="formbutton" value="Register Submodel">Register Submodel</button>
+			<button type="button" class="btn btn-primary" id="formbutton" value="Register Submodel">Register
+				Submodel</button>
 		</form>
 		<th:block th:insert="~{fragments/footer.html :: footer}" />
 	</div>
@@ -108,7 +189,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="waitingModelLabel">please wait to complete background process</h5>
+					<h5 class="modal-title" id="waitingModelLabel"></h5>
 				</div>
 				<div class="modal-body">
 					<img th:src="@{/img/loading.gif}" alt="" />
@@ -118,15 +199,21 @@
 	</div>
 	<script>
 
-		$("#submodelform").on("submit", function (e) {
-			e.preventDefault();
-			const form = $(e.target);
-			const json = convertFormToJSON(form);
-			console.log(json);
+		$("#formbutton").click(function () {
+			const form = $("#submodelform");
+			const formother = $("#submodelform_other");
+			let json = $.extend(true, {}, convertFormToJSON(form), convertFormToJSON(formother));
+			let originaljson = $.extend(true, json, {specificAssetIds: convertSpecificAssetIdsTableToJSON()});
+			originaljson = $.extend(true, originaljson, {properties: convertMultipleFiledToJSON()});
+			originaljson['examplePayload'] = JSON.parse($("#examplePayload").html());
+			originaljson['digitalTwin'] = JSON.parse($("#digitalTwin").html());
+			originaljson['examples'] = JSON.parse($("#examples").html());
+			originaljson['required'] = requireFieldList;
+
 			$.ajax({
 				type: "POST",
 				url: '/api/save-submodel',
-				data: JSON.stringify(json),
+				data: JSON.stringify(originaljson),
 				contentType: "application/json"
 			})
 				.done(function (data, textStatus, jqXHR) {
@@ -140,14 +227,63 @@
 
 		});
 
+		function convertMultipleFiledToJSON() {
+			let original = [];
+			$("[id^='tr-csvFieldsTable_']").each(function () {
+				let json = {}
+				let idpart = $(this).attr('id');
+				let idindex = idpart.replace('tr-csvFieldsTable_', '');
+				json['schemaFieldName'] = $("#schemaFieldName-csvFieldsTable_" + idindex).val();
+				json['csvFieldName'] = $("#csvFieldName-csvFieldsTable_" + idindex).val();
+				json['schemadetails'] = JSON.parse($("#schemadetails-csvFieldsTable_" + idindex).val());
+				json['preference'] = JSON.parse($("#preference-csvFieldsTable_" + idindex).val());
+				original.push(json);
+			})
+			return original;
+		}
+
+		function convertSpecificAssetIdsTableToJSON() {
+			let original = [];
+			$("[id^='tr-specificAssetIdstbl_']").each(function () {
+				let json = {}
+				let idpart = $(this).attr('id');
+				let idindex = idpart.replace('tr-specificAssetIdstbl_', '');
+				json['key'] = $("#key-specificAssetIdstbl_" + idindex).val();
+				json['value'] = $("#value-specificAssetIdstbl_" + idindex).val();
+				original.push(json);
+			})
+			return original;
+		}
 
 		function convertFormToJSON(form) {
-			return $(form)
-				.serializeArray()
-				.reduce(function (json, {name, value}) {
-					json[name] = value;
-					return json;
-				}, {});
+			let reportDropDownsJson = {};
+			form.serializeArray().forEach(({name, value}) => {
+				if (reportDropDownsJson.hasOwnProperty(name)) {
+					if (!Array.isArray(reportDropDownsJson[name])) {
+						reportDropDownsJson[name] = [reportDropDownsJson[name]];
+					}
+					reportDropDownsJson[name].push(value);
+				} else {
+					reportDropDownsJson[name] = value;
+				}
+			});
+			return reportDropDownsJson;
+		}
+
+		function addNewRow(src) {
+			addRows(src, '1', '1', '1');
+			let lastAddedRownumber = $("#hidden-csvFieldsTable").val();
+			let source = src.replace("addbutton-", "") + "_" + lastAddedRownumber;
+			$("#preference-" + source).val(lastAddedRownumber);
+			$("#csvFieldName-" + source).val("");
+			$("#schemaFieldName-" + source).val("");
+			$("#schemadetails-" + source).val("");
+			$("#schemaFieldName-" + source).attr("readonly", false);
+		}
+
+		function removeRow(src, rowindex) {
+			deleteSingleRow(src, rowindex);
+			addOptionToDropDown()
 		}
 	</script>
 	<link rel="stylesheet" th:href="@{/css/selectize.default.min.css}" />

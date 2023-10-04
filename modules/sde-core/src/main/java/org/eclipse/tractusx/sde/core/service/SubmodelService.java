@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.common.exception.ValidationException;
@@ -33,8 +34,16 @@ import org.eclipse.tractusx.sde.common.mapper.SubmodelMapper;
 import org.eclipse.tractusx.sde.common.model.Submodel;
 import org.eclipse.tractusx.sde.core.registry.SubmodelRegistration;
 import org.eclipse.tractusx.sde.core.registry.UsecaseRegistration;
+import org.eclipse.tractusx.sde.core.submodel.entity.SubmodelEntity;
+import org.eclipse.tractusx.sde.core.submodel.entity.SubmodelSematicModelMapper;
+import org.eclipse.tractusx.sde.core.submodel.repository.SubmodelRepository;
+import org.eclipse.tractusx.sde.sematichub.proxy.SematichubModel;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -46,6 +55,10 @@ public class SubmodelService {
 	private final UsecaseRegistration usecaseRegistry;
 
 	private final SubmodelMapper submodelMapper;
+
+	private final SubmodelSematicModelMapper submodelSematicModelMapper;
+
+	private final SubmodelRepository submodelRepository;
 
 	public List<Map<String, String>> findAllSubmodels(List<String> usecases) {
 
@@ -95,14 +108,73 @@ public class SubmodelService {
 		return readValue(submodelName)
 				.orElseThrow(() -> new ValidationException(submodelName + " submodel is not supported"));
 	}
-	
-	public List<Submodel> getAllSubmodels(){
+
+	public List<Submodel> getAllSubmodels() {
 		return submodelRegistration.getModels();
 	}
 
-	public List<Map<Object, Object>> saveSubmodel() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Map<Object, Object>> readSubmodels() {
+
+		List<SubmodelEntity> findAll = submodelRepository.findAll();
+		return findAll.stream().map(entity -> {
+			return submodelMapper.jsonPojoToMap(mapFromEntityToJson(entity));
+		}).toList();
+	}
+
+	@PostConstruct
+	public void loadSubmodelsFromDatabase() {
+
+		List<SubmodelEntity> findAll = submodelRepository.findAll();
+		findAll.stream().forEach(entity -> {
+			JsonObject mapFromEntityToJson = mapFromEntityToJson(entity);
+			submodelRegistration.register(mapFromEntityToJson);
+		});
+	}
+
+	private JsonObject mapFromEntityToJson(SubmodelEntity entity) {
+		JsonObject entitytoPojo = submodelSematicModelMapper.entitytoPojo(entity);
+		JsonObject schemaObject = new JsonObject();
+		schemaObject.addProperty("$schema", "https://json-schema.org/draft/2019-09/schema");
+		schemaObject.addProperty("$id", "http://example.com/example.json");
+		schemaObject.addProperty("type", "array");
+		schemaObject.addProperty("id", entity.getId());
+		schemaObject.addProperty("idShort", getValue(entitytoPojo, "idShort"));
+		schemaObject.addProperty("version", getValue(entitytoPojo, "version"));
+		schemaObject.addProperty("semantic_id", getValue(entitytoPojo, "semanticId"));
+		schemaObject.addProperty("title", getValue(entitytoPojo, "title"));
+		schemaObject.addProperty("description", getValue(entitytoPojo, "description"));
+		schemaObject.addProperty("shortDescription", getValue(entitytoPojo, "shortDescription"));
+
+		JsonObject items = new JsonObject();
+		items.addProperty("type", "object");
+		items.add("required", entitytoPojo.get("required"));
+		items.add("properties", prepareProperties(entitytoPojo));
+		schemaObject.add("items", items);
+		schemaObject.add("examples", entitytoPojo.get("examples"));
+		return schemaObject;
+	}
+
+	private String getValue(JsonObject entitytoPojo, String prop) {
+		return entitytoPojo.get(prop) == null ? "" : entitytoPojo.get(prop).getAsString();
+	}
+
+	private JsonObject prepareProperties(JsonObject entitytoPojo) {
+		JsonObject jPropObject = new JsonObject();
+		JsonArray asJsonArray = entitytoPojo.get("properties").getAsJsonArray();
+		asJsonArray.forEach(element -> {
+			JsonObject jsonElement = element.getAsJsonObject().get("schemadetails").getAsJsonObject();
+			jsonElement.addProperty("title", element.getAsJsonObject().get("csvFieldName").getAsString());
+			jPropObject.add(element.getAsJsonObject().get("schemaFieldName").getAsString(), jsonElement);
+		});
+		return jPropObject;
+	}
+
+	public Map<Object, Object> saveSubmodel(SematichubModel sematichubModel) {
+		sematichubModel.setId(UUID.randomUUID().toString());
+		SubmodelEntity savedEntity = submodelRepository.save(submodelSematicModelMapper.mapFrom(sematichubModel));
+		JsonObject mapFromEntityToJson = mapFromEntityToJson(savedEntity);
+		submodelRegistration.register(mapFromEntityToJson);
+		return submodelMapper.jsonPojoToMap(mapFromEntityToJson);
 	}
 
 }

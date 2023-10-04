@@ -18,37 +18,31 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.extensions;
+package org.eclipse.tractusx.sde.core.submodel.entity;
 
-import java.io.InputStream;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.eclipse.tractusx.sde.common.mapper.SubmodelMapper;
-import org.eclipse.tractusx.sde.common.model.Submodel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.gson.JsonObject;
-
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.SneakyThrows;
 
-@Component
-public abstract class SubmodelExtension {
 
-	@Autowired
-	private SubmodelMapper submodelMapper;
+@Converter
+public class JsonNodeToStringConverter implements AttributeConverter<JsonNode, String> {
+	
+	private ObjectMapper mapper = new ObjectMapper();
 
 	@SneakyThrows
-	public Submodel loadSubmodel(InputStream input) {
-		JsonObject schema = submodelMapper.jsonfileToJsonPojo(input);
-		
-		return Submodel.builder()
-				.id(schema.get("id").getAsString())
-				.name(schema.get("title").getAsString())
-				.version(schema.get("version").getAsString())
-				.semanticId(schema.get("semantic_id").getAsString())
-				.schema(schema).build();
+	@Override
+	public String convertToDatabaseColumn(JsonNode attribute) {
+		return mapper.writeValueAsString(attribute);
 	}
-	
-	public abstract Submodel submodel();
 
+	@SneakyThrows
+	@Override
+	public JsonNode convertToEntityAttribute(String dbData) {
+		return mapper.readTree(dbData);
+	}
+    
 }

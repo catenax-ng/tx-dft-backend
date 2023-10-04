@@ -1,13 +1,8 @@
-let fieldList = [];
+let requireFieldList = [];
 var $globalAssetId;
-var $localIdentifier;
-var $specificAssetIds;
 var $shellIdShortId;
 
-var csvFieldsControl;
 var globalAssetIdControl;
-var localIdentifierControl;
-var specificAssetIdsControl;
 var shellIdShortIdControl;
 
 
@@ -42,60 +37,65 @@ let optionsWithGlobal = {
 };
 
 $(document).ready(function() {
-	$csvFields = $('#csvFields').selectize(optionsWithCreate);
 	$globalAssetId = $('#globalAssetId').selectize(optionsWithGlobal);
-	$localIdentifier = $('#localIdentifier').selectize(optionsWithOutCreate);
-	$specificAssetIds = $('#specificAssetIds').selectize(optionsWithOutCreate);
 	$shellIdShortId = $('#shellIdShortId').selectize(optionsWithOutCreate);
 
-	csvFieldsControl = $csvFields[0].selectize;
 	globalAssetIdControl = $globalAssetId[0].selectize;
-	localIdentifierControl = $localIdentifier[0].selectize;
-	specificAssetIdsControl = $specificAssetIds[0].selectize;
 	shellIdShortIdControl = $shellIdShortId[0].selectize;
 
 	$(".dyanamicdiv").hide();
 
-	//$('#waitingModel').modal('show');
+	$('#waitingModel').modal('show');
 
 	$('#submodel').change(function() {
+		let urn = $(this).val();
+		$('#waitingModel').modal('show');
+		$.getJSON('/api/hub/models/' + encodeURIComponent(urn) + '/toflatcsv', function(reposnedataSet) {
+			let selectedText = $("#submodel option:selected").text();
+			let nameDetails = selectedText.split("-");
+			$('#title').val(nameDetails[0]);
+			$('#description').val(reposnedataSet.description);
+			$('#semanticId').val(urn);
+			$('#submodelIdShort').val(nameDetails[0].toLowerCase());
+			$('#version').val(nameDetails[1]);
 
-		$.getJSON('/api/hub/models/' + encodeURIComponent($(this).val()) + '/example-payload', function(dataSet) {
-			$('#examplePayloadPre').text(JSON.stringify(dataSet, undefined, 2));
-			$('#digitalTwinPre').text(JSON.stringify(JSON.parse(getDigitalTwinObj()), undefined, 2));
-			$('#examplePayload').val(JSON.stringify(dataSet, undefined, 2));
-			$('#digitalTwin').val(JSON.stringify(JSON.parse(getDigitalTwinObj()), undefined, 2));
+			$('#examplePayload').text(JSON.stringify(reposnedataSet.examplePayload, undefined, 2));
+			$('#digitalTwin').text(JSON.stringify(JSON.parse(getDigitalTwinObj()), undefined, 2));
+			$('#examples').text(JSON.stringify([reposnedataSet.examples], undefined, 2));
 
-			csvFieldsControl.clear();
-			csvFieldsControl.clearOptions();
 			globalAssetIdControl.clearOptions();
-			localIdentifierControl.clearOptions();
-			specificAssetIdsControl.clearOptions();
 			shellIdShortIdControl.clearOptions();
+			createCSVFieldTable(reposnedataSet.properties);
+			requireFieldList = reposnedataSet.required;
 
-			getFlatCSVFieldsFromServer(dataSet);
 			$(".dyanamicdiv").show();
+			$('#waitingModel').modal('hide');
 		})
 			.fail(function(ex) { alert('failed, ' + ex); });
 
 	});
+
+	$.getJSON('/api/readSubmodels', function(dataSet) {
+		console.log(dataSet);
+	})
+		.fail(function(ex) { alert('failed, ' + ex); });
 
 	$.getJSON('/api/hub/models?status=RELEASED&pageSize=1000&page=0', function(dataSet) {
 		$("#submodel").append('<option value="">-- Select Option--</option>');
 		$.each(dataSet.items, function(index, item) {
 			$("#submodel").append('<option value="' + item.urn + '">' + item.name + '-' + item.version + '</option>');
 		});
-		//$('#waitingModel').modal('hide');
+		$('#waitingModel').modal('hide');
 	})
 		.fail(function(ex) { alert('failed, ' + ex); });
 
 
 	$.getJSON('/api/usecases', function(dataSet) {
-		$("#usecase").append('<option value="">-- Select Option--</option>');
+		$("#usecases").append('<option value="">-- Select Option--</option>');
 		$.each(dataSet, function(index, item) {
-			$("#usecase").append('<option value="' + item.id + '">' + item.title + '</option>');
+			$("#usecases").append('<option value="' + item.id + '">' + item.title + '</option>');
 		});
-		$('#usecase').selectize(optionsWithOutCreate);
+		$('#usecases').selectize(optionsWithOutCreate);
 	})
 		.fail(function(ex) { alert('failed, ' + ex); });
 
@@ -104,30 +104,90 @@ $(document).ready(function() {
 
 });
 
-function getFlatCSVFieldsFromServer(dataSet) {
-	$.ajax({
-		type: "POST",
-		url: '/api/hub/models/json/toflatcsv',
-		data: JSON.stringify(dataSet),
-		contentType: "application/json"
-	})
-		.done(function(data, textStatus, jqXHR) {
-			$.each(data, function(index, item) {
-				csvFieldsControl.addOption({ 'id': item, name: item });
+function createCSVFieldTable(dataSet) {
+	$(".csvFieldsTable_dyanmic_row").remove();
+	let index = 1;
+	$.each(dataSet, function(key, value) {
+		let csvFValue = key.substr(key.lastIndexOf(".") + 1)
+		let csvFNameUseCount = $("[id^='csvFieldName-csvFieldsTable_'][value='" + csvFValue + "']").length;
+		if (csvFNameUseCount > 0) {
+			csvFValue = key;
+		}
+		let scehmaDetials = JSON.stringify(value, undefined, 2);
+
+		$("#tabelname-csvFieldsTable").append('<tr class="csvFieldsTable_dyanmic_row" id="tr-csvFieldsTable_' + index + '">'
+			+ '<td ><span id="srno-csvFieldsTable_' + index + '">' + index + '</span>. <br/><br/>'
+			+ '<img src="./img/remove.png" id="delbutton-csvFieldsTable_' + index + '" onclick="removeRow(this.id,\'1\')"/><br/><br/>'
+			+ 'Preference: <input type="text" class="preference form-control" id="preference-csvFieldsTable_' + index + '" value="' + index + '" onblur="goToAddOption(this.id)"/>'
+			+ '</td>'
+			+ '<td>'
+			+ '<label for="schemaFieldName-csvFieldsTable_' + index + '"><strong>Schema Field</strong>: </label> <br/>'
+			+ '<input type="text" class="form-control" readonly id="schemaFieldName-csvFieldsTable_' + index + '" value="' + key + '" onblur="goToAddOption(this.id)"/><br/><br/>'
+			+ '<label for="csvFieldName-csvFieldsTable_' + index + '"><strong>CSV Fields Title</strong>: </label>'
+			+ '<input type="text" id="csvFieldName-csvFieldsTable_' + index + '" value="' + csvFValue + '" class="form-control"/>'
+			+ '</td>'
+			+ '<td><textarea class="descriptionview form-control" id="schemadetails-csvFieldsTable_' + index + '">' + scehmaDetials + '</textarea></td>'
+			+ '</tr>');
+
+		$("#hidden-csvFieldsTable").val(index);
+
+		index++;
+	});
+	addOptionToDropDown();
+	/*$("#tabelname-csvFieldsTable").sortable({
+		items: 'tr:not(tr:first-child)',
+		cursor: 'pointer',
+		axis: 'y',
+		dropOnEmpty: false,
+		start: function(e, ui) {
+			ui.item.addClass("selected");
+		},
+		stop: function(e, ui) {
+			ui.item.removeClass("selected");
+			$(this).find("tr").each(function(index) {
+				if (index > 0) {
+					$(this).find(".preference").val(index);
+				}
 			});
-			fieldList = data;
-			csvFieldsControl.setValue(data);
-		})
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			console.log("Ajax problem: " + textStatus + ". " + errorThrown);
-		});
+		}
+	});*/
+
+}
+
+function goToAddOption(src) {
+	let values = $("#" + src).val();
+	let csvFValue = values.substr(values.lastIndexOf(".") + 1)
+	let fId = src.replace('schemaFieldName', '');
+	$("#csvFieldName" + fId).val(csvFValue);
+	let sampleJson = { type: "string", description: "" + csvFValue + "" };
+	$("#schemadetails" + fId).val(JSON.stringify(sampleJson, undefined, 2));
+	addOptionToDropDown();
+}
+
+function addOptionToDropDown() {
+
+	deleteAllRowexcept1st('specificAssetIdstbl');
+
+	$("#tabelname-specificAssetIdstbl").find("[id^='key-specificAssetIdstbl'],[id^='value-specificAssetIdstbl']").each(function() {
+		$(this).html("");
+	});
+
+	globalAssetIdControl.clearOptions();
+	shellIdShortIdControl.clearOptions();
+
+	$("[id^='schemaFieldName-csvFieldsTable_']").each(function() {
+		let item = $(this).val();
+		addItemTolist(item);
+	});
 }
 
 
 function addItemTolist(item) {
 	globalAssetIdControl.addOption({ 'id': item, name: item });
-	localIdentifierControl.addOption({ 'id': item, name: item });
-	specificAssetIdsControl.addOption({ 'id': item, name: item });
+
+	$("#tabelname-specificAssetIdstbl").find("[id^='key-specificAssetIdstbl'],[id^='value-specificAssetIdstbl']").each(function() {
+		$(this).append('<option value="' + item + '">' + item + '</option>');
+	})
 	shellIdShortIdControl.addOption({ 'id': item, name: item });
 }
 
@@ -135,10 +195,10 @@ function getDigitalTwinObj() {
 	return `{
     "description": [],
     "displayName": [],
-    "globalAssetId": "urn:uuid:{uuid}",
+    "globalAssetId": "urn:uuid:{globalAssetId}",
     "idShort": "{shellShortId}",
-    "id": "urn:uuid:{uuid}",
-    "specificAssetIds": "{specificAssetIds}",
+    "id": "urn:uuid:{autoGeneratedUUID}",
+    "specificAssetIds": "[{specificAssetIds}]",
     "submodelDescriptors": [
         {
             "endpoints": [
@@ -163,7 +223,7 @@ function getDigitalTwinObj() {
                 }
             ],
             "idShort": "{submodelShortId}",
-            "id": "urn:uuid:{uuid}",
+            "id": "urn:uuid:{autoGeneratedUUID}",
             "semanticId": {
                 "type": "ExternalReference",
                 "keys": [

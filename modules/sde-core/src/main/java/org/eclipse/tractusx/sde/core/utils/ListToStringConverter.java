@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023 T-Systems International GmbH
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.core.processreport.entity;
+package org.eclipse.tractusx.sde.core.utils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,11 +27,10 @@ import java.util.List;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-
 @Converter
 public class ListToStringConverter implements AttributeConverter<List<String>, String> {
-	
-    @Override
+
+	@Override
     public String convertToDatabaseColumn(List<String> attribute) {
         return attribute == null ? null : String.join(",",attribute);
     }
@@ -40,5 +39,5 @@ public class ListToStringConverter implements AttributeConverter<List<String>, S
     public List<String> convertToEntityAttribute(String dbData) {
         return dbData == null ? Collections.emptyList() : Arrays.asList(dbData.split(","));
     }
-    
+
 }
