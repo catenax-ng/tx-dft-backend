@@ -89,6 +89,31 @@
 					<textarea id="description" name="description" class="form-control"></textarea>
 				</div>
 			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="shortDescription">Is this Relational Submodel?
+					</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="isrelational" id="isrelational_no"
+							value="option2">
+						<label class="form-check-label" for="isrelational_no">No</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="isrelational" id="isrelational_yes"
+							value="option1">
+						<label class="form-check-label" for="isrelational_yes">Yes</label>
+					</div>
+					<div class="form-group">
+						<select id="relationalsubmodel" name="relationalsubmodel" class="mydropdwon"
+							placeholder="-- Select Option--">
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group col-md-6">
+
+				</div>
+			</div>
 		</form>
 		<form id="submodelform_csv">
 			<div class="form-row dyanamicdiv">

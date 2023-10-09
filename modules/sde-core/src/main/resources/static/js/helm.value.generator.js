@@ -1,9 +1,11 @@
 let requireFieldList = [];
 var $globalAssetId;
 var $shellIdShortId;
+var $relationalsubmodel;
 
 var globalAssetIdControl;
 var shellIdShortIdControl;
+var relationalsubmodel;
 
 
 let optionsWithCreate = {
@@ -39,9 +41,11 @@ let optionsWithGlobal = {
 $(document).ready(function() {
 	$globalAssetId = $('#globalAssetId').selectize(optionsWithGlobal);
 	$shellIdShortId = $('#shellIdShortId').selectize(optionsWithOutCreate);
-
+    $relationalsubmodel = $('#relationalsubmodel').selectize(optionsWithGlobal);
+    
 	globalAssetIdControl = $globalAssetId[0].selectize;
 	shellIdShortIdControl = $shellIdShortId[0].selectize;
+	relationalsubmodel = $relationalsubmodel[0].selectize;
 
 	$(".dyanamicdiv").hide();
 
@@ -74,6 +78,7 @@ $(document).ready(function() {
 			.fail(function(ex) { alert('failed, ' + ex); });
 
 	});
+
 
 	$.getJSON('/api/readSubmodels', function(dataSet) {
 		console.log(dataSet);
@@ -183,12 +188,16 @@ function addOptionToDropDown() {
 
 
 function addItemTolist(item) {
+	
 	globalAssetIdControl.addOption({ 'id': item, name: item });
 
 	$("#tabelname-specificAssetIdstbl").find("[id^='key-specificAssetIdstbl'],[id^='value-specificAssetIdstbl']").each(function() {
 		$(this).append('<option value="' + item + '">' + item + '</option>');
 	})
 	shellIdShortIdControl.addOption({ 'id': item, name: item });
+	
+	relationalsubmodel.addOption({ 'id': item, name: item });
+	
 }
 
 function getDigitalTwinObj() {
