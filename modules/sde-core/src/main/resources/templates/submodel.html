@@ -89,31 +89,6 @@
 					<textarea id="description" name="description" class="form-control"></textarea>
 				</div>
 			</div>
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label for="shortDescription">Is this Relational Submodel?
-					</label>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="isrelational" id="isrelational_no"
-							value="option2">
-						<label class="form-check-label" for="isrelational_no">No</label>
-					</div>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="isrelational" id="isrelational_yes"
-							value="option1">
-						<label class="form-check-label" for="isrelational_yes">Yes</label>
-					</div>
-					<div class="form-group">
-						<select id="relationalsubmodel" name="relationalsubmodel" class="mydropdwon"
-							placeholder="-- Select Option--">
-						</select>
-					</div>
-				</div>
-
-				<div class="form-group col-md-6">
-
-				</div>
-			</div>
 		</form>
 		<form id="submodelform_csv">
 			<div class="form-row dyanamicdiv">
@@ -135,18 +110,116 @@
 				</div>
 			</div>
 		</form>
-		<form id="submodelform_other">
-			<div class="form-row dyanamicdiv">
+		<form id="submodelform_other" class="dyanamicdiv">
+			<div class="form-row">
 				<div class="form-group col-md-6">
-					<label for="examplePayload"><strong>Example Payload</strong></label>
+					<label for="examplePayload"><strong>Json Example Payload</strong></label>
 					<pre id="examplePayload" class="form-control" style="height: auto;font-size: 11px;"></pre>
 				</div>
 				<div class="form-group col-md-6">
-					<label for="examples"><strong>Examples</strong></label>
+					<label for="examples"><strong>CSV Examples payload</strong></label>
 					<pre id="examples" class="form-control" style="height: auto;font-size: 11px;"></pre>
 				</div>
 			</div>
-			<div class="form-row dyanamicdiv">
+
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="shortDescription"><strong>Is this Relational Submodel?</strong>
+					</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="isRelational" checked id="isrelational_no"
+							value="no" onchange="buildRelationshp(this.id)">
+						<label class="form-check-label" for="isrelational_no">No</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="isRelational" id="isrelational_yes"
+							value="yes" onchange="buildRelationshp(this.id)">
+						<label class="form-check-label" for="isrelational_yes">Yes</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-row relationship_div" style="display:none">
+				<div class="form-group col-md-6">
+					<label for="parentlookupfield"><strong>Parent look up for field</strong></label>
+					<select id="parentlookupfield" name="parentLookupField" class="mydropdwon"
+						placeholder="-- Select Option--">
+					</select>
+					<em><br />This filed will automaticaly look up based on parent specificAssetIds key. This field
+						will not aksed to user to enter data</em>
+					<label for="parentspecificAssetIdstbl"><strong>Parent twin look up based on below Specific
+							Assets Ids</strong></label>
+					<img src="./img/plus.png" alt="add image" id="addbutton-parentspecificAssetIdstbl"
+						onclick="addRows(this.id,'1','1','1')" />
+					<em><br />For same Key and value will generate field name and value combination, <br />
+						In Twin, The specificAssetIds key will be CSV field name and value will be user
+						enter/selected value</em>
+					<table id="tabelname-parentspecificAssetIdstbl" class="table table-bordered">
+						<caption>Specific Asset Ids table</caption>
+						<tr>
+							<th style="width:45%">Key
+								<input type="hidden" name="hidden-parentspecificAssetIdstbl"
+									id="hidden-parentspecificAssetIdstbl" value="1" />
+							</th>
+							<th style="width:45%">Value</th>
+							<th style="width:10%"></th>
+						</tr>
+						<tr id="tr-parentspecificAssetIdstbl_1">
+							<td>
+								<select id="key-parentspecificAssetIdstbl_1" name="parentspecificAssetIdstbl_key"
+									class="form-control" placeholder="-- Select Option--"></select>
+							</td>
+							<td><select id="value-parentspecificAssetIdstbl_1" name="parentspecificAssetIdstbl_value"
+									class="form-control" placeholder="-- Select Option--"></select></td>
+							<td>
+								<img src="./img/remove.png" alt="remove image"
+									id="delbutton-parentspecificAssetIdstbl_1"
+									onclick="deleteSingleRow(this.id, '1')" />
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="form-group col-md-6">
+					<div>
+						<label for="childlookupfield"><strong>Child look up for field</strong></label>
+						<select id="childlookupfield" name="childLookupField" class="mydropdwon"
+							placeholder="-- Select Option--">
+						</select>
+						<em><br />This filed will automaticaly look up based on parent specificAssetIds key.
+							This field
+							will not aksed to user to enter data</em>
+					</div>
+					<label for="specificAssetIds"><strong>Child Specific Asset Ids</strong></label>
+					<img src="./img/plus.png" alt="add image" id="addbutton-childspecificAssetIdstbl"
+						onclick="addRows(this.id,'1','1','1')" />
+					<em><br />For same Key and value will generate field name and value combination, <br />
+						In Twin, The specificAssetIds key will be CSV field name and value will be user
+						enter/selected value</em>
+					<table id="tabelname-childspecificAssetIdstbl" class="table table-bordered">
+						<caption>Child Specific Asset Ids table</caption>
+						<tr>
+							<th style="width:45%">Key
+								<input type="hidden" name="hidden-childspecificAssetIdstbl"
+									id="hidden-childspecificAssetIdstbl" value="1" />
+							</th>
+							<th style="width:45%">Value</th>
+							<th style="width:10%"></th>
+						</tr>
+						<tr id="tr-childspecificAssetIdstbl_1">
+							<td>
+								<select id="key-childspecificAssetIdstbl_1" name="childspecificAssetIdstbl_key"
+									class="form-control" placeholder="-- Select Option--"></select>
+							</td>
+							<td><select id="value-childspecificAssetIdstbl_1" name="childspecificAssetIdstbl_value"
+									class="form-control" placeholder="-- Select Option--"></select></td>
+							<td>
+								<img src="./img/remove.png" alt="remove image" id="delbutton-childspecificAssetIdstbl_1"
+									onclick="deleteSingleRow(this.id, '1')" />
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="digitalTwin"><strong>Digital Twin</strong></label>
 					<pre id="digitalTwin" class="form-control" style="height: auto;font-size: 11px;"></pre>
@@ -162,12 +235,12 @@
 
 						<div class="form-group col-md-12">
 							<label for="shellIdShortId"><strong>Shell idShort</strong></label>
-							<i><br />All selected mutiple fields will be use as field1_field2_field3_BPNNumber</i>
+							<em><br />All selected mutiple fields will be use as field1_field2_field3_BPNNumber</em>
 							<select id="shellIdShortId" name="shellIdShortId" multiple class="mydropdwon"
 								placeholder="-- Select Option--"></select>
 						</div>
-						<div class="form-group col-md-12">
-							<label for="specificAssetIds"><strong>Specific Asset Ids</strong></label>
+						<div class="form-group col-md-12" style="margin-top: 8%;">
+							<label for="specificAssetIds"><strong>Specific Asset Ids for Twin creation</strong></label>
 							<img src="./img/plus.png" alt="add image" id="addbutton-specificAssetIdstbl"
 								onclick="addRows(this.id,'1','1','1')" />
 							<em><br />For same Key and value will generate field name and value combination, <br />
@@ -187,6 +260,10 @@
 									<td>
 										<select id="key-specificAssetIdstbl_1" name="specificAssetIds_key"
 											class="form-control" placeholder="-- Select Option--"></select>
+										<input type="checkbox" id="publicreadble-specificAssetIdstbl_1"
+											name="specificAssetIds_publicreadble" />
+										<label for="publicreadble-specificAssetIdstbl_1"> Public readable
+											attribute</label>
 									</td>
 									<td><select id="value-specificAssetIdstbl_1" name="specificAssetIds_value"
 											class="form-control" placeholder="-- Select Option--"></select></td>
@@ -228,7 +305,9 @@
 			const form = $("#submodelform");
 			const formother = $("#submodelform_other");
 			let json = $.extend(true, {}, convertFormToJSON(form), convertFormToJSON(formother));
-			let originaljson = $.extend(true, json, {specificAssetIds: convertSpecificAssetIdsTableToJSON()});
+			let originaljson = $.extend(true, json, {specificAssetIds: convertSpecificAssetIdsTableToJSON('specificAssetIdstbl')});
+			originaljson = $.extend(true, originaljson, {parentSpecificAssetIds: convertSpecificAssetIdsTableToJSON('parentspecificAssetIdstbl')});
+			originaljson = $.extend(true, originaljson, {childSpecificAssetIds: convertSpecificAssetIdsTableToJSON('childspecificAssetIdstbl')});
 			originaljson = $.extend(true, originaljson, {properties: convertMultipleFiledToJSON()});
 			originaljson['examplePayload'] = JSON.parse($("#examplePayload").html());
 			originaljson['digitalTwin'] = JSON.parse($("#digitalTwin").html());
@@ -267,14 +346,17 @@
 			return original;
 		}
 
-		function convertSpecificAssetIdsTableToJSON() {
+		function convertSpecificAssetIdsTableToJSON(src) {
 			let original = [];
-			$("[id^='tr-specificAssetIdstbl_']").each(function () {
+			$("[id^='tr-" + src + "_']").each(function () {
 				let json = {}
 				let idpart = $(this).attr('id');
-				let idindex = idpart.replace('tr-specificAssetIdstbl_', '');
-				json['key'] = $("#key-specificAssetIdstbl_" + idindex).val();
-				json['value'] = $("#value-specificAssetIdstbl_" + idindex).val();
+				let idindex = idpart.replace('tr-' + src + '_', '');
+				json['key'] = $("#key-" + src + "_" + idindex).val();
+				json['value'] = $("#value-" + src + "_" + idindex).val();
+
+				if ($("#publicreadble-" + src + "_" + idindex).length > 0)
+					json['publicreadble'] = $("#publicreadble-" + src + "_" + idindex).val();
 				original.push(json);
 			})
 			return original;
@@ -295,6 +377,20 @@
 			return reportDropDownsJson;
 		}
 
+
+		function buildRelationshp(src) {
+			var radioValue = $("input[name='isRelational']:checked").val();
+			if (radioValue === 'yes') {
+				$(".relationship_div").show();
+			}
+			else {
+				$(".relationship_div").hide();
+			}
+		}
+
+
+
+
 		function addNewRow(src) {
 			addRows(src, '1', '1', '1');
 			let lastAddedRownumber = $("#hidden-csvFieldsTable").val();
@@ -304,6 +400,7 @@
 			$("#schemaFieldName-" + source).val("");
 			$("#schemadetails-" + source).val("");
 			$("#schemaFieldName-" + source).attr("readonly", false);
+			$("#schemaFieldName-" + source).attr("onblur", "goToAddOption(this.id)");
 		}
 
 		function removeRow(src, rowindex) {

@@ -134,23 +134,19 @@ function setClonedData(counter, indexofcount, $clone, delrow) {
 		}
 	});
 
-	$clone.find("input:radio").attr("id", function() {
+	$clone.find("input:radio,input:checkbox").attr("id", function() {
 		var fid = generateId(this.id, indexofcount, counter, 'radio');
 		$(this).next().attr('for', fid);
+		$(this).attr('checked', false);
 		return fid;
 	});
-	$clone.find("input:radio").attr("name", function() {
+	$clone.find("input:radio,input:checkbox").attr("name", function() {
 		var fname = generateId(this.name, indexofcount, counter, 'radio');
 		return fname;
 	});
 
 
 	$clone.find("input,select,img,a,textarea,table,tr,td,img,div,file,span,pre").attr("id", function() {
-		var fid = generateId(this.id, indexofcount, counter, '');
-		return fid;
-	});
-
-	$clone.find("label").attr("for", function() {
 		var fid = generateId(this.id, indexofcount, counter, '');
 		return fid;
 	});
@@ -166,7 +162,7 @@ function setClonedData(counter, indexofcount, $clone, delrow) {
 			fid = '';
 		return fid;
 	});
-	$clone.find("input:checked").attr('checked', false);
+
 	$clone.find("span.validationmsg").text('');
 	$clone.attr("id",
 		function() {

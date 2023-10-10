@@ -88,7 +88,7 @@ public class ConsumerControlPanelService extends AbstractEDCStepsHelper {
 
 		JsonNode contractOfferCatalog = contractOfferCatalogApiProxy
 				.getContractOffersCatalog(contractOfferRequestFactory
-						.getContractOfferRequest(providerUrl + protocolPath, limit, offset, filterExpression));
+						.getContractOfferRequest(sproviderUrl + protocolPath, limit, offset, filterExpression));
 
 		JsonNode jOffer = contractOfferCatalog.get("dcat:dataset");
 		if (jOffer.isArray()) {

@@ -1,11 +1,9 @@
 let requireFieldList = [];
-var $globalAssetId;
-var $shellIdShortId;
-var $relationalsubmodel;
 
 var globalAssetIdControl;
 var shellIdShortIdControl;
-var relationalsubmodel;
+var parentlookupfield;
+var childlookupfield;
 
 
 let optionsWithCreate = {
@@ -32,6 +30,7 @@ let optionsWithOutCreate = {
 };
 
 let optionsWithGlobal = {
+	plugins: ["remove_button"],
 	valueField: 'name',
 	labelField: 'name',
 	searchField: 'name',
@@ -39,13 +38,15 @@ let optionsWithGlobal = {
 };
 
 $(document).ready(function() {
-	$globalAssetId = $('#globalAssetId').selectize(optionsWithGlobal);
-	$shellIdShortId = $('#shellIdShortId').selectize(optionsWithOutCreate);
-    $relationalsubmodel = $('#relationalsubmodel').selectize(optionsWithGlobal);
-    
+	var $globalAssetId = $('#globalAssetId').selectize(optionsWithGlobal);
+	var $shellIdShortId = $('#shellIdShortId').selectize(optionsWithOutCreate);
+	var $parentlookupfield = $('#parentlookupfield').selectize(optionsWithGlobal);
+	var $childlookupfield = $('#childlookupfield').selectize(optionsWithGlobal);
+
 	globalAssetIdControl = $globalAssetId[0].selectize;
 	shellIdShortIdControl = $shellIdShortId[0].selectize;
-	relationalsubmodel = $relationalsubmodel[0].selectize;
+	parentlookupfield = $parentlookupfield[0].selectize;
+	childlookupfield = $childlookupfield[0].selectize;
 
 	$(".dyanamicdiv").hide();
 
@@ -127,7 +128,7 @@ function createCSVFieldTable(dataSet) {
 			+ '</td>'
 			+ '<td>'
 			+ '<label for="schemaFieldName-csvFieldsTable_' + index + '"><strong>Schema Field</strong>: </label> <br/>'
-			+ '<input type="text" class="form-control" readonly id="schemaFieldName-csvFieldsTable_' + index + '" value="' + key + '" onblur="goToAddOption(this.id)"/><br/><br/>'
+			+ '<input type="text" class="form-control" readonly id="schemaFieldName-csvFieldsTable_' + index + '" value="' + key + '"/><br/><br/>'
 			+ '<label for="csvFieldName-csvFieldsTable_' + index + '"><strong>CSV Fields Title</strong>: </label>'
 			+ '<input type="text" id="csvFieldName-csvFieldsTable_' + index + '" value="' + csvFValue + '" class="form-control"/>'
 			+ '</td>'
@@ -177,6 +178,17 @@ function addOptionToDropDown() {
 		$(this).html("");
 	});
 
+	$("#tabelname-parentspecificAssetIdstbl").find("[id^='key-parentspecificAssetIdstbl'],[id^='value-parentspecificAssetIdstbl']").each(function() {
+		$(this).html("");
+	});
+
+	$("#tabelname-childspecificAssetIdstbl").find("[id^='key-childspecificAssetIdstbl'],[id^='value-childspecificAssetIdstbl']").each(function() {
+		$(this).html("");
+	});
+
+	parentlookupfield.clearOptions();
+	childlookupfield.clearOptions();
+
 	globalAssetIdControl.clearOptions();
 	shellIdShortIdControl.clearOptions();
 
@@ -188,16 +200,27 @@ function addOptionToDropDown() {
 
 
 function addItemTolist(item) {
-	
-	globalAssetIdControl.addOption({ 'id': item, name: item });
+
+	globalAssetIdControl.addOption({ id: item, name: item });
 
 	$("#tabelname-specificAssetIdstbl").find("[id^='key-specificAssetIdstbl'],[id^='value-specificAssetIdstbl']").each(function() {
 		$(this).append('<option value="' + item + '">' + item + '</option>');
 	})
-	shellIdShortIdControl.addOption({ 'id': item, name: item });
-	
-	relationalsubmodel.addOption({ 'id': item, name: item });
-	
+
+	$("#tabelname-parentspecificAssetIdstbl").find("[id^='key-parentspecificAssetIdstbl'],[id^='value-parentspecificAssetIdstbl']").each(function() {
+		$(this).append('<option value="' + item + '">' + item + '</option>');
+	})
+
+	$("#tabelname-childspecificAssetIdstbl").find("[id^='key-childspecificAssetIdstbl'],[id^='value-childspecificAssetIdstbl']").each(function() {
+		$(this).append('<option value="' + item + '">' + item + '</option>');
+	})
+
+	shellIdShortIdControl.addOption({ id: item, name: item });
+
+	parentlookupfield.addOption({ id: item, name: item });
+
+	childlookupfield.addOption({ id: item, name: item });
+
 }
 
 function getDigitalTwinObj() {

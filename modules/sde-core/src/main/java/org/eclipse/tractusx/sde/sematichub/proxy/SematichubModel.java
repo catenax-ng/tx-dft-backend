@@ -25,12 +25,17 @@ public class SematichubModel {
 	private String shortDescription;
 	private String description;
 	private String globalAssetId;
+	private String isRelational;
 	private JsonNode examples;
 	private JsonNode examplePayload;
 	private JsonNode required;
 	private JsonNode digitalTwin;
 	private JsonNode properties;
 	private JsonNode specificAssetIds;
+	private String parentLookupField;
+	private JsonNode parentSpecificAssetIds;
+	private String childLookupField;
+	private JsonNode childSpecificAssetIds;
 	private List<String> shellIdShortId;
 	private List<String> usecases;
 

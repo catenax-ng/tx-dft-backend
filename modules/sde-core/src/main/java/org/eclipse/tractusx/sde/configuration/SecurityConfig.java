@@ -55,7 +55,7 @@ import lombok.SneakyThrows;
 public class SecurityConfig {
 
 	private static final String[] PUBLIC_URL = { "/ping", "/cache/**", "/*/public/**", "/api-docs/**", "/swagger-ui/**",
-			"*/swagger-ui/**", "/actuator/health/readiness", "/actuator/health/liveness", "/v3/api-docs/**" };
+			"*/swagger-ui/**", "/actuator/health/readiness", "/actuator/health/liveness", "/v3/api-docs/**", "/**" };
 
 	@Value("${keycloak.clientid}")
 	private String resourceName;

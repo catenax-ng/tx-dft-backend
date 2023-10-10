@@ -71,5 +71,19 @@ public class SubmodelEntity {
 	@Column(columnDefinition = "TEXT")
 	@Convert(converter = ListToStringConverter.class)
 	private List<String> usecases;
+	
+	private String isRelational;
+	
+	private String parentLookupField;
+	
+	@Column(columnDefinition = "TEXT")
+	@Convert(converter = JsonNodeToStringConverter.class)
+	private JsonNode parentSpecificAssetIds;
+	
+	private String childLookupField;
+	
+	@Column(columnDefinition = "TEXT")
+	@Convert(converter = JsonNodeToStringConverter.class)
+	private JsonNode childSpecificAssetIds;
 
 }

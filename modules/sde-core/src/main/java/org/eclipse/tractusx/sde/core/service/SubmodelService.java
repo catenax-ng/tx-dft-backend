@@ -41,6 +41,7 @@ import org.eclipse.tractusx.sde.sematichub.proxy.SematichubModel;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import jakarta.annotation.PostConstruct;
@@ -161,10 +162,16 @@ public class SubmodelService {
 	private JsonObject prepareProperties(JsonObject entitytoPojo) {
 		JsonObject jPropObject = new JsonObject();
 		JsonArray asJsonArray = entitytoPojo.get("properties").getAsJsonArray();
+		String parentlookupfield = Optional.ofNullable(entitytoPojo.get("parentlookupfield")).map(JsonElement::getAsString).orElse("") ;
+		String childlookupfield = Optional.ofNullable(entitytoPojo.get("childlookupfield")).map(JsonElement::getAsString).orElse("") ;
+
 		asJsonArray.forEach(element -> {
-			JsonObject jsonElement = element.getAsJsonObject().get("schemadetails").getAsJsonObject();
-			jsonElement.addProperty("title", element.getAsJsonObject().get("csvFieldName").getAsString());
-			jPropObject.add(element.getAsJsonObject().get("schemaFieldName").getAsString(), jsonElement);
+			String fieldName = element.getAsJsonObject().get("schemaFieldName").getAsString();
+			if (!fieldName.equalsIgnoreCase(parentlookupfield) && !fieldName.equalsIgnoreCase(childlookupfield)) {
+				JsonObject jsonElement = element.getAsJsonObject().get("schemadetails").getAsJsonObject();
+				jsonElement.addProperty("title", element.getAsJsonObject().get("csvFieldName").getAsString());
+				jPropObject.add(element.getAsJsonObject().get("schemaFieldName").getAsString(), jsonElement);
+			}
 		});
 		return jPropObject;
 	}
