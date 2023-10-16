@@ -116,7 +116,7 @@ public class DigitalTwinsUtility {
 						.endpointProtocol(CommonConstants.HTTP)
 						.endpointProtocolVersion(List.of(CommonConstants.ENDPOINT_PROTOCOL_VERSION))
 						.subProtocol(CommonConstants.SUB_PROTOCOL)
-						.subprotocolBody(encodedUrl("id=" + shellId + "-" + submodelIdentification) + ";dspEndpoint="
+						.subprotocolBody("id=" + shellId + "-" + submodelIdentification + ";dspEndpoint="
 								+ edcEndpoint)
 						.subprotocolBodyEncoding(CommonConstants.BODY_ENCODING)
 						.securityAttributes(List.of(new SecurityAttributes("NONE", "NONE", "NONE"))).build())
@@ -170,10 +170,6 @@ public class DigitalTwinsUtility {
 					.toList();
 		}
 		return Collections.emptyList();
-	}
-
-	private String encodedUrl(String format) {
-		return format.replace(":", "%3A");
 	}
 
 	private String getFieldFromJsonNode(JsonNode jnode, String fieldName) {
