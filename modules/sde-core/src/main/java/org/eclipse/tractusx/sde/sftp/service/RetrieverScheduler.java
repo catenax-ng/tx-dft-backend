@@ -20,47 +20,64 @@
 
 package org.eclipse.tractusx.sde.sftp.service;
 
-import java.util.UUID;
-import java.util.concurrent.ScheduledFuture;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class RetrieverScheduler {
 
-	private final ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 	private final ProcessRemoteCsv processRemoteCsv;
-	private final ConfigService configService;
-	private ScheduledFuture<?> cronFuture = null;
+	private final JobMaintenanceConfigService jobMaintenanceConfigService;
+	private final SchedulerConfigService schedulerConfigService;
+	private ThreadPoolTaskScheduler taskScheduler;
 
-	public synchronized void schedule(String cronExpression) {
-		if (cronFuture != null) {
-			cronFuture.cancel(false);
-		}
+	@Autowired
+	public RetrieverScheduler(ProcessRemoteCsv processRemoteCsv, @Lazy JobMaintenanceConfigService jobMaintenanceConfigService, @Lazy SchedulerConfigService schedulerConfigService) {
+		this.processRemoteCsv = processRemoteCsv;
+		this.jobMaintenanceConfigService = jobMaintenanceConfigService;
+		this.schedulerConfigService = schedulerConfigService;
+	}
 
-		if (configService.getJobMaintenanceDetails().getAutomaticUpload().booleanValue()) {
-			taskScheduler.initialize();
-			cronFuture = taskScheduler.schedule(() -> processRemoteCsv.process(taskScheduler, UUID.randomUUID().toString()),
-					new CronTrigger(cronExpression));
-			log.info("The Cron Scheduler started successfully as corn expresion " + cronExpression);
+	public synchronized ThreadPoolTaskScheduler reset() {
+		Optional.ofNullable(taskScheduler).ifPresent(ThreadPoolTaskScheduler::shutdown);
+		taskScheduler = new ThreadPoolTaskScheduler();
+		taskScheduler.setWaitForTasksToCompleteOnShutdown(false);
+		taskScheduler.initialize();
+		return taskScheduler;
+	}
+
+	@EventListener(ApplicationReadyEvent.class)
+	public synchronized void reschedule() {
+		if (jobMaintenanceConfigService.getConfiguration().getAutomaticUpload()) {
+			String cronExpression = schedulerConfigService.convertScheduleToCron(schedulerConfigService.getConfiguration());
+			reset().schedule(
+					() -> processRemoteCsv.process(taskScheduler, UUID.randomUUID().toString()),
+					new CronTrigger(cronExpression)
+			);
+			log.info("The Cron Scheduler started successfully as cron expression " + cronExpression);
 		} else {
 			log.warn("Automatic file upload disable, no new scheduler set for run");
 		}
 	}
 
 	public String fire() {
+		if (taskScheduler == null || taskScheduler.getScheduledExecutor().isShutdown()) {
+			reset();
+		}
 		return processRemoteCsv.process(taskScheduler, UUID.randomUUID().toString());
 	}
 
 	public void stopAll() {
 		taskScheduler.shutdown();
-		cronFuture = null;
 	}
 }

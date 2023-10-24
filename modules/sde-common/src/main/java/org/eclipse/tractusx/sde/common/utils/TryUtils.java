@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.core.utils;
+package org.eclipse.tractusx.sde.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class TryUtils {
         }
     }
 
-    private static <E extends Exception> ThrowableSupplier<Boolean, E> voidToBooleanAdapter(ThrowableAction<E> runnable) {
+    public static <E extends Exception> ThrowableSupplier<Boolean, E> voidToBooleanAdapter(ThrowableAction<E> runnable) {
         return () -> {
             runnable.run();
             return true;

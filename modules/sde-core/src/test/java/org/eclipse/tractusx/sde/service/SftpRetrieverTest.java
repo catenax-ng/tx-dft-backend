@@ -20,20 +20,18 @@
 
 package org.eclipse.tractusx.sde.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.OptionalInt;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Delegate;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.sde.EnableTestContainers;
 import org.eclipse.tractusx.sde.TestContainerInitializer;
+import org.eclipse.tractusx.sde.agent.ConfigService;
+import org.eclipse.tractusx.sde.common.ConfigurableFactory;
 import org.eclipse.tractusx.sde.core.csv.service.CsvHandlerService;
 import org.eclipse.tractusx.sde.notification.config.EmailConfiguration;
 import org.eclipse.tractusx.sde.notification.manager.EmailManager;
 import org.eclipse.tractusx.sde.sftp.RetrieverI;
-import org.eclipse.tractusx.sde.sftp.service.DefaultConfigManagement;
 import org.eclipse.tractusx.sde.sftp.service.SftpRetrieverFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;
@@ -43,13 +41,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Delegate;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.OptionalInt;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Slf4j
 @SpringBootTest
@@ -69,17 +70,16 @@ class SftpRetrieverTest {
 	EmailConfiguration emailConfiguration;
 
 	@Autowired
-	SftpRetrieverFactoryImpl sftpRetrieverFactory;
+	ConfigService configService;
 
 	@Autowired
-	DefaultConfigManagement defaultConfigManagement;
+	ApplicationContext context;
 	
 	@BeforeEach
 	public void before() {
-		defaultConfigManagement.deleteAllConfig();
+		configService.deleteAllConfig();
 		TestContainerInitializer.sftp.stop();
 		TestContainerInitializer.sftp.start();
-		defaultConfigManagement.saveDefaultConfiguration();
 	}
 
 	@FunctionalInterface
@@ -104,7 +104,9 @@ class SftpRetrieverTest {
 	@ParameterizedTest(name = "testFtps Test: {index}, {argumentsWithNames}")
 	@MethodSource("provider")
 	void testFtps(Function<RetrieverI, ThrowableExec> tr) throws Exception {
-		try (var sftp = sftpRetrieverFactory.create(OptionalInt.of(TestContainerInitializer.sftp.getMappedPort(22)))) {
+        @SuppressWarnings("unchecked") var factory = (ConfigurableFactory<? extends RetrieverI>)context.getBean("sftp");
+		var f1 = (SftpRetrieverFactoryImpl)factory;
+		try (var sftp = f1.create(OptionalInt.of(TestContainerInitializer.sftp.getMappedPort(22)))) {
 			for (String fileId : sftp) {
 				final var filePath = Path.of(csvHandlerService.getFilePath(fileId));
 				log.info(fileId);

@@ -20,94 +20,62 @@
 
 package org.eclipse.tractusx.sde.core.controller;
 
-import java.util.Map;
-
-import org.eclipse.tractusx.sde.agent.model.ConfigType;
-import org.eclipse.tractusx.sde.agent.model.MinioConfigModel;
-import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
-import org.eclipse.tractusx.sde.agent.model.SftpConfigModel;
-import org.eclipse.tractusx.sde.sftp.dto.EmailNotificationModel;
-import org.eclipse.tractusx.sde.sftp.dto.JobMaintenanceModel;
-import org.eclipse.tractusx.sde.sftp.service.ConfigService;
-import org.eclipse.tractusx.sde.sftp.service.SchedulerService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.eclipse.tractusx.sde.common.ConfigurationProvider;
+import org.eclipse.tractusx.sde.common.utils.TryUtils;
+import org.eclipse.tractusx.sde.common.validators.SpringValidator;
+import org.eclipse.tractusx.sde.sftp.service.RetrieverScheduler;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @PreAuthorize("hasPermission('','auto_config_management')")
 @RequiredArgsConstructor
 public class AutoUploadAgentConfigController {
 
-	private final ConfigService autoUploadAgentConfigurationService;
-	private final SchedulerService schedulerService;
+
+	private final ApplicationContext context;
+	private final SpringValidator springValidator;
+	private final RetrieverScheduler retrieverScheduler;
+
+	private final ObjectMapper mapper = new ObjectMapper();
+
 
 	@PostMapping("/fire")
 	public Map<String, String> fire() {
-		return schedulerService.fire();
+		return Map.of("msg", retrieverScheduler.fire());
 	}
 
-	@PutMapping("/scheduler")
-	public JsonNode updateScheduler(@RequestBody @Valid SchedulerConfigModel schedulerConfig) {
-		schedulerService.updateSchedulerExecution(schedulerConfig);
-		return autoUploadAgentConfigurationService.saveConfiguration(ConfigType.SCHEDULER,
-				schedulerConfig);
+	@GetMapping("/config")
+	public Object getConfig(@RequestParam String type) {
+		return TryUtils.tryExec(
+				() -> (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
+				TryUtils.IGNORE()
+		).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Configuration not found")
+		).getConfiguration();
 	}
 
-	@GetMapping("/scheduler")
-	public JsonNode getSchedulerConfig() {
-		return autoUploadAgentConfigurationService.getConfiguration(ConfigType.SCHEDULER);
+	@PutMapping("/config")
+	public void updateScheduler(@RequestBody JsonNode config, @RequestParam String type) {
+		@SuppressWarnings("unchecked") var cp = (ConfigurationProvider<Object>) TryUtils.tryExec(
+				() ->  (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
+				TryUtils.IGNORE()
+		).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Configuration not found"));
+		Class<?> aClass = cp.getConfiguration().getClass();
+		var configObj = mapper.convertValue(config, aClass);
+		cp.saveConfig(springValidator.validate(configObj));
 	}
-
-	@PutMapping("/sftp")
-	public JsonNode updateSftp(@RequestBody @Valid SftpConfigModel config) {
-		return autoUploadAgentConfigurationService.saveConfiguration(ConfigType.SFTP, config);
-	}
-
-	@PutMapping("/minio")
-	public JsonNode updateMinio(@RequestBody @Valid MinioConfigModel config) {
-		return autoUploadAgentConfigurationService.saveConfiguration(ConfigType.MINIO, config);
-	}
-
-	@GetMapping("/minio")
-	public JsonNode getMinioConfig() {
-		return autoUploadAgentConfigurationService.getConfiguration(ConfigType.MINIO);
-	}
-
-	@GetMapping("/sftp")
-	public JsonNode getSftpConfig() {
-		return autoUploadAgentConfigurationService.getConfiguration(ConfigType.SFTP);
-	}
-
-	@PutMapping("/notification")
-	public JsonNode updateNotification(@RequestBody @Valid EmailNotificationModel config) {
-		return autoUploadAgentConfigurationService.saveConfiguration(ConfigType.NOTIFICATION, config);
-	}
-
-	@GetMapping("/notification")
-	public JsonNode getNotificationConfig() {
-		return autoUploadAgentConfigurationService.getConfiguration(ConfigType.NOTIFICATION);
-	}
-
-	@PutMapping("/job-maintenance")
-	public JsonNode updateJobMaintenance(@RequestBody @Valid JobMaintenanceModel config) {
-		JsonNode saveConfiguration = autoUploadAgentConfigurationService.saveConfiguration(ConfigType.JOB_MAINTENANCE,
-				config);
-		schedulerService.updateScehdulreStatus(config);
-		return saveConfiguration;
-	}
-
-	@GetMapping("/job-maintenance")
-	public JsonNode getJobMaintenanceConfig() {
-		return autoUploadAgentConfigurationService.getConfiguration(ConfigType.JOB_MAINTENANCE);
-	}
-
 }

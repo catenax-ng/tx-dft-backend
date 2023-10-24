@@ -29,19 +29,21 @@ import org.eclipse.tractusx.sde.agent.enums.SftpReportStatusEnum;
 import org.eclipse.tractusx.sde.agent.mapper.SftpReportMapper;
 import org.eclipse.tractusx.sde.agent.model.SftpReportModel;
 import org.eclipse.tractusx.sde.agent.repository.SftpReportRepository;
+import org.eclipse.tractusx.sde.common.ConfigurableFactory;
 import org.eclipse.tractusx.sde.common.enums.ProgressStatusEnum;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
 import org.eclipse.tractusx.sde.common.utils.DateUtil;
+import org.eclipse.tractusx.sde.common.utils.TryUtils;
 import org.eclipse.tractusx.sde.core.csv.service.CsvHandlerService;
 import org.eclipse.tractusx.sde.core.processreport.entity.ProcessReportEntity;
 import org.eclipse.tractusx.sde.core.processreport.repository.ProcessReportRepository;
 import org.eclipse.tractusx.sde.core.service.SubmodelOrchestartorService;
-import org.eclipse.tractusx.sde.core.utils.TryUtils;
 import org.eclipse.tractusx.sde.notification.manager.EmailManager;
+import org.eclipse.tractusx.sde.notification.manager.EmailNotificationModelProvider;
 import org.eclipse.tractusx.sde.sftp.RetrieverI;
-import org.eclipse.tractusx.sde.sftp.dto.EmailNotificationModel;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.support.RetrySynchronizationManager;
@@ -62,32 +64,29 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.eclipse.tractusx.sde.core.utils.TryUtils.IGNORE;
-import static org.eclipse.tractusx.sde.core.utils.TryUtils.tryRun;
+import static org.eclipse.tractusx.sde.common.utils.TryUtils.IGNORE;
+import static org.eclipse.tractusx.sde.common.utils.TryUtils.tryRun;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProcessRemoteCsv {
-
 	private static final String TD_CLOSE = "</td>";
 	private static final String TD = "<td>";
 	private final CsvHandlerService csvHandlerService;
 	private final PolicyProvider policyProvider;
-	private final RetrieverFactory retrieverFactory;
 	private final SubmodelOrchestartorService submodelOrchestartorService;
 	private final SftpReportRepository sftpReportRepository;
 	private final ProcessReportRepository processReportRepository;
 	private final SftpReportMapper sftpReportMapper;
 	private final ObjectFactory<ProcessRemoteCsv> selfFactory;
 	private final EmailManager emailManager;
-	private final ConfigService configService;
+	private final EmailNotificationModelProvider emailNotificationModelProvider;
+	private final JobMaintenanceConfigService jobMaintenanceConfigService;
+	private final ApplicationContext context;
 
-	@Value("mail.to.address")
-	private String toEmail;
-
-	@Value("mail.cc.address")
-	private String ccEmail;
+	@Value("${retriever.name}")
+	private String retriever;
 
 	@SneakyThrows
 	@SuppressWarnings({"ResultOfMethodCallIgnored"})
@@ -95,6 +94,7 @@ public class ProcessRemoteCsv {
 			ServiceException.class }, maxAttemptsExpression = "3", backoff = @Backoff(delayExpression = "5000"))
 	public String process(TaskScheduler taskScheduler, String schedulerUuid) {
 		log.info("Scheduler started " + schedulerUuid);
+		@SuppressWarnings("unchecked") var retrieverFactory = (ConfigurableFactory<RetrieverI>)context.getBean(retriever);
 		boolean loginSuccess = false;
 		String msg = null;
 		try (var retriever = retrieverFactory.create()) {
@@ -161,8 +161,7 @@ public class ProcessRemoteCsv {
 		List<SftpSchedulerReport> sftpReportList = sftpReportRepository.findBySchedulerId(schedulerId);
 		if (!sftpReportList.isEmpty()) {
 			log.info("Send notification for scheduler: " + schedulerId);
-			EmailNotificationModel emailNotification = configService.getNotificationDetails();
-
+			var emailNotification = emailNotificationModelProvider.getConfiguration();
 			Map<String, Object> emailContent = new HashMap<>();
 			emailContent.put("toemail", emailNotification.getToEmail());
 			emailContent.put("ccemail", emailNotification.getCcEmail());
@@ -206,7 +205,7 @@ public class ProcessRemoteCsv {
 			selfFactory.getObject().createDbReport(retriever, inProgressIdList, schedulerId).forEach(Runnable::run);
 			tryRun(retriever::close, IGNORE());
 
-			if (configService.getJobMaintenanceDetails().getEmailNotification().booleanValue()) {
+			if (jobMaintenanceConfigService.getConfiguration().getEmailNotification()) {
 				// EmailNotificationModel method call
 				sendNotificationForProcessedFiles(schedulerId);
 			} else {

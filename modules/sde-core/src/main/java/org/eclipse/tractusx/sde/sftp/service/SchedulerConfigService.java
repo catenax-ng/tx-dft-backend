@@ -20,78 +20,30 @@
 
 package org.eclipse.tractusx.sde.sftp.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.tractusx.sde.agent.ConfigService;
+import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
+import org.eclipse.tractusx.sde.agent.model.SchedulerType;
+import org.eclipse.tractusx.sde.common.ConfigurationProvider;
+import org.eclipse.tractusx.sde.common.exception.ValidationException;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.tractusx.sde.agent.entity.ConfigEntity;
-import org.eclipse.tractusx.sde.agent.model.ConfigType;
-import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
-import org.eclipse.tractusx.sde.agent.model.SchedulerType;
-import org.eclipse.tractusx.sde.agent.repository.AutoUploadAgentConfigRepository;
-import org.eclipse.tractusx.sde.common.exception.ValidationException;
-import org.eclipse.tractusx.sde.sftp.dto.JobMaintenanceModel;
-import org.springframework.stereotype.Service;
+@Service("scheduler")
+public class SchedulerConfigService implements ConfigurationProvider<SchedulerConfigModel> {
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-
-@Service
-@RequiredArgsConstructor
-public class SchedulerService {
-
-	private final AutoUploadAgentConfigRepository configRepository;
 	private final ConfigService configService;
 	private final RetrieverScheduler retrieverScheduler;
 
-	private final ObjectMapper mapper = new ObjectMapper();
-
-	public Map<String, String> fire() {
-		return Map.of("msg", retrieverScheduler.fire());
-	}
-
-	@SneakyThrows
-	public void saveDefaultScheduler() {
-		Optional<ConfigEntity> config = configRepository.findAllByType(ConfigType.SCHEDULER.toString());
-		if (config.isEmpty()) {
-			SchedulerConfigModel schedulerConfigModel = SchedulerConfigModel.builder().type(SchedulerType.HOURLY)
-					.time("1").build();
-
-			configService.saveConfiguration(ConfigType.SCHEDULER, schedulerConfigModel);
-
-			// Start the scheduler
-			updateSchedulerExecution(schedulerConfigModel);
-		} else {
-			// start scehduler
-			updateSchedulerExecution(mapper.readValue(config.get().getContent(), SchedulerConfigModel.class));
-		}
-	}
-
-	public void updateSchedulerExecution(SchedulerConfigModel model) {
-		// update the scheduler
-		retrieverScheduler.schedule(convertScheduleToCron(model));
-	}
-
-	public void updateScehdulreStatus(JobMaintenanceModel config) {
-		if (config.getAutomaticUpload().booleanValue()) {
-			// enable the scheduler
-			enable();
-		} else {
-			// disable the scheduler
-			retrieverScheduler.stopAll();
-		}
-	}
-
-	private void enable() {
-		SchedulerConfigModel config = configService.getSchedulerDetails();
-		retrieverScheduler.schedule(convertScheduleToCron(config));
+	public SchedulerConfigService(ConfigService configService, @Lazy RetrieverScheduler retrieverScheduler) {
+		this.configService = configService;
+		this.retrieverScheduler = retrieverScheduler;
 	}
 
 	public String convertScheduleToCron(SchedulerConfigModel model) {
@@ -169,4 +121,34 @@ public class SchedulerService {
 		if (!m.matches())
 			throw new ValidationException("'" + time + "' time is not number between [1-24]");
 	}
+
+
+	@Override
+	public SchedulerConfigModel getConfiguration() {
+		return configService.getConfigurationAsObject(SchedulerConfigModel.class)
+				.orElseGet(() -> {
+					var scm = getDefaultSchedulerConfigModel();
+					configService.saveConfiguration(scm);
+					return scm;
+				});
+	}
+
+	@Override
+	public void saveConfig(SchedulerConfigModel config) {
+		configService.saveConfiguration(config);
+		retrieverScheduler.reschedule();
+	}
+
+	@Override
+	public Class<SchedulerConfigModel> getConfigClass() {
+		return SchedulerConfigModel.class;
+	}
+
+	private SchedulerConfigModel getDefaultSchedulerConfigModel() {
+		return SchedulerConfigModel.builder()
+				.type(SchedulerType.HOURLY)
+				.time("1")
+				.build();
+	}
+
 }

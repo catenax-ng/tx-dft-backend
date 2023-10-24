@@ -18,7 +18,15 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.sftp;
+package org.eclipse.tractusx.sde.common;
 
-public interface RetrieverConfiguration {
+import java.io.IOException;
+
+public interface ConfigurableFactory<T> {
+    /***
+     * Successful creation of the retriever means the RetrieverConfiguration was correct
+     * and the retriever managed to log in to the remote resource
+     * @return retriever
+     */
+    T create() throws IOException;
 }
