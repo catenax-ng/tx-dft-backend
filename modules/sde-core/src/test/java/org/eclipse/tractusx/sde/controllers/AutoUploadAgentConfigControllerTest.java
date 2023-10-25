@@ -65,10 +65,10 @@ class AutoUploadAgentConfigControllerTest {
 	@Test
 	void testSaveSFTPConfig() throws Exception {
 
-		mvc.perform(MockMvcRequestBuilders.put("/config").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(getBodySftp())).queryParam("type", "sftp")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.put("/config/sftp").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(getBodySftp()))).andExpect(status().isOk());
 
-		mvc.perform(MockMvcRequestBuilders.get("/config").queryParam("type", "sftp").contentType(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.get("/config/sftp").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 
 		Assertions.assertEquals(
@@ -78,12 +78,22 @@ class AutoUploadAgentConfigControllerTest {
 	}
 
 	@Test
+	void testNotFound() throws Exception {
+
+		mvc.perform(MockMvcRequestBuilders.put("/config/dontexist").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(getBodySftp()))).andExpect(status().isNotFound());
+
+		mvc.perform(MockMvcRequestBuilders.get("/config/dontexist").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
 	void testSaveSchedulerHourlyTypeConfig() throws Exception {
 
-		mvc.perform(MockMvcRequestBuilders.put("/config").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(getSchedulerHourBody())).queryParam("type", "scheduler")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.put("/config/scheduler").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(getSchedulerHourBody()))).andExpect(status().isOk());
 
-		mvc.perform(MockMvcRequestBuilders.get("/config").queryParam("type", "scheduler")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.get("/config/scheduler")).andExpect(status().isOk());
 
 		Assertions.assertEquals(
 				objectMapper.convertValue(getSchedulerHourBody(), SchedulerConfigModel.class),
@@ -94,10 +104,10 @@ class AutoUploadAgentConfigControllerTest {
 	@Test
 	void testSaveSchedulerDailyTypeConfig() throws Exception {
 
-		mvc.perform(MockMvcRequestBuilders.put("/config").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(getJsonSchedulerDailyBody())).queryParam("type", "scheduler")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.put("/config/scheduler").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(getJsonSchedulerDailyBody()))).andExpect(status().isOk());
 
-		mvc.perform(MockMvcRequestBuilders.get("/config").queryParam("type", "scheduler")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.get("/config/scheduler")).andExpect(status().isOk());
 
 		Assertions.assertEquals(
 				objectMapper.convertValue(getJsonSchedulerDailyBody(), SchedulerConfigModel.class),
@@ -108,10 +118,10 @@ class AutoUploadAgentConfigControllerTest {
 	@Test
 	void testSaveSchedulerWeeklyTypeConfig() throws Exception {
 
-		mvc.perform(MockMvcRequestBuilders.put("/config").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(getJsonSchedulerWeeklyBody())).queryParam("type", "scheduler")).andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.put("/config/scheduler").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(getJsonSchedulerWeeklyBody()))).andExpect(status().isOk());
 
-		mvc.perform(MockMvcRequestBuilders.get("/config").queryParam("type", "scheduler").contentType(MediaType.APPLICATION_JSON))
+		mvc.perform(MockMvcRequestBuilders.get("/config/scheduler").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 
 		Assertions.assertEquals(

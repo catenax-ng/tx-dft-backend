@@ -30,10 +30,10 @@ import org.eclipse.tractusx.sde.sftp.service.RetrieverScheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,8 +59,8 @@ public class AutoUploadAgentConfigController {
 		return Map.of("msg", retrieverScheduler.fire());
 	}
 
-	@GetMapping("/config")
-	public Object getConfig(@RequestParam String type) {
+	@GetMapping("/config/{type}")
+	public Object getConfig(@PathVariable("type") String type) {
 		return TryUtils.tryExec(
 				() -> (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
 				TryUtils.IGNORE()
@@ -68,8 +68,8 @@ public class AutoUploadAgentConfigController {
 		).getConfiguration();
 	}
 
-	@PutMapping("/config")
-	public void updateScheduler(@RequestBody JsonNode config, @RequestParam String type) {
+	@PutMapping("/config/{type}")
+	public void updateScheduler(@PathVariable("type") String type, @RequestBody JsonNode config) {
 		@SuppressWarnings("unchecked") var cp = (ConfigurationProvider<Object>) TryUtils.tryExec(
 				() ->  (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
 				TryUtils.IGNORE()
