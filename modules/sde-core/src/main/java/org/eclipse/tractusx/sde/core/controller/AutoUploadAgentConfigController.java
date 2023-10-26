@@ -74,7 +74,7 @@ public class AutoUploadAgentConfigController {
 				() ->  (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
 				TryUtils.IGNORE()
 		).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Configuration not found"));
-		Class<?> aClass = cp.getConfiguration().getClass();
+		Class<?> aClass = cp.getConfigClass();
 		var configObj = mapper.convertValue(config, aClass);
 		cp.saveConfig(springValidator.validate(configObj));
 	}

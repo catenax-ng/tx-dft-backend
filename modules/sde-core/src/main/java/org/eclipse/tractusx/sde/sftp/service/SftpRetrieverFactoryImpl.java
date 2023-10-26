@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.eclipse.tractusx.sde.agent.ConfigService;
 import org.eclipse.tractusx.sde.agent.model.SftpConfigModel;
-import org.eclipse.tractusx.sde.agent.repository.AutoUploadAgentConfigRepository;
 import org.eclipse.tractusx.sde.common.ConfigurableFactory;
 import org.eclipse.tractusx.sde.common.ConfigurationProvider;
 import org.eclipse.tractusx.sde.core.csv.service.CsvHandlerService;
@@ -63,7 +62,6 @@ public class SftpRetrieverFactoryImpl implements ConfigurableFactory<SftpRetriev
 	private int retryDelayTo;
 
 	private final ConfigService configService;
-	private final AutoUploadAgentConfigRepository configRepository;
 	private final CsvHandlerService csvHandlerService;
 
 	@SneakyThrows
