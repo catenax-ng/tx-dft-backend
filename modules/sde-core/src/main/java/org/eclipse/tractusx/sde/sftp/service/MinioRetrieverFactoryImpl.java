@@ -29,6 +29,8 @@ import org.eclipse.tractusx.sde.core.csv.service.CsvHandlerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service("minio")
 @RequiredArgsConstructor
 public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetriever>, ConfigurationProvider<MinioConfigModel> {
@@ -57,7 +59,7 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 
 
 	@Override
-	public MinioRetriever create() {
+	public MinioRetriever create() throws IOException {
 		var configModel = getConfiguration();
 		return new MinioRetriever(csvHandlerService,
 							configModel.getEndpoint(),
