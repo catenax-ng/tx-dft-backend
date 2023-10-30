@@ -26,8 +26,12 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.lifecycle.Startables;
+import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.MountableFile;
+
+import java.time.Duration;
 
 public class TestContainerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.4")
@@ -36,15 +40,23 @@ public class TestContainerInitializer implements ApplicationContextInitializer<C
             .withUsername("root")
             .withPassword("P@ssword21");
 
-    static public GenericContainer<?>  sftp = new GenericContainer<>("dvasunin/sftp:latest")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("sftp/", 0777),
-                    "/home/foo/upload/sftp")
-            .withExposedPorts(22)
-            .withCommand("foo:pass:::upload");
+//    static public GenericContainer<?>  sftp = new GenericContainer<>("dvasunin/sftp:latest")
+//            .withCopyFileToContainer(
+//                    MountableFile.forClasspathResource("sftp/", 0777),
+//                    "/home/foo/upload/sftp")
+//            .withExposedPorts(22)
+//            .withCommand("foo:pass:::upload");
+
+    public static GenericContainer<?> minio = new GenericContainer<>("quay.io/minio/minio")
+            .withEnv("MINIO_ACCESS_KEY", "minioadmin")
+            .withEnv("MINIO_SECRET_KEY", "minioadmin")
+            .withCommand("server", "/data")
+            .withExposedPorts(9000);
+            ;
+
 
     static {
-        Startables.deepStart(postgres, sftp).join();
+        Startables.deepStart(postgres, minio).join();
     }
 
     @Override
@@ -61,7 +73,16 @@ public class TestContainerInitializer implements ApplicationContextInitializer<C
             "sftp.username=foo",
             "sftp.password=pass",
             "sftp.host=127.0.0.1",
-            "sftp.port=" + sftp.getMappedPort(22)
+            "sftp.port=22",
+            "minio.endpoint="+minio.getHost(),
+            "minio.access-key=minioadmin",
+            "minio.secret-key=minioadmin1",
+            "minio.bucket-name=bucket1",
+            "minio.location.tobeprocessed=/upload/sftp/tobe",
+            "minio.location.inprogress=/upload/sftp/inprogress",
+            "minio.location.success=/upload/sftp/success",
+            "minio.location.partialsucess=/upload/sftp/partial",
+            "minio.location.failed=/upload/sftp/failed"
         ).applyTo(applicationContext);
     }
 }

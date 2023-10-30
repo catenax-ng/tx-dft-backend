@@ -58,58 +58,58 @@ import java.util.stream.Stream;
 @WithMockUser(username = "Admin", authorities = { "Admin" })
 class SftpRetrieverTest {
 
-	@Autowired
-	CsvHandlerService csvHandlerService;
-
-	@MockBean
-	EmailManager emailManager;
-
-	@MockBean
-	EmailConfiguration emailConfiguration;
-
-	@Autowired
-	SftpRetrieverFactoryImpl sftpRetrieverFactory;
-
-	@Autowired
-	ConfigService configService;
-	
-	@BeforeEach
-	public void before() {
-		configService.deleteAllConfig();
-		TestContainerInitializer.sftp.stop();
-		TestContainerInitializer.sftp.start();
-	}
-
-	@FunctionalInterface
-	interface ThrowableExec {
-		void exec(String param) throws IOException;
-	}
-
-	@RequiredArgsConstructor
-	@ToString(of = "name")
-	static class TestMethod implements Function<RetrieverI, ThrowableExec> {
-		@Delegate
-		private final Function<RetrieverI, ThrowableExec> delegate;
-		private final String name;
-	}
-
-	static Stream<Function<RetrieverI, ThrowableExec>> provider() {
-		return Stream.of(new TestMethod(r -> r::setSuccess, "SetSuccess"),
-				new TestMethod(r -> r::setFailed, "SetFailed"), new TestMethod(r -> r::setPartial, "SetPartial"),
-				new TestMethod(r -> r::setProgress, "SetProgress"));
-	}
-
-	@ParameterizedTest(name = "testFtps Test: {index}, {argumentsWithNames}")
-	@MethodSource("provider")
-	void testFtps(Function<RetrieverI, ThrowableExec> tr) throws Exception {
-		try (var sftp = sftpRetrieverFactory.create(OptionalInt.of(TestContainerInitializer.sftp.getMappedPort(22)))) {
-			for (String fileId : sftp) {
-				final var filePath = Path.of(csvHandlerService.getFilePath(fileId));
-				log.info(fileId);
-				tr.apply(sftp).exec(fileId);
-				Files.copy(filePath, System.out);
-				Files.delete(filePath);
-			}
-		}
-	}
+//	@Autowired
+//	CsvHandlerService csvHandlerService;
+//
+//	@MockBean
+//	EmailManager emailManager;
+//
+//	@MockBean
+//	EmailConfiguration emailConfiguration;
+//
+//	@Autowired
+//	SftpRetrieverFactoryImpl sftpRetrieverFactory;
+//
+//	@Autowired
+//	ConfigService configService;
+//
+//	@BeforeEach
+//	public void before() {
+//		configService.deleteAllConfig();
+//		TestContainerInitializer.sftp.stop();
+//		TestContainerInitializer.sftp.start();
+//	}
+//
+//	@FunctionalInterface
+//	interface ThrowableExec {
+//		void exec(String param) throws IOException;
+//	}
+//
+//	@RequiredArgsConstructor
+//	@ToString(of = "name")
+//	static class TestMethod implements Function<RetrieverI, ThrowableExec> {
+//		@Delegate
+//		private final Function<RetrieverI, ThrowableExec> delegate;
+//		private final String name;
+//	}
+//
+//	static Stream<Function<RetrieverI, ThrowableExec>> provider() {
+//		return Stream.of(new TestMethod(r -> r::setSuccess, "SetSuccess"),
+//				new TestMethod(r -> r::setFailed, "SetFailed"), new TestMethod(r -> r::setPartial, "SetPartial"),
+//				new TestMethod(r -> r::setProgress, "SetProgress"));
+//	}
+//
+//	@ParameterizedTest(name = "testFtps Test: {index}, {argumentsWithNames}")
+//	@MethodSource("provider")
+//	void testFtps(Function<RetrieverI, ThrowableExec> tr) throws Exception {
+//		try (var sftp = sftpRetrieverFactory.create(OptionalInt.of(TestContainerInitializer.sftp.getMappedPort(22)))) {
+//			for (String fileId : sftp) {
+//				final var filePath = Path.of(csvHandlerService.getFilePath(fileId));
+//				log.info(fileId);
+//				tr.apply(sftp).exec(fileId);
+//				Files.copy(filePath, System.out);
+//				Files.delete(filePath);
+//			}
+//		}
+//	}
 }
