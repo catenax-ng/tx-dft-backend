@@ -25,6 +25,7 @@ import org.eclipse.tractusx.sde.agent.ConfigService;
 import org.eclipse.tractusx.sde.agent.model.MinioConfigModel;
 import org.eclipse.tractusx.sde.common.ConfigurableFactory;
 import org.eclipse.tractusx.sde.common.ConfigurationProvider;
+import org.eclipse.tractusx.sde.common.validators.SpringValidator;
 import org.eclipse.tractusx.sde.core.csv.service.CsvHandlerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 	private String secretKey;
 	@Value("${minio.bucket-name}")
 	private String bucketName;
-	@Value("${minio.location.tobeprocessed}")
+	@Value("${minio.location.tobeprocessed:}")
 	private String toBeProcessed;
 	@Value("${minio.location.inprogress}")
 	private String inProgress;
@@ -56,7 +57,12 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 
 	private final ConfigService configService;
 	private final CsvHandlerService csvHandlerService;
+	private final SpringValidator validator;
 
+
+	private String removeFirstSlashForMinio(String path) {
+		return path != null && !path.isBlank() && path.charAt(0) == '/' ? path.substring(1) : "";
+	}
 
 	@Override
 	public MinioRetriever create() throws IOException {
@@ -66,11 +72,11 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 							configModel.getAccessKey(),
 							configModel.getSecretKey(),
 							configModel.getBucketName(),
-							configModel.getToBeProcessedLocation(),
-							configModel.getInProgressLocation(),
-							configModel.getSuccessLocation(),
-							configModel.getPartialSuccessLocation(),
-							configModel.getFailedLocation()
+							removeFirstSlashForMinio(configModel.getToBeProcessedLocation()),
+							removeFirstSlashForMinio(configModel.getInProgressLocation()),
+							removeFirstSlashForMinio(configModel.getSuccessLocation()),
+							removeFirstSlashForMinio(configModel.getPartialSuccessLocation()),
+							removeFirstSlashForMinio(configModel.getFailedLocation())
 				);
 	}
 
@@ -95,7 +101,7 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 	}
 
 	private MinioConfigModel getDefaultConfig() {
-		return MinioConfigModel.builder()
+		return validator.validate(MinioConfigModel.builder()
 				.endpoint(endpoint)
 				.accessKey(accessKey)
 				.secretKey(secretKey)
@@ -105,6 +111,7 @@ public class MinioRetrieverFactoryImpl implements ConfigurableFactory<MinioRetri
 				.inProgressLocation(inProgress)
 				.partialSuccessLocation(partialSuccess)
 				.successLocation(success)
-				.build();
+				.build()
+		);
 	}
 }

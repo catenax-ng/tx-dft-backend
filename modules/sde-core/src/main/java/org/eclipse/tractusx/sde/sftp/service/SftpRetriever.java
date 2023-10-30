@@ -111,7 +111,7 @@ public class SftpRetriever implements RetrieverI {
                     }
                     return channelSftp;
                 },
-                () -> TryUtils.tryRun(() -> Thread.sleep(rnd.nextInt(retryDelayFrom, retryDelayTo)), TryUtils.IGNORE()),
+                () -> TryUtils.tryRun(() -> Thread.sleep(rnd.nextInt(retryDelayFrom, retryDelayTo)), TryUtils::IGNORE),
                 numberOfRetries
         );
     }

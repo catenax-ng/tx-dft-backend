@@ -64,7 +64,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.eclipse.tractusx.sde.common.utils.TryUtils.IGNORE;
 import static org.eclipse.tractusx.sde.common.utils.TryUtils.tryRun;
 
 @Service
@@ -203,7 +202,7 @@ public class ProcessRemoteCsv {
 					inProgressIdList, schedulerId), Instant.now().plus(Duration.ofSeconds(5)));
 		} else {
 			selfFactory.getObject().createDbReport(retriever, inProgressIdList, schedulerId).forEach(Runnable::run);
-			tryRun(retriever::close, IGNORE());
+			tryRun(retriever::close, TryUtils::IGNORE);
 
 			if (jobMaintenanceConfigService.getConfiguration().getEmailNotification()) {
 				// EmailNotificationModel method call

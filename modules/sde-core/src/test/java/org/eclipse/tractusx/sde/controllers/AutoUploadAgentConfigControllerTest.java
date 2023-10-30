@@ -21,7 +21,7 @@
 package org.eclipse.tractusx.sde.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.tractusx.sde.EnableTestContainers;
+import org.eclipse.tractusx.sde.EnablePostgreSQL;
 import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
 import org.eclipse.tractusx.sde.agent.model.SftpConfigModel;
 import org.eclipse.tractusx.sde.sftp.service.SchedulerConfigService;
@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@EnableTestContainers
+@EnablePostgreSQL
 @ActiveProfiles("test")
 @WithMockUser(username = "Admin", authorities = { "Admin" })
 class AutoUploadAgentConfigControllerTest {

@@ -18,17 +18,27 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.validators;
+package org.eclipse.tractusx.sde;
 
 
-import jakarta.validation.Valid;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.testcontainers.containers.GenericContainer;
 
-@Validated
-@Component
-public class SpringValidator {
-    public <T> T validate(@Valid T t) {
-        return t;
+public class SFTPInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    static public GenericContainer<?>  sftp = new GenericContainer<>("dvasunin/sftp:latest")
+            .withExposedPorts(22)
+            .withCommand("foo:pass:::upload");
+
+    static {
+        sftp.start();
+    }
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        TestPropertyValues.of(
+                "sftp.host=" + sftp.getHost(),
+                "sftp.port=" + sftp.getMappedPort(22)
+        ).applyTo(applicationContext);
     }
 }

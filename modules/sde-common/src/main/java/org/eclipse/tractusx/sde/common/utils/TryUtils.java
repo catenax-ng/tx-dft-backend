@@ -83,13 +83,7 @@ public class TryUtils {
         return tryExec(voidToBooleanAdapter(runnable), onErr).orElse(false);
     }
 
-    /***
-     *
-     * @return a function which ignores any given parameter
-     */
-    public static <ANY> Consumer<ANY> IGNORE() {
-        return a -> {};
-    }
+    public static <ANY> void IGNORE(ANY any) {}
 
     public static <V, E extends Exception> V retryAdapter(ThrowableSupplier<V, E> callable, Runnable pause, int tries) throws E{
         Optional<V> res = Optional.empty();

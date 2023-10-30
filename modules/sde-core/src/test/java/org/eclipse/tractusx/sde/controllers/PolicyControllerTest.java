@@ -1,11 +1,7 @@
 package org.eclipse.tractusx.sde.controllers;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.tractusx.sde.EnableTestContainers;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.tractusx.sde.EnablePostgreSQL;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.entities.UsagePolicies;
 import org.eclipse.tractusx.sde.common.enums.DurationEnum;
@@ -28,12 +24,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@EnableTestContainers
+@EnablePostgreSQL
 @ActiveProfiles("test")
 @WithMockUser(username = "Admin", authorities = { "Admin" })
 class PolicyControllerTest {

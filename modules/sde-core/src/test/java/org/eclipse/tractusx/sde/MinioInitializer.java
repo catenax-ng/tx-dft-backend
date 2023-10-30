@@ -18,17 +18,28 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.validators;
+package org.eclipse.tractusx.sde;
 
 
-import jakarta.validation.Valid;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.testcontainers.containers.MinIOContainer;
 
-@Validated
-@Component
-public class SpringValidator {
-    public <T> T validate(@Valid T t) {
-        return t;
+public class MinioInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    static public MinIOContainer minio = new MinIOContainer("minio/minio:RELEASE.2023-09-04T19-57-37Z")
+            .withUserName("testuser")
+            .withPassword("testpassword");
+
+    static {
+        minio.start();
+    }
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        TestPropertyValues.of(
+            "minio.endpoint="+minio.getS3URL(),
+            "minio.access-key=" + minio.getUserName(),
+            "minio.secret-key=" + minio.getPassword()
+        ).applyTo(applicationContext);
     }
 }

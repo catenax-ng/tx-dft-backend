@@ -18,17 +18,17 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.validators;
+package org.eclipse.tractusx.sde;
 
+import org.springframework.test.context.ContextConfiguration;
 
-import jakarta.validation.Valid;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Validated
-@Component
-public class SpringValidator {
-    public <T> T validate(@Valid T t) {
-        return t;
-    }
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@ContextConfiguration(initializers = {PostgreSQLInitializer.class, SFTPInitializer.class})
+public @interface EnableSFTP {
 }

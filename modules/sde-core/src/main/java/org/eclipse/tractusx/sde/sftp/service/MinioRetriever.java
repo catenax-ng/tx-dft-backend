@@ -42,6 +42,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @Slf4j
 public class MinioRetriever implements RetrieverI {
     private final MinioClient minioClient;
@@ -74,8 +76,8 @@ public class MinioRetriever implements RetrieverI {
             for (var r : minioClient.listObjects(
                     ListObjectsArgs.builder()
                             .bucket(bucketName)
-                            .prefix(toBeProcessedLocation + "/")
-                            .recursive(false)
+                            .prefix(isNullOrEmpty(toBeProcessedLocation) ? "" : toBeProcessedLocation + "/")
+                            .recursive(!isNullOrEmpty(toBeProcessedLocation))
                             .build())) {
                 var item = r.get();
                 if (!item.isDir() && item.objectName().toLowerCase().endsWith(".csv")) {

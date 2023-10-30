@@ -18,17 +18,19 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-package org.eclipse.tractusx.sde.common.validators;
+package org.eclipse.tractusx.sde.service;
 
+import org.eclipse.tractusx.sde.EnableMinio;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 
-import jakarta.validation.Valid;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
-
-@Validated
-@Component
-public class SpringValidator {
-    public <T> T validate(@Valid T t) {
-        return t;
-    }
+@SpringBootTest
+@EnableMinio
+@Execution(ExecutionMode.SAME_THREAD)
+@WithMockUser(username = "Admin", authorities = { "Admin" })
+@ActiveProfiles("miniotest")
+public class MinioRetrieverNonEmptyTobeProcessedTest extends MinioRetrieverTest{
 }

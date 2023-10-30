@@ -63,7 +63,7 @@ public class AutoUploadAgentConfigController {
 	public Object getConfig(@PathVariable("type") String type) {
 		return TryUtils.tryExec(
 				() -> (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
-				TryUtils.IGNORE()
+				TryUtils::IGNORE
 		).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Configuration not found")
 		).getConfiguration();
 	}
@@ -72,7 +72,7 @@ public class AutoUploadAgentConfigController {
 	public void updateScheduler(@PathVariable("type") String type, @RequestBody JsonNode config) {
 		@SuppressWarnings("unchecked") var cp = (ConfigurationProvider<Object>) TryUtils.tryExec(
 				() ->  (ConfigurationProvider<?>) context.getBean(type.toLowerCase()),
-				TryUtils.IGNORE()
+				TryUtils::IGNORE
 		).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Configuration not found"));
 		Class<?> aClass = cp.getConfigClass();
 		var configObj = mapper.convertValue(config, aClass);
