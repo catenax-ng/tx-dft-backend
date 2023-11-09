@@ -1,4 +1,4 @@
-   # Simple Data Exchanger (formally known Data Format Transformer)
+# Simple Data Exchanger (formally known Data Format Transformer)
 ---
 ## Description
 
