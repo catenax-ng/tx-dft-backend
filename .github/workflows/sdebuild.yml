@@ -22,7 +22,7 @@ name: sdebuild
 on:
   push:
     branches:
-      - 'minio_with_latest_sde'
+      - 'ver-2.3.1'
     tags:
       - 'v*.*.*'
       - 'v*.*.*-*'
