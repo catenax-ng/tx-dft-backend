@@ -33,7 +33,7 @@ COPY ../modules ./modules
 
 # our final base image
 
-FROM eclipse-temurin:21.0.1_12-jdk
+FROM eclipse-temurin:17.0.9_9-jdk
 
 ARG USERNAME=sdeuser
 ARG USER_UID=1001
