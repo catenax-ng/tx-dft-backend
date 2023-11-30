@@ -42,7 +42,7 @@ RUN useradd -m -d /home/sdeuser -s /bin/bash -u $USER_UID -U $USERNAME
 USER $USERNAME
 
 # set deployment directory
-WORKDIR /home/user/sdeuser/sdeapp
+WORKDIR /home/sdeuser/sdeapp
 
 # copy over the built artifact from the maven image
 
