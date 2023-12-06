@@ -31,7 +31,7 @@ RUN mvn clean install
 
 # our final base image
 
-FROM eclipse-temurin:17.0.9_9-jdk-alpine
+FROM eclipse-temurin:17.0.9_9-jdk-jammy
 
 ARG USERNAME=sdeuser
 ARG USER_UID=1001
@@ -39,7 +39,7 @@ ARG USER_GID=$USER_UID
 
 # Create the user
 
-RUN useradd -m -d /home/sdeuser -s /bin/sh -u $USER_UID -U $USERNAME 
+RUN useradd -m -d /home/sdeuser -s /bin/bash -u $USER_UID -U $USERNAME 
 USER $USERNAME
 
 # set deployment directory
