@@ -20,7 +20,7 @@
 name: "Trivy"
 on:
   push:
-    branches: [main]
+    branches: [donot-test]
   schedule:
     # Once a day
     - cron: "0 0 * * *"
