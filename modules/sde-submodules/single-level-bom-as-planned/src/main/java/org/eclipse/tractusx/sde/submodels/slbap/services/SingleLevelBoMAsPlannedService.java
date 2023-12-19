@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.slbap.entity.SingleLevelBoMAsPlannedEntity;
 import org.eclipse.tractusx.sde.submodels.slbap.mapper.SingleLevelBoMAsPlannedMapper;
 import org.eclipse.tractusx.sde.submodels.slbap.repository.SingleLevelBoMAsPlannedRepository;
@@ -43,7 +43,7 @@ public class SingleLevelBoMAsPlannedService {
 
 	private final SingleLevelBoMAsPlannedMapper singleLevelBoMAsPlannedMapper;
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -90,15 +90,10 @@ public class SingleLevelBoMAsPlannedService {
 				.orElseThrow(() -> new NoDataFoundException("No data found uuid " + uuid));
 	}
 
-	public void deleteEDCAsset(SingleLevelBoMAsPlannedEntity singleLevelBoMAsPlannedEntity) {
+	public void deleteEDCAsset(SingleLevelBoMAsPlannedEntity aspectEntity) {
 
-		deleteEDCFacilitator.deleteContractDefination(singleLevelBoMAsPlannedEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(singleLevelBoMAsPlannedEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(singleLevelBoMAsPlannedEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(singleLevelBoMAsPlannedEntity.getAssetId());
+		edcProviderV2Facilator.deleteEDCOffer(aspectEntity.getAssetId(), aspectEntity.getAccessPolicyId(),
+				aspectEntity.getUsagePolicyId(), aspectEntity.getContractDefinationId());
 	}
 
 	public int getUpdatedData(String refProcessId) {

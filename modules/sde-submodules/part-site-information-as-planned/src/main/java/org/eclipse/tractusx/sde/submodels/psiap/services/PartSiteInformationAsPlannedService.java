@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.psiap.entity.PartSiteInformationAsPlannedEntity;
 import org.eclipse.tractusx.sde.submodels.psiap.mapper.PartSiteInformationAsPlannedMapper;
 import org.eclipse.tractusx.sde.submodels.psiap.repository.PartSiteInformationAsPlannedRepository;
@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonObject;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class PartSiteInformationAsPlannedService {
 
 	private final PartSiteInformationAsPlannedMapper partSiteInformationAsPlannedMapper;
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -72,16 +73,11 @@ public class PartSiteInformationAsPlannedService {
 
 		saveAspectWithDeleted(partSiteInformationAsPlannedEntity);
 	}
-
-	public void deleteEDCAsset(PartSiteInformationAsPlannedEntity partSiteInformationAsPlannedEntity) {
-
-		deleteEDCFacilitator.deleteContractDefination(partSiteInformationAsPlannedEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(partSiteInformationAsPlannedEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(partSiteInformationAsPlannedEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(partSiteInformationAsPlannedEntity.getAssetId());
+	
+	@SneakyThrows
+	public void deleteEDCAsset(PartSiteInformationAsPlannedEntity entity) {
+		edcProviderV2Facilator.deleteEDCOffer(entity.getAssetId(), entity.getAccessPolicyId(),
+				entity.getUsagePolicyId(), entity.getContractDefinationId());
 	}
 
 	private void saveAspectWithDeleted(PartSiteInformationAsPlannedEntity aspectEntity) {

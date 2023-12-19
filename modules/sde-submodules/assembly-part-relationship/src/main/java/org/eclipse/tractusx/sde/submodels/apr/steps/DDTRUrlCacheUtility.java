@@ -20,23 +20,29 @@
 
 package org.eclipse.tractusx.sde.submodels.apr.steps;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.tractusx.sde.common.exception.ServiceException;
-import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedByIdResponse;
-import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedResponse;
-import org.eclipse.tractusx.sde.edc.model.request.Offer;
-import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
-import org.eclipse.tractusx.sde.edc.services.ConsumerControlPanelService;
-import org.eclipse.tractusx.sde.portal.handler.PortalProxyService;
-import org.eclipse.tractusx.sde.portal.model.ConnectorInfo;
+import org.eclipse.tractusx.sde.common.configuration.properties.EDCConfigurationProperties;
+import org.eclipse.tractusx.sde.common.configuration.properties.PortalConfigurationProperties;
+import org.eclipse.tractusx.sde.edc.catalog.EDCCatalogV2Facilator;
+import org.eclipse.tractusx.sde.edc.catalog.model.Dataset;
+import org.eclipse.tractusx.sde.edc.catalog.model.OfferCatalog;
+import org.eclipse.tractusx.sde.edc.consumer.EDCConsumerV2Facilator;
+import org.eclipse.tractusx.sde.edc.core.model.Constraint;
+import org.eclipse.tractusx.sde.edc.core.model.ConstraintOperator;
+import org.eclipse.tractusx.sde.edc.core.proxy.EDCClient;
+import org.eclipse.tractusx.sde.edc.edr.model.EDRCachedByIdResponse;
+import org.eclipse.tractusx.sde.portal.impl.PortalFacilator;
+import org.eclipse.tractusx.sde.portal.model.PortalClient;
+import org.eclipse.tractusx.sde.portal.response.ConnectorInfo;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import feign.FeignException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -46,34 +52,56 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DDTRUrlCacheUtility {
 
-	private final PortalProxyService portalProxyService;
+	private final PortalFacilator portalFacilator;
 
-	private final ConsumerControlPanelService consumerControlPanelService;
+	private final EDCCatalogV2Facilator edcCatalogV2Facilator;
+
+	private final EDCConsumerV2Facilator edcConsumerV2Facilator;
+	
+	private final EDCConfigurationProperties edcConfigurationProperties;
+	
+	private final PortalConfigurationProperties portalConfigurationProperties;
+	
+	@SneakyThrows
+	@PostConstruct
+	public void init() {
+		
+		EDCClient edcClient =EDCClient.builder()
+				.edcHost(new URI(edcConfigurationProperties.getConsumerHost()))
+				.edcApiHeaderKey(edcConfigurationProperties.getConsumerApiKey())
+				.edcApiHeaderValue(edcConfigurationProperties.getConsumerApiValue())
+				.edcDataManagementPath(edcConfigurationProperties.getConsumerManagementPath())
+				.build();
+		
+		PortalClient portalClient = PortalClient.builder()
+				.portalHost(new URI(portalConfigurationProperties.getHostname()))
+				.portalTokenUrl(new URI(portalConfigurationProperties.getAuthenticationUrl()))
+				.clientId(portalConfigurationProperties.getClientId())
+				.clientSecret(portalConfigurationProperties.getClientSecret()).build();
+		
+		edcCatalogV2Facilator.setEDCClient(edcClient);
+		
+		edcConsumerV2Facilator.init(edcClient, portalClient);
+	}
 
 	@Cacheable(value = "bpn-ddtr", key = "#bpnNumber")
-	public List<QueryDataOfferModel> getDDTRUrl(String bpnNumber) {
+	public List<OfferCatalog> getDDTRUrl(String bpnNumber) {
 
-		List<ConnectorInfo> connectorInfos = portalProxyService.fetchConnectorInfo(List.of(bpnNumber));
+		List<ConnectorInfo> connectorInfos = portalFacilator.fetchConnectorInfo(List.of(bpnNumber));
 
-		List<QueryDataOfferModel> offers = new ArrayList<>();
+		List<OfferCatalog> offers = new ArrayList<>();
 
-		String filterExpression = String.format("""
-				 "filterExpression": [{
-				    "operandLeft": "https://w3id.org/edc/v0.0.1/ns/type",
-				    "operator": "=",
-				    "operandRight": "data.core.digitalTwinRegistry"
-				}]""");
+		Constraint constraint = Constraint.builder().leftOperand("type").operator(ConstraintOperator.EQ)
+				.rightOperand("data.core.digitalTwinRegistry").build();
 
 		connectorInfos.stream().forEach(
 				connectorInfo -> connectorInfo.getConnectorEndpoint().parallelStream().distinct().forEach(connector -> {
 					try {
-						List<QueryDataOfferModel> queryDataOfferModel = consumerControlPanelService
-								.queryOnDataOffers(connector, 0, 100, filterExpression);
-						log.info("For Connector " + connector + ", found asset :" + queryDataOfferModel.size());
-
-						queryDataOfferModel.forEach(each -> each.setConnectorOfferUrl(connector));
-
-						offers.addAll(queryDataOfferModel);
+						OfferCatalog queryDataOfferModel = edcCatalogV2Facilator.requestCatalog(connector,
+								List.of(constraint), 0, 100);
+						log.info("For Connector " + connector + ", found asset :"
+								+ queryDataOfferModel.getDataSetOffers().size());
+						offers.add(queryDataOfferModel);
 					} catch (Exception e) {
 						log.error("Error while looking EDC catalog for digitaltwin registry url, " + connector
 								+ ", Exception :" + e.getMessage());
@@ -84,24 +112,10 @@ public class DDTRUrlCacheUtility {
 	}
 
 	@SneakyThrows
-	public EDRCachedByIdResponse verifyAndGetToken(String bpnNumber, QueryDataOfferModel queryDataOfferModel) {
-		Offer offer = Offer.builder().assetId(queryDataOfferModel.getAssetId())
-				.offerId(queryDataOfferModel.getOfferId()).policyId(queryDataOfferModel.getPolicyId()).build();
+	public EDRCachedByIdResponse verifyAndGetToken(Dataset dataset, String connectorEndpointUrl, String connectorId) {
 		try {
-			EDRCachedResponse eDRCachedResponse = consumerControlPanelService.verifyOrCreateContractNegotiation(
-					bpnNumber, Map.of(), queryDataOfferModel.getConnectorOfferUrl(), null, offer);
-
-			if (eDRCachedResponse == null) {
-				throw new ServiceException(
-						"Time out!! to get 'NEGOTIATED' EDC EDR status to lookup dt twin, The current status is null");
-			} else if (!"NEGOTIATED".equalsIgnoreCase(eDRCachedResponse.getEdrState())) {
-				throw new ServiceException(
-						"Time out!! to get 'NEGOTIATED' EDC EDR status to lookup dt twin, The current status is '"
-								+ eDRCachedResponse.getEdrState() + "'");
-			} else
-				return consumerControlPanelService
-						.getAuthorizationTokenForDataDownload(eDRCachedResponse.getTransferProcessId());
-
+			return edcConsumerV2Facilator.subcribeAndInititateTransferWaitGetEDRAuthToken(dataset, connectorEndpointUrl,
+					connectorId);
 		} catch (FeignException e) {
 			String errorMsg = "Unable to look up offer because: " + e.contentUTF8();
 			log.error("FeignException : " + errorMsg);
@@ -109,7 +123,6 @@ public class DDTRUrlCacheUtility {
 			String errorMsg = "Unable to look up offer because: " + e.getMessage();
 			log.error("Exception : " + errorMsg);
 		}
-
 		return null;
 	}
 

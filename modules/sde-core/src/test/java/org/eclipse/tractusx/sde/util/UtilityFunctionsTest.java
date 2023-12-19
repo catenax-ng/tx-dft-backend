@@ -20,23 +20,15 @@
 
 package org.eclipse.tractusx.sde.util;
 
-import org.eclipse.tractusx.sde.common.utils.TryUtils;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.eclipse.tractusx.sde.edc.util.UtilityFunctions;
+import org.eclipse.tractusx.sde.common.utils.TryUtils;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
 
 @Testable
 class UtilityFunctionsTest {
-
-    @Test
-    public void testRemoveLastSlashOfUrl() {
-        assertEquals("https://example.org/example", UtilityFunctions.removeLastSlashOfUrl("https://example.org/example"));
-        assertEquals("", UtilityFunctions.removeLastSlashOfUrl("/"));
-    }
 
     @Test
     public void testRetry() throws Exception{

@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.apr.entity.AspectRelationshipEntity;
 import org.eclipse.tractusx.sde.submodels.apr.mapper.AspectRelationshipMapper;
 import org.eclipse.tractusx.sde.submodels.apr.repository.AspectRelationshipRepository;
@@ -47,7 +47,7 @@ public class AspectRelationshipService {
 
 	public static final String DELETED_Y = "Y";
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -77,17 +77,10 @@ public class AspectRelationshipService {
 	}
 
 	@SneakyThrows
-	public void deleteEDCAsset(AspectRelationshipEntity aspectRelationshipEntity) {
-
-		deleteEDCFacilitator.deleteContractDefination(aspectRelationshipEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(aspectRelationshipEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(aspectRelationshipEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(aspectRelationshipEntity.getAssetId());
+	public void deleteEDCAsset(AspectRelationshipEntity entity) {
+		edcProviderV2Facilator.deleteEDCOffer(entity.getAssetId(), entity.getAccessPolicyId(),
+				entity.getUsagePolicyId(), entity.getContractDefinationId());
 	}
-
 	private void saveAspectRelationshipWithDeleted(AspectRelationshipEntity aspectRelationshipEntity) {
 		aspectRelationshipEntity.setDeleted(DELETED_Y);
 		aspectRelationshipRepository.save(aspectRelationshipEntity);

@@ -43,8 +43,9 @@ import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubModelResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsUtility;
 import org.eclipse.tractusx.sde.digitaltwins.gateways.external.EDCDigitalTwinProxyForLookUp;
-import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedByIdResponse;
-import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
+import org.eclipse.tractusx.sde.edc.catalog.model.Dataset;
+import org.eclipse.tractusx.sde.edc.catalog.model.OfferCatalog;
+import org.eclipse.tractusx.sde.edc.edr.model.EDRCachedByIdResponse;
 import org.eclipse.tractusx.sde.submodels.apr.model.AspectRelationship;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -205,27 +206,31 @@ public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 		ShellLookupRequest shellLookupRequest = digitalTwinsUtility.getShellLookupRequest(getShellLookupRequestforChild(aspectRelationShip));
 
 		String childManufacturerId = aspectRelationShip.getChildManufacturerId();
-		List<QueryDataOfferModel> queryDataOffers = getDDTRUrl(childManufacturerId);
+		List<OfferCatalog> queryDataOffers = getDDTRUrl(childManufacturerId);
 
 		String childUUID = null;
 		String msg = "";
 
-		for (QueryDataOfferModel dtOffer : queryDataOffers) {
+		for (OfferCatalog dtOffer : queryDataOffers) {
 
-			EDRCachedByIdResponse edrToken = dDTRUrlCacheUtility.verifyAndGetToken(childManufacturerId, dtOffer);
+			for (Dataset dataset : dtOffer.getDataSetOffers()) {
+				EDRCachedByIdResponse edrToken = dDTRUrlCacheUtility.verifyAndGetToken(dataset,
+						dtOffer.getConnectorEndpointUrl(), dtOffer.getConnectorId());
 
-			if (edrToken != null) {
-				childUUID = lookUpChildTwin(shellLookupRequest, aspectRelationShip, edrToken, dtOffer);
-				if (childUUID != null) {
-					break;
+				if (edrToken != null) {
+					childUUID = lookUpChildTwin(shellLookupRequest, aspectRelationShip, edrToken, dtOffer);
+					if (childUUID != null) {
+						break;
+					} else {
+						log.warn(aspectRelationShip.getRowNumber() + ", EDC connector "
+								+ dtOffer.getConnectorEndpointUrl() + ", No child twin found for "
+								+ shellLookupRequest.toJsonString());
+					}
 				} else {
-					log.warn(aspectRelationShip.getRowNumber() + ", EDC connector " + dtOffer.getConnectorOfferUrl()
-							+ ", No child twin found for " + shellLookupRequest.toJsonString());
+					msg = ", EDC connector " + dtOffer.getConnectorEndpointUrl()
+							+ ", The EDR token is null to find child twin ";
+					log.warn(aspectRelationShip.getRowNumber() + msg + shellLookupRequest.toJsonString());
 				}
-			} else {
-				msg = ", EDC connector " + dtOffer.getConnectorOfferUrl()
-						+ ", The EDR token is null to find child twin ";
-				log.warn(aspectRelationShip.getRowNumber() + msg + shellLookupRequest.toJsonString());
 			}
 		}
 
@@ -246,10 +251,10 @@ public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 
 	@SneakyThrows
 	private String lookUpChildTwin(ShellLookupRequest shellLookupRequest, AspectRelationship aspectRelationShip,
-			EDRCachedByIdResponse edrToken, QueryDataOfferModel dtOffer) {
+			EDRCachedByIdResponse edrToken, OfferCatalog dtOffer) {
 		String childUUID = null;
 		String endpoint = edrToken.getEndpoint();
-		String dtOfferUrl = dtOffer.getConnectorOfferUrl();
+		String dtOfferUrl = dtOffer.getConnectorEndpointUrl();
 		try {
 
 			Map<String, String> header = new HashMap<>();
@@ -308,7 +313,7 @@ public class DigitalTwinsAspectRelationShipCsvHandlerUseCase extends Step {
 		return childUUID;
 	}
 
-	public List<QueryDataOfferModel> getDDTRUrl(String bpnNumber) {
+	public List<OfferCatalog> getDDTRUrl(String bpnNumber) {
 
 		LocalDateTime cacheExpTime = map.get(bpnNumber);
 		LocalDateTime currDate = LocalDateTime.now();

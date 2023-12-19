@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.entities.UsagePolicies;
 import org.eclipse.tractusx.sde.common.enums.UsagePolicyEnum;
+import org.eclipse.tractusx.sde.core.model.Offer;
 import org.eclipse.tractusx.sde.core.processreport.entity.ConsumerDownloadHistoryEntity;
 import org.eclipse.tractusx.sde.core.processreport.model.ConsumerDownloadHistory;
-import org.eclipse.tractusx.sde.edc.model.request.Offer;
 import org.mapstruct.Mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;

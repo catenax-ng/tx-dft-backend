@@ -20,23 +20,19 @@
 
 package org.eclipse.tractusx.sde.configuration;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.text.StringSubstitutor;
+import org.eclipse.tractusx.sde.common.mapper.EDCAssetEntryRequestFactory;
+import org.eclipse.tractusx.sde.common.submodel.executor.create.steps.impl.EDCHandlerStep;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
 import org.eclipse.tractusx.sde.core.properties.SdeCommonProperties;
-import org.eclipse.tractusx.sde.core.utils.ValueReplacerUtility;
-import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequest;
-import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequestFactory;
-import org.eclipse.tractusx.sde.edc.facilitator.CreateEDCAssetFacilator;
-import org.eclipse.tractusx.sde.edc.gateways.external.EDCGateway;
+import org.eclipse.tractusx.sde.edc.core.model.Constraint;
+import org.eclipse.tractusx.sde.edc.core.model.ConstraintOperator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -49,58 +45,51 @@ import lombok.extern.slf4j.Slf4j;
 @Profile("default")
 public class DigitalTwinAssetProvider {
 
-	private final AssetEntryRequestFactory assetFactory;
-	private final EDCGateway edcGateway;
-	private final CreateEDCAssetFacilator createEDCAssetFacilator;
+	private final EDCHandlerStep edcHandlerStep;
+	private final EDCAssetEntryRequestFactory edcAssetEntryRequestFactory;
 	private final SdeCommonProperties sdeCommonProperties;
-	private final ValueReplacerUtility valueReplacerUtility;
 
 	@PostConstruct
 	@SneakyThrows
 	public void init() {
 
 		String assetId = UUIdGenerator.getUuid();
-		AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest("", "Digital twin registry information",
-				assetId, "1", "");
 
-		assetEntryRequest.getAsset().getProperties().put("type", "data.core.digitalTwinRegistry");
-		assetEntryRequest.getAsset().getProperties().put("registry", sdeCommonProperties.getDigitalTwinRegistry());
+		Constraint criteriaConstraintType = Constraint.builder()
+				.leftOperand("type")
+				.operator(ConstraintOperator.EQ)
+				.rightOperand("data.core.digitalTwinRegistry")
+				.build();
 
-		assetEntryRequest.getDataAddress().getProperties().put("oauth2:tokenUrl",
-				sdeCommonProperties.getDigitalTwinTokenUrl());
-		assetEntryRequest.getDataAddress().getProperties().put("oauth2:clientId",
-				sdeCommonProperties.getDigitalTwinClientId());
+		Constraint criteriaConstraint = Constraint.builder()
+				.leftOperand("registry")
+				.operator(ConstraintOperator.EQ)
+				.rightOperand(sdeCommonProperties.getDigitalTwinRegistry())
+				.build();
+
+		Map<String, Object> assetProps = edcAssetEntryRequestFactory.getAssetProperties(assetId, "DigitalTwinAsset");
+
+		Map<String, Object> dataAddressProps = edcAssetEntryRequestFactory
+				.getDataAddressProperties(sdeCommonProperties.getDigitalTwinRegistry());
 
 		if (sdeCommonProperties.isDDTRManagedThirdparty()) {
-			assetEntryRequest.getDataAddress().getProperties().put("baseUrl",
-					sdeCommonProperties.getDigitalTwinRegistry());
-			assetEntryRequest.getDataAddress().getProperties().put("oauth2:scope",
-					sdeCommonProperties.getDigitalTwinAuthenticationScope());
-			assetEntryRequest.getDataAddress().getProperties().put("oauth2:clientSecret", sdeCommonProperties.getDigitalTwinClientSecret());
+			dataAddressProps.put("baseUrl", sdeCommonProperties.getDigitalTwinRegistry());
+			dataAddressProps.put("oauth2:scope", sdeCommonProperties.getDigitalTwinAuthenticationScope());
+			dataAddressProps.put("oauth2:clientSecret", sdeCommonProperties.getDigitalTwinClientSecret());
+			dataAddressProps.remove("oauth2:clientSecretKey");
 		} else {
-			assetEntryRequest.getDataAddress().getProperties().put("baseUrl",
+			dataAddressProps.put("baseUrl",
 					sdeCommonProperties.getDigitalTwinRegistry() + sdeCommonProperties.getDigitalTwinRegistryURI());
 		}
 
-		Map<String, String> inputData = new HashMap<>();
-		inputData.put("manufacturerId", sdeCommonProperties.getManufacturerId());
-		inputData.put("digitalTwinRegistry", sdeCommonProperties.getDigitalTwinRegistry());
+		JsonNode allAssets = edcHandlerStep.getAllAssets(0, 100, List.of(criteriaConstraintType, criteriaConstraint));
 
-		ObjectNode requestBody = (ObjectNode) new ObjectMapper().readTree(valueReplacerUtility
-				.valueReplacerUsingFileTemplate("/edc_request_template/edc_asset_lookup.json", inputData));
-
-		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
-			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, List.of(),
-					Map.of());
+		if (allAssets == null || (allAssets.isArray() && allAssets.isEmpty())) {
+			Map<String, String> createEDCAsset = edcHandlerStep.createAsset(List.of(), Map.of(), assetProps,
+					dataAddressProps);
 			log.info("Digital twin asset creates :" + createEDCAsset.toString());
 		} else {
 			log.info("Digital twin asset exists in edc connector, so ignoring asset creation");
 		}
-	}
-
-	@SneakyThrows
-	private String valueReplacer(String requestTemplatePath, Map<String, String> inputData) {
-		StringSubstitutor stringSubstitutor1 = new StringSubstitutor(inputData);
-		return stringSubstitutor1.replace(requestTemplatePath);
 	}
 }

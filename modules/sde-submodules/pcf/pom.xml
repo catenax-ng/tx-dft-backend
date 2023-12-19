@@ -40,11 +40,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>edc</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>digital-twins</artifactId>
 			<version>0.0.1</version>
 		</dependency>

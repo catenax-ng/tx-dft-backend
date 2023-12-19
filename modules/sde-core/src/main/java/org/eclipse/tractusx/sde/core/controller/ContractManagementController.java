@@ -23,10 +23,13 @@ package org.eclipse.tractusx.sde.core.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
+import java.net.URI;
 import java.util.Map;
 
-import org.eclipse.tractusx.sde.edc.enums.Type;
-import org.eclipse.tractusx.sde.edc.facilitator.ContractNegotiateManagementHelper;
+import org.eclipse.tractusx.sde.common.configuration.properties.EDCConfigurationProperties;
+import org.eclipse.tractusx.sde.core.model.RequestForType;
+import org.eclipse.tractusx.sde.core.service.ContractNegotiateServiceHandler;
+import org.eclipse.tractusx.sde.edc.core.proxy.EDCClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,14 +40,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 @RestController
 @RequestMapping("contract-agreements")
 @RequiredArgsConstructor
 public class ContractManagementController {
 
-	private final ContractNegotiateManagementHelper contractNegotiateManagement;
+	private final ContractNegotiateServiceHandler contractProviderNegotiateManagement;
+	private final ContractNegotiateServiceHandler contractConsumerNegotiateManagement;
+
+	private final EDCConfigurationProperties edcConfigurationProperties;
+
+	private EDCClient edcProviderClient = null;
+	private EDCClient edcConsumerClient = null;
+
+	@SneakyThrows
+	@PostConstruct
+	public void init() {
+
+		this.edcProviderClient = EDCClient.builder().edcHost(new URI(edcConfigurationProperties.getConsumerHost()))
+				.edcApiHeaderKey(edcConfigurationProperties.getConsumerApiKey())
+				.edcApiHeaderValue(edcConfigurationProperties.getConsumerApiValue())
+				.edcDataManagementPath(edcConfigurationProperties.getConsumerManagementPath()).build();
+
+		this.edcConsumerClient = EDCClient.builder().edcHost(new URI(edcConfigurationProperties.getConsumerHost()))
+				.edcApiHeaderKey(edcConfigurationProperties.getConsumerApiKey())
+				.edcApiHeaderValue(edcConfigurationProperties.getConsumerApiValue())
+				.edcDataManagementPath(edcConfigurationProperties.getConsumerManagementPath()).build();
+		
+		contractProviderNegotiateManagement.init(this.edcProviderClient);
+		contractConsumerNegotiateManagement.init(this.edcConsumerClient);
+
+	}
 
 	@GetMapping(value = "/provider", produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasPermission('','provider_view_contract_agreement')")
@@ -57,7 +87,8 @@ public class ContractManagementController {
 		if (offset == null) {
 			offset = 0;
 		}
-		Map<String, Object> res = contractNegotiateManagement.getAllContractOffers(Type.PROVIDER.name(), limit, offset);
+		Map<String, Object> res = contractProviderNegotiateManagement.getAllContractOffers(RequestForType.PROVIDER,
+				limit, offset);
 		return ok().body(res);
 	}
 
@@ -72,35 +103,23 @@ public class ContractManagementController {
 		if (offset == null) {
 			offset = 0;
 		}
-		Map<String, Object> res = contractNegotiateManagement.getAllContractOffers(Type.CONSUMER.name(), limit, offset);
+		Map<String, Object> res = contractConsumerNegotiateManagement.getAllContractOffers(RequestForType.CONSUMER,
+				limit, offset);
 		return ok().body(res);
 	}
 
-	@PostMapping(value = "/{negotiationId}/provider/decline", produces = APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/provider/{negotiationId}/terminate", produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasPermission('','provider_delete_contract_agreement')")
 	public ResponseEntity<Object> declineContractProvider(@PathVariable("negotiationId") String negotiationId) {
-		contractNegotiateManagement.declineContract(Type.PROVIDER.name(), negotiationId);
+		contractProviderNegotiateManagement.terminateContract(RequestForType.PROVIDER, negotiationId);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@GetMapping(value = "/{negotiationId}/consumer/decline", produces = APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/consumer/{negotiationId}/terminate", produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasPermission('','consumer_delete_contract_agreement')")
 	public ResponseEntity<Object> declineContractConsumer(@PathVariable("negotiationId") String negotiationId) {
-		contractNegotiateManagement.declineContract(Type.CONSUMER.name(), negotiationId);
+		contractConsumerNegotiateManagement.terminateContract(RequestForType.CONSUMER, negotiationId);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@PostMapping(value = "/{negotiationId}/provider/cancel", produces = APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasPermission('','provider_delete_contract_agreement')")
-	public ResponseEntity<Object> cancelContractProvider(@PathVariable("negotiationId") String negotiationId) {
-		contractNegotiateManagement.cancelContract(Type.PROVIDER.name(), negotiationId);
-		return new ResponseEntity<>(HttpStatus.CREATED);
-	}
-
-	@PostMapping(value = "/{negotiationId}/consumer/cancel", produces = APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasPermission('','consumer_delete_contract_agreement')")
-	public ResponseEntity<Object> cancelContractConsumer(@PathVariable("negotiationId") String negotiationId) {
-		contractNegotiateManagement.cancelContract(Type.CONSUMER.name(), negotiationId);
-		return new ResponseEntity<>(HttpStatus.CREATED);
-	}
 }

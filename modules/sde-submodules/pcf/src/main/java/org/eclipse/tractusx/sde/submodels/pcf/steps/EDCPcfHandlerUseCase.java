@@ -26,14 +26,13 @@ import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerUseCaseException;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
-import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequest;
-import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequestFactory;
-import org.eclipse.tractusx.sde.edc.facilitator.CreateEDCAssetFacilator;
-import org.eclipse.tractusx.sde.edc.gateways.external.EDCGateway;
+import org.eclipse.tractusx.sde.common.submodel.executor.create.steps.impl.EDCHandlerStep;
 import org.eclipse.tractusx.sde.submodels.pcf.entity.PcfEntity;
 import org.eclipse.tractusx.sde.submodels.pcf.model.PcfAspect;
 import org.eclipse.tractusx.sde.submodels.pcf.service.PcfService;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -42,9 +41,7 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class EDCPcfHandlerUseCase extends Step {
 
-	private final AssetEntryRequestFactory assetFactory;
-	private final EDCGateway edcGateway;
-	private final CreateEDCAssetFacilator createEDCAssetFacilator;
+	private final EDCHandlerStep edcHandlerStep;
 	private final PcfService aspectService;
 
 	@SneakyThrows
@@ -54,17 +51,16 @@ public class EDCPcfHandlerUseCase extends Step {
 
 		try {
 
-			AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest(submodel,
-					getSubmodelShortDescriptionOfModel(), shellId, subModelId, input.getId());
-			if (!edcGateway.assetExistsLookup(
-					assetEntryRequest.getAsset().getId())) {
+			String assetId = shellId + "-" + subModelId;
+			JsonNode asset = edcHandlerStep.getAsset(assetId);
+			if (asset == null) {
 
-				edcProcessingforAspect(assetEntryRequest, input);
+				edcProcessingforAspect(submodel, shellId, subModelId, input);
 
 			} else {
 
 				deleteEDCFirstForUpdate(submodel, input, processId);
-				edcProcessingforAspect(assetEntryRequest, input);
+				edcProcessingforAspect(submodel, shellId, subModelId, input);
 				input.setUpdatedforPcf(CommonConstants.UPDATED_Y);
 			}
 
@@ -87,16 +83,16 @@ public class EDCPcfHandlerUseCase extends Step {
 	}
 
 	@SneakyThrows
-	private void edcProcessingforAspect(AssetEntryRequest assetEntryRequest, PcfAspect input) {
+	private void edcProcessingforAspect(String submodel, String shellId, String subModelId, PcfAspect input) {
 
-		Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest,
-				input.getBpnNumbersforPcf(), input.getUsagePoliciesforPcf());
+		Map<String, String> createEDCOffer = edcHandlerStep.createEDCOffer(submodel, shellId, subModelId,
+				input.getUuid(), input.getBpnNumbersforPcf(), input.getUsagePoliciesforPcf());
 
 		// EDC transaction information for DB
-		input.setAssetIdforPcf(assetEntryRequest.getAsset().getId());
-		input.setAccessPolicyIdforPcf(createEDCAsset.get("accessPolicyId"));
-		input.setUsagePolicyIdforPcf(createEDCAsset.get("usagePolicyId"));
-		input.setContractDefinationIdforPcf(createEDCAsset.get("contractDefinitionId"));
+		input.setAssetIdforPcf(createEDCOffer.get("assetId"));
+		input.setAccessPolicyIdforPcf(createEDCOffer.get("accessPolicyId"));
+		input.setUsagePolicyIdforPcf(createEDCOffer.get("usagePolicyId"));
+		input.setContractDefinationIdforPcf(createEDCOffer.get("contractDefinitionId"));
 	}
 
 }

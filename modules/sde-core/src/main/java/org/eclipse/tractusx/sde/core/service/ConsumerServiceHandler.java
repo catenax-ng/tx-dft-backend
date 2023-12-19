@@ -27,6 +27,7 @@ import static org.eclipse.tractusx.sde.common.enums.ProgressStatusEnum.PARTIALLY
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,18 +41,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.tractusx.sde.common.configuration.properties.EDCConfigurationProperties;
+import org.eclipse.tractusx.sde.common.configuration.properties.PortalConfigurationProperties;
 import org.eclipse.tractusx.sde.common.enums.ProgressStatusEnum;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.common.model.Acknowledgement;
 import org.eclipse.tractusx.sde.common.model.PagingResponse;
 import org.eclipse.tractusx.sde.common.model.Submodel;
 import org.eclipse.tractusx.sde.core.failurelog.repository.ConsumerDownloadHistoryRepository;
+import org.eclipse.tractusx.sde.core.model.ConsumerRequest;
+import org.eclipse.tractusx.sde.core.model.Offer;
 import org.eclipse.tractusx.sde.core.processreport.entity.ConsumerDownloadHistoryEntity;
 import org.eclipse.tractusx.sde.core.processreport.mapper.ConsumerDownloadHistoryMapper;
 import org.eclipse.tractusx.sde.core.processreport.model.ConsumerDownloadHistory;
-import org.eclipse.tractusx.sde.edc.model.request.ConsumerRequest;
-import org.eclipse.tractusx.sde.edc.model.request.Offer;
-import org.eclipse.tractusx.sde.edc.services.ConsumerControlPanelService;
+import org.eclipse.tractusx.sde.edc.catalog.EDCCatalogV2Facilator;
+import org.eclipse.tractusx.sde.edc.catalog.model.Dataset;
+import org.eclipse.tractusx.sde.edc.consumer.EDCConsumerV2Facilator;
+import org.eclipse.tractusx.sde.edc.core.model.Constraint;
+import org.eclipse.tractusx.sde.edc.core.model.ConstraintOperator;
+import org.eclipse.tractusx.sde.edc.core.model.LogicalConstraint;
+import org.eclipse.tractusx.sde.edc.core.model.LogicalOperatorType;
+import org.eclipse.tractusx.sde.edc.core.proxy.EDCClient;
+import org.eclipse.tractusx.sde.portal.model.PortalClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -64,15 +76,18 @@ import com.google.gson.Gson;
 import com.opencsv.CSVWriter;
 import com.opencsv.ICSVWriter;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @Service
-@AllArgsConstructor
-public class ConsumerService {
+@RequiredArgsConstructor
+public class ConsumerServiceHandler {
 
-	private final ConsumerControlPanelService consumerControlPanelService;
+	private final EDCConsumerV2Facilator edcConsumerV2Facilator;
+
+	private final EDCCatalogV2Facilator edcCatalogV2Facilator;
 
 	private final SubmodelOrchestartorService submodelOrchestartorService;
 
@@ -81,6 +96,51 @@ public class ConsumerService {
 	private final ConsumerDownloadHistoryMapper consumerDownloadHistoryMapper;
 
 	ObjectMapper mapper = new ObjectMapper();
+
+	private final EDCConfigurationProperties edcConfigurationProperties;
+
+	private final PortalConfigurationProperties portalConfigurationProperties;
+
+	@SneakyThrows
+	@PostConstruct
+	public void init() {
+
+		EDCClient edcConsumerClient = EDCClient.builder().edcHost(new URI(edcConfigurationProperties.getConsumerHost()))
+				.edcApiHeaderKey(edcConfigurationProperties.getConsumerApiKey())
+				.edcApiHeaderValue(edcConfigurationProperties.getConsumerApiValue())
+				.edcDataManagementPath(edcConfigurationProperties.getConsumerManagementPath()).build();
+
+		PortalClient portalClient = PortalClient.builder()
+				.portalHost(new URI(portalConfigurationProperties.getHostname()))
+				.portalTokenUrl(new URI(portalConfigurationProperties.getAuthenticationUrl()))
+				.clientId(portalConfigurationProperties.getClientId())
+				.clientSecret(portalConfigurationProperties.getClientSecret()).build();
+
+		edcConsumerV2Facilator.init(edcConsumerClient, portalClient);
+		edcCatalogV2Facilator.setEDCClient(edcConsumerClient);
+	}
+
+	public Object queryOnDataOffers(String providerDSPUrl, Integer offset, Integer limit) {
+		return edcCatalogV2Facilator.requestCatalog(providerDSPUrl, List.of(), offset, limit);
+	}
+
+	public void subscribeDataOffers(ConsumerRequest consumerRequest) {
+		consumerRequest.getOffers().forEach(offer -> {
+			Dataset dataset = new Dataset();
+			dataset.setDataSetId(offer.getAssetId());
+			dataset.setOfferId(offer.getOfferId());
+			dataset.setUsagePolicyConstraint(LogicalConstraint.builder().type(LogicalOperatorType.AND)
+					.constraints(consumerRequest.getPolicies().stream()
+							.map(usagePolicy -> Constraint.builder().leftOperand(usagePolicy.getTypeOfAccess().name())
+									.operator(ConstraintOperator.EQ).rightOperand(usagePolicy.getValue()).build())
+							.toList())
+					.build());
+
+			edcConsumerV2Facilator.subcribeOffer(dataset, consumerRequest.getProviderUrl(),
+					consumerRequest.getConnectorId());
+		});
+
+	}
 
 	public Acknowledgement subscribeAndDownloadDataOffersAsync(ConsumerRequest consumerRequest) {
 		String processId = UUID.randomUUID().toString();
@@ -115,8 +175,22 @@ public class ConsumerService {
 		// Save consumer Download history in DB
 		consumerDownloadHistoryRepository.save(entity);
 
-		Map<String, Object> subscribeAndDownloadDataOffers = consumerControlPanelService
-				.subscribeAndDownloadDataOffers(consumerRequest, flagToDownloadImidiate);
+		Map<String, Object> subscribeAndDownloadDataOffers = new HashMap<>();
+		consumerRequest.getOffers().forEach(offer -> {
+			Dataset dataset = new Dataset();
+			dataset.setDataSetId(offer.getAssetId());
+			dataset.setOfferId(offer.getOfferId());
+			dataset.setUsagePolicyConstraint(LogicalConstraint.builder().type(LogicalOperatorType.AND)
+					.constraints(consumerRequest.getPolicies().stream()
+							.map(usagePolicy -> Constraint.builder().leftOperand(usagePolicy.getTypeOfAccess().name())
+									.operator(ConstraintOperator.EQ).rightOperand(usagePolicy.getValue()).build())
+							.toList())
+					.build());
+			Map<String, Object> subcribeAndDownloadOffer = edcConsumerV2Facilator.subcribeAndDownloadOffer(dataset,
+					consumerRequest.getProviderUrl(), consumerRequest.getConnectorId(),
+					consumerRequest.getDownloadDataAs());
+			subscribeAndDownloadDataOffers.putAll(subcribeAndDownloadOffer);
+		});
 
 		Map<String, Object> dataWithValue = new TreeMap<>();
 
@@ -144,8 +218,8 @@ public class ConsumerService {
 	}
 
 	@SneakyThrows
-	public void downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(String referenceProcessId, String type,
-			HttpServletResponse response) {
+	public void downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(String referenceProcessId,
+			String downloadDataAs, HttpServletResponse response) {
 
 		String processId = UUID.randomUUID().toString();
 
@@ -175,13 +249,14 @@ public class ConsumerService {
 
 				List<String> assetIds = offerList.stream().map(Offer::getAssetId).toList();
 
-				Map<String, Object> downloadFileFromEDCUsingifAlreadyTransferStatusCompleted = consumerControlPanelService
-						.downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(assetIds, type);
+				Map<String, Object> downloadFileFromEDCUsingifAlreadyTransferStatusCompleted = new HashMap<>();
+				assetIds.stream().forEach(assetId -> downloadFileFromEDCUsingifAlreadyTransferStatusCompleted
+						.putAll(edcConsumerV2Facilator.streamData(assetId, downloadDataAs)));
 
 				offerList.stream()
 						.forEach(offer -> prepareFromOfferResponse(
 								downloadFileFromEDCUsingifAlreadyTransferStatusCompleted, failedCount, successCount,
-								dataWithValue, offer, true, type));
+								dataWithValue, offer, true, downloadDataAs));
 
 				entity.setEndDate(LocalDateTime.now());
 				entity.setOffers(mapper.writeValueAsString(offerList));
@@ -199,7 +274,7 @@ public class ConsumerService {
 				// Save consumer Download history in DB
 				consumerDownloadHistoryRepository.save(entity);
 
-				prepareHttpResponse(response, processId, dataWithValue, type);
+				prepareHttpResponse(response, processId, dataWithValue, downloadDataAs);
 			} else {
 				generateFailureJsonResponse(response, "Unable to find data offer in SDE for download");
 			}
@@ -368,12 +443,9 @@ public class ConsumerService {
 				zippedOut.putNextEntry(e);
 				// There is no need for staging the CSV on filesystem or reading bytes into
 				// memory. Directly write bytes to the output stream.
-				CSVWriter writer = new CSVWriter(new OutputStreamWriter(zippedOut),
-						';',
-						ICSVWriter.NO_QUOTE_CHARACTER,
-	                    '/',
-	                    ICSVWriter.DEFAULT_LINE_END);
-				
+				CSVWriter writer = new CSVWriter(new OutputStreamWriter(zippedOut), ';', ICSVWriter.NO_QUOTE_CHARACTER,
+						'/', ICSVWriter.DEFAULT_LINE_END);
+
 				List<Object> valueList = (ArrayList<Object>) value;
 				for (Object list : valueList) {
 

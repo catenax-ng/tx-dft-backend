@@ -51,9 +51,7 @@
 	</properties>
 
 	<modules>
-		<module>modules/sde-external-services/edc</module>
 		<module>modules/sde-external-services/digital-twins</module>
-		<module>modules/sde-external-services/portal</module>
 		<module>modules/sde-external-services/bpn-discovery</module>
 		<module>modules/sde-external-services/sde-agent</module>
 		<module>modules/sde-external-services/sde-notification</module>

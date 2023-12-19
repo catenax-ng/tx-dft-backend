@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.sluab.entity.SingleLevelUsageAsBuiltEntity;
 import org.eclipse.tractusx.sde.submodels.sluab.mapper.SingleLevelUsageAsBuiltMapper;
 import org.eclipse.tractusx.sde.submodels.sluab.repository.SingleLevelUsageAsBuiltRepository;
@@ -44,7 +44,7 @@ public class SingleLevelUsageAsBuiltService {
 
 	private final SingleLevelUsageAsBuiltMapper singleLevelUsageAsBuiltMapper;
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -72,17 +72,12 @@ public class SingleLevelUsageAsBuiltService {
 
 		saveAspectRelationshipWithDeleted(aspectRelationshipEntity);
 	}
-
+	
 	@SneakyThrows
-	public void deleteEDCAsset(SingleLevelUsageAsBuiltEntity singleLevelUsageAsBuiltEntity) {
+	public void deleteEDCAsset(SingleLevelUsageAsBuiltEntity aspectEntity) {
 
-		deleteEDCFacilitator.deleteContractDefination(singleLevelUsageAsBuiltEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(singleLevelUsageAsBuiltEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(singleLevelUsageAsBuiltEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(singleLevelUsageAsBuiltEntity.getAssetId());
+		edcProviderV2Facilator.deleteEDCOffer(aspectEntity.getAssetId(), aspectEntity.getAccessPolicyId(),
+				aspectEntity.getUsagePolicyId(), aspectEntity.getContractDefinationId());
 	}
 
 	private void saveAspectRelationshipWithDeleted(SingleLevelUsageAsBuiltEntity singleLevelUsageAsBuiltEntity) {

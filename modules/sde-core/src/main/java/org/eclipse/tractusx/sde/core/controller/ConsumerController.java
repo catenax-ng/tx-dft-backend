@@ -24,9 +24,8 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.UUID;
 
-import org.eclipse.tractusx.sde.core.service.ConsumerService;
-import org.eclipse.tractusx.sde.edc.model.request.ConsumerRequest;
-import org.eclipse.tractusx.sde.edc.services.ConsumerControlPanelService;
+import org.eclipse.tractusx.sde.core.model.ConsumerRequest;
+import org.eclipse.tractusx.sde.core.service.ConsumerServiceHandler;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,9 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ConsumerController {
 
-	private final ConsumerControlPanelService consumerControlPanelService;
-
-	private final ConsumerService consumerService;
+	private final ConsumerServiceHandler consumerServiceHandler;
 
 	@GetMapping(value = "/query-data-offers")
 	@PreAuthorize("hasPermission('','consumer_view_contract_offers')")
@@ -63,7 +60,7 @@ public class ConsumerController {
 		if (offset == null) {
 			offset = 0;
 		}
-		return ok().body(consumerControlPanelService.queryOnDataOffers(providerUrl, offset, limit, null));
+		return ok().body(consumerServiceHandler.queryOnDataOffers(providerUrl, offset, limit));
 	}
 
 	@PostMapping(value = "/subscribe-data-offers")
@@ -71,7 +68,7 @@ public class ConsumerController {
 	public ResponseEntity<Object> subscribeDataOffers(@Valid @RequestBody ConsumerRequest consumerRequest) {
 		String processId = UUID.randomUUID().toString();
 		log.info("Request recevied : /api/subscribe-data-offers");
-		consumerControlPanelService.subscribeDataOffers(consumerRequest, processId);
+		consumerServiceHandler.subscribeDataOffers(consumerRequest);
 		return ResponseEntity.ok().body(processId);
 	}
 
@@ -80,7 +77,7 @@ public class ConsumerController {
 	public ResponseEntity<Object> subscribeAndDownloadDataOffersAsync(
 			@Valid @RequestBody ConsumerRequest consumerRequest) {
 		log.info("Request recevied : /api/subscribe-download-data-offers-async");
-		return ResponseEntity.ok().body(consumerService.subscribeAndDownloadDataOffersAsync(consumerRequest));
+		return ResponseEntity.ok().body(consumerServiceHandler.subscribeAndDownloadDataOffersAsync(consumerRequest));
 	}
 
 	@PostMapping(value = "/subscribe-download-data-offers")
@@ -88,17 +85,18 @@ public class ConsumerController {
 	public void subscribeAndDownloadDataOffersSynchronous(@Valid @RequestBody ConsumerRequest consumerRequest,
 			HttpServletResponse response) {
 		log.info("Request recevied : /api/subscribe-download-data-offers");
-		consumerService.subscribeAndDownloadDataOffersSynchronous(consumerRequest, response);
+		consumerServiceHandler.subscribeAndDownloadDataOffersSynchronous(consumerRequest, response);
 	}
 
 	@GetMapping(value = "/download-data-offers")
 	@PreAuthorize("hasPermission('','consumer_download_data_offer')")
 	public void downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(
 			@RequestParam("processId") String referenceProcessId,
-			@RequestParam(value = "type", defaultValue = "csv", required = false) String type, HttpServletResponse response)
-			throws Exception {
+			@RequestParam(value = "type", defaultValue = "csv", required = false) String type,
+			HttpServletResponse response) throws Exception {
 		log.info("Request received : /api/download-data-offers");
-		consumerService.downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(referenceProcessId, type, response);
+		consumerServiceHandler.downloadFileFromEDCUsingifAlreadyTransferStatusCompleted(referenceProcessId, type,
+				response);
 	}
 
 	@GetMapping(value = "/view-download-history")
@@ -108,7 +106,7 @@ public class ConsumerController {
 		page = page == null ? 0 : page;
 		pageSize = pageSize == null ? 10 : pageSize;
 		log.info("Request received : /api/view-download-history");
-		return ok().body(consumerService.viewDownloadHistory(page, pageSize));
+		return ok().body(consumerServiceHandler.viewDownloadHistory(page, pageSize));
 	}
 
 	@GetMapping(value = "/view-download-history/{processId}")
@@ -116,7 +114,7 @@ public class ConsumerController {
 	public ResponseEntity<Object> viewConsumerDownloadHistoryDetails(@PathVariable("processId") String processId)
 			throws Exception {
 		log.info("Request received : /api/view-download-history-details");
-		return ok().body(consumerService.viewConsumerDownloadHistoryDetails(processId));
+		return ok().body(consumerServiceHandler.viewConsumerDownloadHistoryDetails(processId));
 
 	}
 

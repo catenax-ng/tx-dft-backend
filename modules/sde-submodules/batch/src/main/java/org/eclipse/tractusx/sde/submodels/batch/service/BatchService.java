@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.batch.entity.BatchEntity;
 import org.eclipse.tractusx.sde.submodels.batch.mapper.BatchMapper;
 import org.eclipse.tractusx.sde.submodels.batch.repository.BatchRepository;
@@ -46,7 +46,7 @@ public class BatchService {
 
 	public static final String DELETED_Y = "Y";
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -76,15 +76,9 @@ public class BatchService {
 	}
 
 	@SneakyThrows
-	public void deleteEDCAsset(BatchEntity batchEntity) {
-
-		deleteEDCFacilitator.deleteContractDefination(batchEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(batchEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(batchEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(batchEntity.getAssetId());
+	public void deleteEDCAsset(BatchEntity entity) {
+		edcProviderV2Facilator.deleteEDCOffer(entity.getAssetId(), entity.getAccessPolicyId(),
+				entity.getUsagePolicyId(), entity.getContractDefinationId());
 	}
 
 	private void saveBatchWithDeleted(BatchEntity batchEntity) {

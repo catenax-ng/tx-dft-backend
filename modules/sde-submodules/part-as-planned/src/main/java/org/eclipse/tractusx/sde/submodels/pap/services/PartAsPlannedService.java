@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.pap.entity.PartAsPlannedEntity;
 import org.eclipse.tractusx.sde.submodels.pap.mapper.PartAsPlannedMapper;
 import org.eclipse.tractusx.sde.submodels.pap.repository.PartAsPlannedRepository;
@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonObject;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 
 @Service
 @AllArgsConstructor
@@ -43,7 +44,7 @@ public class PartAsPlannedService {
 
 	private final PartAsPlannedMapper partAsPlannedMapper;
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -73,15 +74,10 @@ public class PartAsPlannedService {
 		saveAspectWithDeleted(partAsPlannedEntity);
 	}
 
-	public void deleteEDCAsset(PartAsPlannedEntity partAsPlannedEntity) {
-
-		deleteEDCFacilitator.deleteContractDefination(partAsPlannedEntity.getContractDefinationId());
-
-		deleteEDCFacilitator.deleteAccessPolicy(partAsPlannedEntity.getAccessPolicyId());
-
-		deleteEDCFacilitator.deleteUsagePolicy(partAsPlannedEntity.getUsagePolicyId());
-
-		deleteEDCFacilitator.deleteAssets(partAsPlannedEntity.getAssetId());
+	@SneakyThrows
+	public void deleteEDCAsset(PartAsPlannedEntity entity) {
+		edcProviderV2Facilator.deleteEDCOffer(entity.getAssetId(), entity.getAccessPolicyId(),
+				entity.getUsagePolicyId(), entity.getContractDefinationId());
 	}
 
 	private void saveAspectWithDeleted(PartAsPlannedEntity aspectEntity) {

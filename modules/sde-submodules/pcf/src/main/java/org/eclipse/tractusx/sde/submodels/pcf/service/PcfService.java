@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.edc.facilitator.DeleteEDCFacilitator;
+import org.eclipse.tractusx.sde.edc.provider.EDCProviderV2Facilator;
 import org.eclipse.tractusx.sde.submodels.pcf.entity.PcfEntity;
 import org.eclipse.tractusx.sde.submodels.pcf.mapper.PcfMapper;
 import org.eclipse.tractusx.sde.submodels.pcf.repository.PcfRepository;
@@ -45,7 +45,7 @@ public class PcfService {
 
 	public static final String DELETED_Y = "Y";
 
-	private final DeleteEDCFacilitator deleteEDCFacilitator;
+	private final EDCProviderV2Facilator edcProviderV2Facilator;
 
 	private final DigitalTwinsFacilitator deleteDigitalTwinsFacilitator;
 
@@ -74,15 +74,10 @@ public class PcfService {
 		saveAspectWithDeleted(pcfEntity);
 	}
 
-	public void deleteEDCAsset(PcfEntity pcfEntity) {
+	public void deleteEDCAsset(PcfEntity entity) {
 
-		deleteEDCFacilitator.deleteContractDefination(pcfEntity.getContractDefinationIdforPcf());
-
-		deleteEDCFacilitator.deleteAccessPolicy(pcfEntity.getAccessPolicyIdforPcf());
-
-		deleteEDCFacilitator.deleteUsagePolicy(pcfEntity.getUsagePolicyIdforPcf());
-
-		deleteEDCFacilitator.deleteAssets(pcfEntity.getAssetIdforPcf());
+		edcProviderV2Facilator.deleteEDCOffer(entity.getAssetIdforPcf(), entity.getAccessPolicyIdforPcf(),
+				entity.getUsagePolicyIdforPcf(), entity.getContractDefinationIdforPcf());
 	}
 
 	private void saveAspectWithDeleted(PcfEntity pcfEntity) {
