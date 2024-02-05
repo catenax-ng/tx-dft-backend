@@ -31,7 +31,7 @@ RUN mvn clean install
 
 # our final base image
 
-FROM eclipse-temurin:17.0.9_9-jdk-jammy
+FROM eclipse-temurin:17.0.10_7-jdk-focal
 
 ARG USERNAME=sdeuser
 ARG USER_UID=1001
@@ -44,6 +44,7 @@ USER $USERNAME
 
 # set deployment directory
 WORKDIR /home/sdeuser/sdeapp
+
 COPY LICENSE NOTICE.md DEPENDENCIES SECURITY.md  ./
 
 # copy over the built artifact from the maven image
