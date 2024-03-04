@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -55,8 +55,8 @@ public class ValidationService {
 	}
 
 	private boolean extracted(PolicyTemplateRequest policy, ConstraintValidatorContext constraintValidatorContext) {
-		boolean access = accessPoliciesValidation(policy.getAccessPolicies(), constraintValidatorContext);
-		boolean usage = usagePoliciesValidation(policy.getUsagePolicies(), constraintValidatorContext);
+		boolean access = accessPoliciesValidation(policy.getPolicies().get("access"), constraintValidatorContext);
+		boolean usage = usagePoliciesValidation(policy.getPolicies().get("usage"), constraintValidatorContext);
 		return access && usage;
 	}
 

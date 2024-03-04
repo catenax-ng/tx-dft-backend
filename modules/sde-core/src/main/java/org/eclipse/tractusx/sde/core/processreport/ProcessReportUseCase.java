@@ -1,8 +1,8 @@
 /********************************************************************************
  * Copyright (c) 2022 Critical TechWorks GmbH
  * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,6 +24,7 @@ package org.eclipse.tractusx.sde.core.processreport;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.tractusx.sde.common.entities.Policies;
@@ -59,16 +60,18 @@ public class ProcessReportUseCase {
 
 	
 	@SneakyThrows
-	public void startBuildProcessReport(String processId, String type, int size, List<Policies> accessPolicies,
-			List<Policies> usagePolicies, String policyUuid) {
+	public void startBuildProcessReport(String processId, String type, int size, Map<String, List<Policies>> policies,
+			String policyUuid) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		saveProcessReport(ProcessReport.builder().processId(processId)
+		saveProcessReport(ProcessReport.builder()
+				.processId(processId)
 				.policyUuid(policyUuid)
 				.csvType(type.toUpperCase())
-				.status(ProgressStatusEnum.IN_PROGRESS).numberOfItems(size).startDate(LocalDateTime.now())
-				.accessPolicies(accessPolicies)
-				.usagePolicies(usagePolicies)
+				.status(ProgressStatusEnum.IN_PROGRESS)
+				.numberOfItems(size)
+				.startDate(LocalDateTime.now())
+				.policies(policies)
 				.build());
 	}
 

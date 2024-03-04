@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2024 T-Systems International GmbH
- * Copyright (c) 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2023 T-Systems International GmbH
+ * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,19 +17,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.sde.policyhub.enums;
 
-public enum PolicyTypeIdEnum {
+ALTER TABLE IF EXISTS policy_tbl ADD COLUMN IF NOT EXISTS policies text NULL;
 
-	ACCESS("Access"), USAGE("Usage"), PURPOSE("Purpose");
+ALTER TABLE IF EXISTS process_report ADD COLUMN IF NOT EXISTS policies text NULL;
 
-	private String value;
 
-	PolicyTypeIdEnum(String value) {
-		this.value = value;
-	}
-
-	public String getPolicyTypeValue() {
-		return value;
-	}
-}

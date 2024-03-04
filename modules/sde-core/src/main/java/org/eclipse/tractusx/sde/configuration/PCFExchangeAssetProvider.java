@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2024 T-Systems International GmbH
+ * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -20,7 +20,6 @@
 
 package org.eclipse.tractusx.sde.configuration;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
@@ -89,8 +88,7 @@ public class PCFExchangeAssetProvider {
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
 			
 			PolicyModel policy= PolicyModel.builder()
-					.accessPolicies(List.of())
-					.usagePolicies(List.of())
+					.policies(Map.of())
 					.build();
 			
 			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, policy);

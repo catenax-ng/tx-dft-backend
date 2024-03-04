@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2024 T-Systems International GmbH
+ * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -22,6 +22,7 @@ package org.eclipse.tractusx.sde.core.policy.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.entities.Policies;
 
@@ -46,15 +47,11 @@ public class PolicyEntity {
 	@Column(name = "policy_name")
 	private String policyName;
 	
-	@Convert(converter = PoliciesListToStringConverter.class)
-	@Column(name = "access_policies", columnDefinition = "TEXT")
-	@JsonProperty(value = "access_policies")
-	private List<Policies> accessPolicies;
+	@Convert(converter = PoliciesMapToStringConverter.class)
+	@Column(name = "policies", columnDefinition = "TEXT")
+	@JsonProperty(value = "policies")
+	private Map<String, List<Policies>> policies;
 	
-	@Convert(converter = PoliciesListToStringConverter.class)
-	@Column(name = "usage_policies", columnDefinition = "TEXT")
-	@JsonProperty(value = "usage_policies")
-	private List<Policies> usagePolicies;
 	
 	@Column(name = "last_updated_time")
 	private LocalDateTime lastUpdatedTime;

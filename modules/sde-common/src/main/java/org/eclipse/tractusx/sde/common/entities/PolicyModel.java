@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -22,6 +22,7 @@ package org.eclipse.tractusx.sde.common.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,12 +47,8 @@ public class PolicyModel {
 	@JsonProperty(value = "policy_name")
 	private String policyName;
 
-	@JsonProperty(value = "access_policies")
-	private List<Policies> accessPolicies;
+	private Map<String, List<Policies>> policies;
 	
-	@JsonProperty(value = "usage_policies")
-	private List<Policies> usagePolicies;
-
 	private LocalDateTime lastUpdatedTime;
 
 }

@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.mapper.JsonObjectMapper;
+import org.eclipse.tractusx.sde.common.utils.PolicyOperationUtil;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,12 +80,12 @@ public class PolicyConstraintBuilderService {
 
 	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getAccessPolicies(), "odrl:or"), Collections.emptyMap(), "a"));
+				getPoliciesConstraints(PolicyOperationUtil.getAccessPolicies(policy), "odrl:or"), Collections.emptyMap(), "a"));
 	}
 
 	public JsonNode getUsagePolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getUsagePolicies(), "odrl:and"), Collections.emptyMap(), "u"));
+				getPoliciesConstraints(PolicyOperationUtil.getUsagePolicies(policy), "odrl:and"), Collections.emptyMap(), "u"));
 	}
 
 	public ActionRequest getUsagePoliciesConstraints(List<Policies> policies) {

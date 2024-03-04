@@ -19,6 +19,9 @@
  ********************************************************************************/
 package org.eclipse.tractusx.sde.common.utils;
 
+import static org.eclipse.tractusx.sde.common.enums.PolicyTypeIdEnum.ACCESS;
+import static org.eclipse.tractusx.sde.common.enums.PolicyTypeIdEnum.USAGE;
+
 import java.util.List;
 
 import org.eclipse.tractusx.sde.common.entities.Policies;
@@ -37,11 +40,19 @@ public class PolicyOperationUtil {
 	}
 	
 	public static List<String> getAccessBPNList(PolicyModel policy) {
-		return getBPNList(policy.getAccessPolicies());
+		return getBPNList(policy.getPolicies().get(ACCESS.getPolicyTypeValue()));
 	}
 
 	public static List<String> getUsageBPNList(PolicyModel policy) {
-		return getBPNList(policy.getUsagePolicies());
+		return getBPNList(policy.getPolicies().get(USAGE.getPolicyTypeValue()));
+	}
+	
+	public static List<Policies> getAccessPolicies(PolicyModel policy) {
+		return policy.getPolicies().get(ACCESS.getPolicyTypeValue());
+	}
+	
+	public static List<Policies> getUsagePolicies(PolicyModel policy) {
+		return policy.getPolicies().get(USAGE.getPolicyTypeValue());
 	}
 
 }

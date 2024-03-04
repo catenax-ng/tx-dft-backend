@@ -21,8 +21,8 @@ package org.eclipse.tractusx.sde.policyhub.model.request;
 
 import java.util.List;
 
+import org.eclipse.tractusx.sde.common.enums.PolicyTypeIdEnum;
 import org.eclipse.tractusx.sde.policyhub.enums.ConstraintOperandIdEnum;
-import org.eclipse.tractusx.sde.policyhub.enums.PolicyTypeIdEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

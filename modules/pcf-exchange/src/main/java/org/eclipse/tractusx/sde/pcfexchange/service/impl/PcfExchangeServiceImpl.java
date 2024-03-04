@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2024 T-Systems International GmbH
+ * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -97,7 +97,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 					.connectorId(providerBPNNumber)
 					.connectorOfferUrl(offer.getConnectorOfferUrl())
 					.policy(PolicyModel.builder()
-							.usagePolicies(consumerRequest.getUsagePolicies()).build())
+							.policies(Map.of("usage",consumerRequest.getUsagePolicies())).build())
 					.build();
 
 			EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(providerBPNNumber,

@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2024 T-Systems International GmbH
+ * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,7 +21,6 @@
 package org.eclipse.tractusx.sde.configuration;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.text.StringSubstitutor;
@@ -92,10 +91,9 @@ public class DigitalTwinAssetProvider {
 				.valueReplacerUsingFileTemplate("/edc_request_template/edc_asset_lookup.json", inputData));
 
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
-			
+
 			PolicyModel policy= PolicyModel.builder()
-					.accessPolicies(List.of())
-					.usagePolicies(List.of())
+					.policies(Map.of())
 					.build();
 			
 			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, policy);

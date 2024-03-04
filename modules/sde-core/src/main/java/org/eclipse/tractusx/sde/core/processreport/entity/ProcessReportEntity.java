@@ -1,8 +1,8 @@
 /********************************************************************************
  * Copyright (c) 2022 Critical TechWorks GmbH
  * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,10 +24,11 @@ package org.eclipse.tractusx.sde.core.processreport.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.enums.ProgressStatusEnum;
-import org.eclipse.tractusx.sde.core.policy.entity.PoliciesListToStringConverter;
+import org.eclipse.tractusx.sde.core.policy.entity.PoliciesMapToStringConverter;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -68,13 +69,9 @@ public class ProcessReportEntity {
     @Column(name = "policy_uuid")
     private String policyUuid;
     
-    @Column(name = "access_policies" , columnDefinition = "TEXT")
-    @Convert(converter = PoliciesListToStringConverter.class)
-    private List<Policies> accessPolicies;
-
-    @Column(name = "usage_policies", columnDefinition = "TEXT")
-    @Convert(converter = PoliciesListToStringConverter.class)
-   	private List<Policies> usagePolicies;
+    @Column(name = "policies" , columnDefinition = "TEXT")
+    @Convert(converter = PoliciesMapToStringConverter.class)
+    private Map<String,List<Policies>> policies;
     
     @Column(name = "number_of_updated_items")
     private int numberOfUpdatedItems;

@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023, 2024 T-Systems International GmbH
- * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 T-Systems International GmbH
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,22 +17,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
+package org.eclipse.tractusx.sde.common.enums;
 
-package org.eclipse.tractusx.sde.core.policy.entity;
+public enum PolicyTypeIdEnum {
 
-import org.eclipse.tractusx.sde.common.entities.PolicyModel;
-import org.eclipse.tractusx.sde.common.entities.PolicyTemplateRequest;
-import org.eclipse.tractusx.sde.common.entities.SubmodelJsonRequest;
-import org.mapstruct.Mapper;
+	ACCESS("access"), USAGE("usage"), PURPOSE("purpose");
 
-@Mapper(componentModel = "spring")
-public interface PolicyMapper {
+	private String value;
 
-	PolicyModel mapFrom(PolicyEntity entiry);
+	PolicyTypeIdEnum(String value) {
+		this.value = value;
+	}
 
-	PolicyEntity mapFrom(PolicyModel pojo);
-	
-	PolicyModel mapFrom(PolicyTemplateRequest request);
-	
-	PolicyTemplateRequest mapFrom(SubmodelJsonRequest request);
+	public String getPolicyTypeValue() {
+		return value;
+	}
 }

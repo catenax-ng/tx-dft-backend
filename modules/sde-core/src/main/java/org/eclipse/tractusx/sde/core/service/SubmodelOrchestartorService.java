@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.entities.PolicyTemplateRequest;
@@ -123,8 +122,8 @@ public class SubmodelOrchestartorService {
 
 		Runnable runnable = () -> {
 			processReportUseCase.startBuildProcessReport(processId, submodelSchemaObject.getId(),
-					csvContent.getRows().size(), submodelPolicyRequest.getAccessPolicies(),
-					submodelPolicyRequest.getUsagePolicies(), submodelPolicyRequest.getUuid());
+					csvContent.getRows().size(), submodelPolicyRequest.getPolicies(),
+				 submodelPolicyRequest.getUuid());
 
 			AtomicInteger successCount = new AtomicInteger();
 			AtomicInteger failureCount = new AtomicInteger();
@@ -174,7 +173,7 @@ public class SubmodelOrchestartorService {
 			executor.init(submodelSchema);
 
 			processReportUseCase.startBuildProcessReport(processId, submodelSchemaObject.getId(), rowData.size(),
-					policy.getAccessPolicies(), policy.getUsagePolicies(), policy.getUuid());
+					policy.getPolicies(), policy.getUuid());
 
 			rowData.stream().forEach(obj -> {
 				int andIncrement = atInt.incrementAndGet();
@@ -272,20 +271,14 @@ public class SubmodelOrchestartorService {
 			PolicyModel localPolicy = policyService.getPolicy(policy.getUuid());
 			
 			if (StringUtils.isNotBlank(policy.getUuid())
-					&& ((CollectionUtils.isNotEmpty(policy.getUsagePolicies())
-							&& !localPolicy.getUsagePolicies().equals(policy.getUsagePolicies()))
-					|| (CollectionUtils.isNotEmpty(policy.getAccessPolicies())
-							&& !localPolicy.getAccessPolicies().equals(policy.getAccessPolicies())))) {
-				
+					&& (!policy.getPolicies().isEmpty()
+							&& !localPolicy.getPolicies().equals(policy.getPolicies()))) {
 				
 				if (StringUtils.isBlank(policy.getPolicyName())) {
 					policy.setPolicyName(localPolicy.getPolicyName());
 				}
-				if (CollectionUtils.isEmpty(policy.getAccessPolicies())) {
-					policy.setAccessPolicies(localPolicy.getAccessPolicies());
-				}
-				if (CollectionUtils.isEmpty(policy.getUsagePolicies())) {
-					policy.setAccessPolicies(localPolicy.getUsagePolicies());
+				if (policy.getPolicies().isEmpty()) {
+					policy.setPolicies(localPolicy.getPolicies());
 				}
 
 				policy = policyService.updatePolicy(policy.getUuid(), policy);

@@ -20,8 +20,11 @@
 
 package org.eclipse.tractusx.sde.edc.services;
 
+import static org.eclipse.tractusx.sde.common.enums.PolicyTypeIdEnum.USAGE;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
@@ -126,7 +129,7 @@ public class CatalogResponseBuilder extends AbstractEDCStepsHelper {
 			}
 		}
 
-		build.setPolicy(PolicyModel.builder().accessPolicies(null).usagePolicies(usagePolicies).build());
+		build.setPolicy(PolicyModel.builder().policies(Map.of(USAGE.name(), usagePolicies)).build());
 	}
 
 	private void setConstraint(List<Policies> usagePolicies, JsonNode jsonNode) {

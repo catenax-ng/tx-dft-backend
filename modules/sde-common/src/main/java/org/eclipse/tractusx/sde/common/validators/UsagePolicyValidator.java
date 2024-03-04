@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -40,8 +40,8 @@ public class UsagePolicyValidator implements ConstraintValidator<ValidatePolicyT
 
 	public boolean isValid(PolicyModel policy, ConstraintValidatorContext constraintValidatorContext) {
 		boolean policyName = validationService.policyName(policy.getPolicyName(), constraintValidatorContext);
-		boolean access = validationService.accessPoliciesValidation(policy.getAccessPolicies(), constraintValidatorContext);
-		boolean usage = validationService.usagePoliciesValidation(policy.getUsagePolicies(), constraintValidatorContext);
+		boolean access = validationService.accessPoliciesValidation(policy.getPolicies().get("access"), constraintValidatorContext);
+		boolean usage = validationService.usagePoliciesValidation(policy.getPolicies().get("usage"), constraintValidatorContext);
 		return policyName && access && usage;
 	}
 
