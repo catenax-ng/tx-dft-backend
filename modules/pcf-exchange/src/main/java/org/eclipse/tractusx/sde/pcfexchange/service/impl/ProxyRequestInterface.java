@@ -60,7 +60,7 @@ public class ProxyRequestInterface {
 	
 	@SneakyThrows
 	public void requestToProviderForPCFValue(String productId, StringBuilder sb, String requestId, String message,
-			QueryDataOfferModel dataset) {
+			QueryDataOfferModel dataset, boolean requestToNotExistingTwin) {
 
 		EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(dataset.getConnectorId(), dataset);
 
@@ -71,7 +71,7 @@ public class ProxyRequestInterface {
 			URI pcfEnpoint = null;
 			String endpoint = edrToken.getEndpoint();
 
-			if (endpoint.endsWith("productIds"))
+			if (requestToNotExistingTwin)
 				endpoint += SLASH_DELIMETER + productId;
 
 			pcfEnpoint = new URI(endpoint);
