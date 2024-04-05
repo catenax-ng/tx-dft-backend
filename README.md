@@ -8,6 +8,7 @@ SDE Simple data exchanger(formally known DFT is short for Data Format Transforme
 It is a standalone service which can be self-hosted. 
 It enables companies to provide their data in the Eclipse Tractus-X network via an EDC.
 
+
 ## Important !!!
 ### Deployment of SDE backend
 The Auto-Setup is the central service orchestration component. The Auto-Setup hide all complex configuration properties for you and get SDE Backend as well as Frontend service deployed for you as service. The Auto-Setup taking all deployment through their specific helm charts. The Auto-Setup knows which prerequisites and which configurations are required for the components and creates them. All dependencies and any error messages are intercepted by Auto-Setup and treated correctly and meaningfully. Therefore, Auto-Setup meets your requirements exactly.
