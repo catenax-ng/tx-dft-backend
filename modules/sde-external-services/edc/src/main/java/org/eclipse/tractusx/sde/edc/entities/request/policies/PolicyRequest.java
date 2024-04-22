@@ -47,8 +47,12 @@ public class PolicyRequest {
 
 	@JsonProperty("@type")
 	@Builder.Default
-	private String type = "Policy";
-
+	private String type = "Set";
+	
+	@JsonProperty("@context")
+	@Builder.Default
+	private String context = "http://www.w3.org/ns/odrl.jsonld";
+	
 	@JsonProperty("odrl:permission")
 	private Object permissions;
 
