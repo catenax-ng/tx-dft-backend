@@ -2,8 +2,8 @@
 <!-- 
 /******************************************************************************** 
 * Copyright (c) 2022 BMW GmbH 
-* Copyright (c) 2022,2023 T-Systems International GmbH 
-* Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation 
+* Copyright (c) 2022, 2024 T-Systems International GmbH 
+* Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation 
 * 
 * See the NOTICE file(s) distributed with this work for additional 
 * information regarding copyright ownership. 
@@ -29,7 +29,7 @@
 		<groupId>org.eclipse.tractusx</groupId>
 		<artifactId>sde</artifactId>
 		<version>0.0.1</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>sde-core</artifactId>
 	<name>sde-core</name>
@@ -122,30 +122,19 @@
 
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>edc</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>digital-twins</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>policy-hub</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>serial-part-typization</artifactId>
+			<artifactId>serial-part</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>assembly-part-relationship</artifactId>
+			<artifactId>single-level-bom-as-built</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		
@@ -158,6 +147,12 @@
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>part-as-planned</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.tractusx</groupId>
+			<artifactId>part-type-information</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 
