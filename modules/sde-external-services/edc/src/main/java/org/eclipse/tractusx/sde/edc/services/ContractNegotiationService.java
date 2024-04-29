@@ -48,7 +48,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ContractNegotiationService extends AbstractEDCStepsHelper {
 
-	private static final String NEGOTIATED = "NEGOTIATED";
 	private final EDRRequestHelper edrRequestHelper;
 	private static final Integer RETRY = 5;
 	private static final Integer THRED_SLEEP_TIME = 5000;
@@ -70,7 +69,7 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 		if (checkContractNegotiationStatus == null) {
 			String contractAgreementId = checkandGetContractAgreementId(assetId);
 			if (StringUtils.isBlank(contractAgreementId)) {
-				log.info("The EDR process was not completed, no 'NEGOTIATED' EDR status found "
+				log.info("The EDR process was not completed, no EDR status found "
 						+ "and not valid contract agreementId for " + recipientURL + ", " + assetId
 						+ ", so initiating EDR process");
 				edrRequestHelper.edrRequestInitiate(recipientURL, connectorId, offer.getOfferId(), assetId, action,
@@ -82,13 +81,7 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 				checkContractNegotiationStatus = EDRCachedResponse.builder().agreementId(contractAgreementId)
 						.assetId(assetId).build();
 			}
-		} else {
-			log.info("There was EDR process initiated " + recipientURL + ", " + assetId
-					+ ", so ignoring EDR process initiation, going to check EDR status only");
-			if (!NEGOTIATED.equals(checkContractNegotiationStatus.getEdrState()))
-				checkContractNegotiationStatus = verifyEDRRequestStatus(assetId);
-		}
-
+		} 
 		return checkContractNegotiationStatus;
 	}
 
@@ -115,14 +108,6 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 		EDRCachedResponse eDRCachedResponse = null;
 		if (eDRCachedResponseList != null && !eDRCachedResponseList.isEmpty()) {
 			for (EDRCachedResponse edrCachedResponseObj : eDRCachedResponseList) {
-				String edrState = edrCachedResponseObj.getEdrState();
-				// For EDC connector 5.0 edrState field not supported so checking token
-				// validation by calling direct API
-				if (NEGOTIATED.equalsIgnoreCase(edrState) || isEDRTokenValid(edrCachedResponseObj)) {
-					eDRCachedResponse = edrCachedResponseObj;
-					eDRCachedResponse.setEdrState(NEGOTIATED);
-					break;
-				}
 				eDRCachedResponse = edrCachedResponseObj;
 			}
 		}
@@ -143,13 +128,13 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 				eDRCachedResponseList = edrRequestHelper.getEDRCachedByAsset(assetId);
 				eDRCachedResponse = verifyEDRResponse(eDRCachedResponseList);
 
-				if (eDRCachedResponse != null && eDRCachedResponse.getEdrState() != null)
-					edrStatus = eDRCachedResponse.getEdrState();
+				if (eDRCachedResponse != null)
+					edrStatus = "FoundEDR";
 
-				log.info("Verifying 'NEGOTIATED' EDC EDR status to download data for '" + assetId
-						+ "', The current status is '" + edrStatus + "', Attempt " + counter);
+				log.info("Verifying EDC EDR status to download data for '" + assetId + "', The current status is '"
+						+ edrStatus + "', Attempt " + counter);
 				counter++;
-			} while (counter <= RETRY && !NEGOTIATED.equals(edrStatus));
+			} while (counter <= RETRY && eDRCachedResponse == null);
 
 			if (eDRCachedResponse == null) {
 				String contractAgreementId = checkandGetContractAgreementId(assetId);
@@ -177,30 +162,6 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 			throw new ServiceException(errorMsg);
 		}
 		return eDRCachedResponse;
-	}
-
-	@SneakyThrows
-	private boolean isEDRTokenValid(EDRCachedResponse edrCachedResponseObj) {
-		String assetId = edrCachedResponseObj.getAssetId();
-		try {
-			EDRCachedByIdResponse authorizationToken = getAuthorizationTokenForDataDownload(
-					edrCachedResponseObj.getTransferProcessId());
-			edrRequestHelper.getDataFromProvider(authorizationToken, authorizationToken.getEndpoint());
-		} catch (FeignException e) {
-			log.error("FeignException RequestBody: " + e.request());
-			String errorMsg = "FeignExceptionton for verifyEDR token " + assetId + "," + e.status() + "::"
-					+ e.contentUTF8();
-			log.error("FeignException Response: " + errorMsg);
-
-			if (e.status() == 403) {
-				log.error("Got 403 as token status so going to try new EDR token: " + errorMsg);
-				return false;
-			}
-		} catch (Exception e) {
-			String errorMsg = "Exception for asset in isEDRTokenValid " + assetId + "," + e.getMessage();
-			log.error(errorMsg);
-		}
-		return true;
 	}
 
 	@SneakyThrows

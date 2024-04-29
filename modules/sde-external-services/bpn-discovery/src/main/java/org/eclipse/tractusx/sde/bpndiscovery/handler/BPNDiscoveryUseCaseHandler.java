@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 @Service
 @RequiredArgsConstructor
@@ -45,19 +46,9 @@ public class BPNDiscoveryUseCaseHandler extends Step implements BPNDiscoveryUsec
 		}
 	}
 
+	@SneakyThrows
 	@Override
 	public JsonNode run(Integer rowIndex, ObjectNode jsonObject, String processId, PolicyModel policy) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(Integer rowIndex, JsonObject jsonObject, String delProcessId, String refProcessId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void run(JsonNode jsonObject) throws ServiceException {
 		if (StringUtils.isBlank(
 				JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject, SubmoduleCommonColumnsConstant.UPDATED))) {
 			try {
@@ -75,7 +66,14 @@ public class BPNDiscoveryUseCaseHandler extends Step implements BPNDiscoveryUsec
 				throw new ServiceException("Exception in BPN Discovery creation : " + e.getMessage());
 			}
 		}
+		return jsonObject;
 	}
+
+	@Override
+	public void delete(Integer rowIndex, JsonObject jsonObject, String delProcessId, String refProcessId) {
+		// Nothing to do with bpn discovery for delete
+	}
+
 
 	private Map<String, String> generateBPNDiscoveryIdentifiersIds(JsonNode jsonObject) {
 		return getBPNDiscoverySpecsOfModel().entrySet().stream().map(entry -> {

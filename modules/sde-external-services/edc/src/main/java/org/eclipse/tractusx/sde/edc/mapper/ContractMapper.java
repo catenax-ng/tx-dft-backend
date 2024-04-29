@@ -20,10 +20,11 @@
 
 package org.eclipse.tractusx.sde.edc.mapper;
 
+import java.util.Map;
+
 import org.eclipse.tractusx.sde.edc.entities.request.policies.ActionRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.PolicyRequest;
 import org.eclipse.tractusx.sde.edc.model.contractnegotiation.ContractNegotiations;
-import org.eclipse.tractusx.sde.edc.model.contractnegotiation.Offer;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -36,19 +37,17 @@ public class ContractMapper {
 	private final ContractPolicyMapper contractPolicyMapper;
 
 	@SneakyThrows
-	public ContractNegotiations prepareContractNegotiations(String providerProtocolUrl, String offerId, String assetId, String provider,
-			ActionRequest action) {
-		
+	public ContractNegotiations prepareContractNegotiations(String providerProtocolUrl, String offerId, String assetId,
+			String provider, ActionRequest action) {
+
 		PolicyRequest policy = contractPolicyMapper.preparePolicy(assetId, action);
-		Offer offer = Offer.builder().assetId(assetId).offerId(offerId).policy(policy).build();
+		policy.setId(offerId);
+		policy.setAssigner(Map.of("@id", provider));
 		return ContractNegotiations.builder()
 				.connectorAddress(providerProtocolUrl)
-				.connectorId(provider)
-				.providerId(provider)
 				.protocol("dataspace-protocol-http")
-				.offer(offer)
+				.policy(policy)
 				.build();
-		
 
 	}
 

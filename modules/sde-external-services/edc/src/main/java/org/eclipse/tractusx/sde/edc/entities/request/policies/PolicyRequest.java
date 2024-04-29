@@ -53,6 +53,9 @@ public class PolicyRequest {
 	@Builder.Default
 	private String context = "http://www.w3.org/ns/odrl.jsonld";
 	
+	@JsonProperty("@id")
+	private String id;
+	
 	@JsonProperty("odrl:permission")
 	private Object permissions;
 
@@ -65,7 +68,11 @@ public class PolicyRequest {
 	private Map<String, String> extensibleProperties;
 
 	@JsonProperty("odrl:target")
-	private String target;
+	private Map<String, String> target;
+	
+	@JsonProperty("odrl:assigner")
+	private Map<String, String> assigner;
+	
 
 	@SneakyThrows
 	public String toJsonString() {
