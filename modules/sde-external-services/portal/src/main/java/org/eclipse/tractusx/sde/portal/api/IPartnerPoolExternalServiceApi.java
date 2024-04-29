@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "IPartnerPoolExternalServiceApi", url = "${partner.pool.hostname}" , configuration = PartnerPoolExternalServiceApiConfiguration.class)
 public interface IPartnerPoolExternalServiceApi {
     
-	@GetMapping(path = "/api/catena/legal-entities")
+	@GetMapping(path = "/v6/legal-entities")
     LegalEntityData fetchLegalEntityData(@RequestParam String legalName, @RequestParam Integer page, @RequestParam Integer size);
 
 }
