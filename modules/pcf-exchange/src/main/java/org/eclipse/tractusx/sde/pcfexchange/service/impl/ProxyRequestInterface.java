@@ -79,7 +79,7 @@ public class ProxyRequestInterface {
 				pcfpushEnpoint = new URI(edrToken.getEndpoint());
 
 			Map<String, String> header = new HashMap<>();
-			header.put(edrToken.getAuthKey(), edrToken.getAuthCode());
+			header.put("authorization", edrToken.getAuthorization());
 
 			// Send request to data provider for PCF value push
 			pcfExchangeProxy.getPcfByProduct(pcfpushEnpoint, header, manufacturerId,
@@ -135,7 +135,7 @@ public class ProxyRequestInterface {
 						edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId);
 
 				Map<String, String> header = new HashMap<>();
-				header.put(edrToken.getAuthKey(), edrToken.getAuthCode());
+				header.put("authorization", edrToken.getAuthorization());
 
 				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, bpnNumber, requestId, message,
 						jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
