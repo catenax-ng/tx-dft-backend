@@ -37,10 +37,10 @@ public class SdeCommonProperties {
 	@Value("${digital-twins.managed.thirdparty:false}")
 	private boolean dDTRManagedThirdparty;
 	
-	@Value("${digital-twins.registry.uri:/api/v3.0}")
+	@Value("${digital-twins.registry.uri:/api/v3}")
 	private  String digitalTwinRegistryURI;
 	
-	@Value("${digital-twins.registry.lookup.uri:/api/v3.0}")
+	@Value("${digital-twins.registry.lookup.uri:/api/v3}")
 	private  String digitalTwinRegistryLookUpURI;
 	
 	@Value("${digital-twins.authentication.url:default}")
