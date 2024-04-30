@@ -226,7 +226,7 @@ public class SubmodelCustomHistoryGenerator {
 			}
 		} catch (Exception e) {
 			isTableNotExist = true;
-			log.error(tableName + " is not exist, so creating table");
+			log.error(tableName + " is not exist, so creating table becuase "+e.getMessage());
 		}
 
 		if (isTableNotExist) {

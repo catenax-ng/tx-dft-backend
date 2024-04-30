@@ -64,10 +64,8 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
 @SpringBootTest
 @EnableMinio
 @Execution(ExecutionMode.SAME_THREAD)
