@@ -37,8 +37,10 @@ import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
 import org.eclipse.tractusx.sde.agent.model.SchedulerType;
 import org.eclipse.tractusx.sde.bpndiscovery.handler.BPNDiscoveryUseCaseHandler;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
+import org.eclipse.tractusx.sde.core.submodel.executor.step.DigitalTwinLookUpInRegistry;
+import org.eclipse.tractusx.sde.core.submodel.executor.step.EDCUsecaseHandler;
+import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
-import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsUtility;
 import org.eclipse.tractusx.sde.retrieverl.service.ActiveStorageMediaProvider;
 import org.eclipse.tractusx.sde.retrieverl.service.ProcessRemoteCsv;
 import org.eclipse.tractusx.sde.retrieverl.service.SchedulerConfigService;
@@ -75,12 +77,19 @@ public class SchedulerMinioTest extends MinioBase{
 
 	@Autowired
 	SchedulerConfigService schedulerConfigService;
+	
 	@MockBean
 	DigitalTwinsFacilitator digitalTwinsFacilitator;
+	
 	@MockBean
-	DigitalTwinsUtility digitalTwinsUtility;
+	EDCUsecaseHandler eDCUsecaseHandler;
+	
 	@MockBean
 	BPNDiscoveryUseCaseHandler bPNDiscoveryUseCaseHandler;
+	
+	@MockBean
+	DigitalTwinLookUpInRegistry digitalTwinLookUpInRegistry;
+	
 	@Autowired
 	ApplicationContext applicationContext;
 	@Autowired
@@ -90,6 +99,10 @@ public class SchedulerMinioTest extends MinioBase{
 
 	@Test
 	public void testScheduler() throws ServiceException, ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+		
+		ShellDescriptorResponse sdb= new ShellDescriptorResponse();
+		sdb.setIdentification("test-shell");
+		Mockito.when(digitalTwinsFacilitator.createShellDescriptor(any())).thenReturn(sdb);
 		Mockito.when(digitalTwinsFacilitator.shellLookup(any())).thenReturn(List.of());
 		@SuppressWarnings("unchecked") ArgumentCaptor<Map<String, Object>> emailContentCaptor = ArgumentCaptor.forClass(Map.class);
 		var time = LocalTime.now().plus(Duration.ofMinutes(1));

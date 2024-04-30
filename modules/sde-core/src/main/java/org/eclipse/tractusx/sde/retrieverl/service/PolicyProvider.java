@@ -49,9 +49,9 @@ public class PolicyProvider {
 	private String defaultPolicy = """
 					{
 	 				"policy_name" : "default",
-	 				"access_policies": [
+	 				"Access": [
 	 			  	],
-	 				"usage_policies": [
+	 				"Usage": [
 	 				]
  				}
 				""";
