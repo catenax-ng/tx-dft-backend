@@ -71,7 +71,9 @@ public class AssetEntryRequestFactory {
 	}
 
 	private String subModelPayloadUrl(String submodel, String submoduleUriPath, String uuid) {
-		return UriComponentsBuilder.fromHttpUrl(dftHostname).path("/" + submodel + "/" + submoduleUriPath).path(uuid)
+		return UriComponentsBuilder.fromHttpUrl(dftHostname)
+				.path("/" + submodel + "/" + submoduleUriPath)
+				.path("/" + uuid)
 				.toUriString();
 	}
 

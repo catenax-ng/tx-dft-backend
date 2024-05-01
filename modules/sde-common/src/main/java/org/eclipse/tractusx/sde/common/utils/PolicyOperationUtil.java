@@ -19,6 +19,7 @@
  ********************************************************************************/
 package org.eclipse.tractusx.sde.common.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,23 +27,55 @@ import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 
 public class PolicyOperationUtil {
-	
-	private PolicyOperationUtil() {}
+
+	private static final String BUSINESS_PARTNER_NUMBER = "BusinessPartnerNumber";
+
+	private PolicyOperationUtil() {
+	}
 
 	private static List<String> getBPNList(List<Policies> policies) {
-		return policies
-				.stream()
-				.filter(e -> e.getTechnicalKey().equals("BusinessPartnerNumber"))
-				.flatMap(e -> e.getValue().stream().filter(StringUtils::isNotBlank))
-				.toList();
+		return policies.stream().filter(e -> e.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER))
+				.flatMap(e -> e.getValue().stream().filter(StringUtils::isNotBlank)).toList();
 	}
-	
+
 	public static List<String> getAccessBPNList(PolicyModel policy) {
 		return getBPNList(policy.getAccessPolicies());
 	}
 
 	public static List<String> getUsageBPNList(PolicyModel policy) {
 		return getBPNList(policy.getUsagePolicies());
+	}
+
+	public static void addProviderBPNInPolicyList(PolicyModel policy, String providerBpn) {
+		
+		List<String> bpnList = getBPNList(policy.getAccessPolicies());
+		if (!bpnList.isEmpty() && !bpnList.contains(providerBpn)) {
+			policy.setAccessPolicies(prepareNewList(policy.getAccessPolicies(), bpnList, providerBpn));
+		}
+		
+		List<String> usageBpnList = getBPNList(policy.getUsagePolicies());
+		if (!usageBpnList.isEmpty() && !usageBpnList.contains(providerBpn)) {
+			policy.setUsagePolicies(prepareNewList(policy.getUsagePolicies(), usageBpnList, providerBpn));
+		}
+	}
+
+	private static List<Policies> prepareNewList(List<Policies> policies, List<String> bpnList, String providerBpn) {
+		return policies.stream().map(e -> 
+				{
+					if(e.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER)) {
+						
+						List<String> processList = new ArrayList<>();
+						processList.add(providerBpn);
+						processList.addAll(bpnList);
+						
+						return Policies.builder()
+								.technicalKey(BUSINESS_PARTNER_NUMBER)
+								.value(bpnList)
+								.build();
+					}
+					else return e;
+				})
+				.toList();
 	}
 
 }

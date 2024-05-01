@@ -20,6 +20,9 @@
 
 package org.eclipse.tractusx.sde.common.submodel.executor;
 
+import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -133,5 +136,19 @@ public abstract class Step {
 
 	protected void logInfo(String message) {
 		log.info(String.format("[%s] %s", this.getClass().getSimpleName(), message));
+	}
+	
+	public String getIdentifier(JsonNode jsonObject, String identifierOfModel) {
+		return JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject,
+				extractExactFieldName(identifierOfModel));
+	}
+	
+	public String extractExactFieldName(String str) {
+
+		if (str.startsWith("${")) {
+			return str.replace("${", "").replace("}", "").trim();
+		} else {
+			return str;
+		}
 	}
 }

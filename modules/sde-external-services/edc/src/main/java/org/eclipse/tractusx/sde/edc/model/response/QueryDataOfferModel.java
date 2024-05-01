@@ -20,6 +20,8 @@
 
 package org.eclipse.tractusx.sde.edc.model.response;
 
+import java.util.Objects;
+
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,7 +44,7 @@ public class QueryDataOfferModel {
 	private String connectorId;
 
 	private String assetId;
-	
+
 	private String manufacturerPartId;
 
 	private String offerId;
@@ -54,7 +56,7 @@ public class QueryDataOfferModel {
 	private String type;
 
 	private String version;
-	
+
 	private String sematicVersion;
 
 	private String description;
@@ -70,7 +72,27 @@ public class QueryDataOfferModel {
 	private String publisher;
 
 	private String policyId;
-	
+
 	private PolicyModel policy;
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (this == obj)
+			return true;
+
+		if (obj == null || obj.getClass() != this.getClass())
+			return false;
+
+		// type casting of the argument.
+		QueryDataOfferModel offer = (QueryDataOfferModel) obj;
+
+		return (offer.assetId.equals(this.assetId) && offer.connectorOfferUrl.equals(this.connectorOfferUrl));
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.assetId.hashCode());
+	}
 
 }

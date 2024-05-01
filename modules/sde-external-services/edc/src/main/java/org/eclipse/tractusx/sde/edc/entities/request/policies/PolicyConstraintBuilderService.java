@@ -116,10 +116,6 @@ public class PolicyConstraintBuilderService {
 		for (String value : policy.getValue()) {
 			if (StringUtils.isNotBlank(value)) {
 				
-				if(policy.getTechnicalKey().contains("FrameworkAgreement")) {
-					value="active";
-				}
-				
 				ConstraintRequest request = ConstraintRequest.builder()
 						.leftOperand(policy.getTechnicalKey())
 						.operator(Operator.builder().id(operator).build())
