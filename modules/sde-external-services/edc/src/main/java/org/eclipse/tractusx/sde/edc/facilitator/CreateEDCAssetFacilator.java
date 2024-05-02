@@ -25,13 +25,11 @@ import java.util.Map;
 
 import org.eclipse.tractusx.sde.common.constants.SubmoduleCommonColumnsConstant;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
-import org.eclipse.tractusx.sde.common.utils.PolicyOperationUtil;
 import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.contractdefinition.ContractDefinitionRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.contractdefinition.ContractDefinitionRequestFactory;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.PolicyConstraintBuilderService;
 import org.eclipse.tractusx.sde.edc.gateways.external.EDCGateway;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,14 +44,9 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 	private final ContractDefinitionRequestFactory contractFactory;
 	private final PolicyConstraintBuilderService policyConstraintBuilderService;
 	
-	@Value("${manufacturerId}")
-	private String manufacturerId;
-
 	public Map<String, String> createEDCAsset(AssetEntryRequest assetEntryRequest, PolicyModel policy) {
 
 		Map<String, String> output = new HashMap<>();
-
-		PolicyOperationUtil.addProviderBPNInPolicyList(policy, manufacturerId);
 
 		edcGateway.createAsset(assetEntryRequest);
 
@@ -84,8 +77,6 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 
 		Map<String, String> output = new HashMap<>();
 		
-		PolicyOperationUtil.addProviderBPNInPolicyList(policy, manufacturerId);
-
 		edcGateway.updateAsset(assetEntryRequest);
 
 		String assetId = assetEntryRequest.getId();

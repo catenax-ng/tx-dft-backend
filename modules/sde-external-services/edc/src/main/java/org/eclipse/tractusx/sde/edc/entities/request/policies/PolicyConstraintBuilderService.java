@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.mapper.JsonObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,10 +39,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PolicyConstraintBuilderService {
+	
+	private static final String BUSINESS_PARTNER_NUMBER = "BusinessPartnerNumber";
 
 	private final PolicyRequestFactory policyRequestFactory;
 
 	private final JsonObjectMapper jsonobjectMapper;
+	
+	@Value("${manufacturerId}")
+	private String manufacturerId;
 
 	// private final IPolicyHubProxyService policyHubProxyService;
 
@@ -113,9 +119,19 @@ public class PolicyConstraintBuilderService {
 	private void preparePolicyConstraint(List<ConstraintRequest> policies, Policies policy) {
 
 		String operator = "odrl:eq";
-		for (String value : policy.getValue()) {
+		
+		List<String> values= policy.getValue();
+		
+		if (policy.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER) && !values.isEmpty()
+				&& !values.contains(manufacturerId) && (values.size() == 1 && !values.get(0).equals(""))) {
+			List<String> temp = new ArrayList<>();
+			values.stream().forEach(temp::add);
+			temp.add(manufacturerId);
+			values = temp;
+		}
+
+		for (String value : values) {
 			if (StringUtils.isNotBlank(value)) {
-				
 				ConstraintRequest request = ConstraintRequest.builder()
 						.leftOperand(policy.getTechnicalKey())
 						.operator(Operator.builder().id(operator).build())
