@@ -139,7 +139,8 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 
 			// push api call
 			Runnable runnable = () -> proxyRequestInterface.sendNotificationToConsumer(status, calculatedPCFValue,
-					pcfRequestModel.getProductId(), pcfRequestModel.getBpnNumber(), pcfRequestModel.getRequestId());
+					pcfRequestModel.getProductId(), pcfRequestModel.getBpnNumber(), pcfRequestModel.getRequestId(),
+					pcfRequestModel.getMessage());
 
 			new Thread(runnable).start();
 
@@ -179,27 +180,33 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 				status, remark);
 	}
 
+	@SneakyThrows
 	@Override
 	public void recievedPCFData(String productId, String bpnNumber, String requestId, String message,
 			JsonNode pcfData) {
 
-		PCFRequestStatusEnum status = PCFRequestStatusEnum.FAILED;
-		try {
-			status = PCFRequestStatusEnum.valueOf(message);
-		} catch (Exception e) {
-			log.error("Unable to find PCF value status " + e.getMessage());
-		}
+		PCFRequestStatusEnum status = null;
 
-		PcfResponseEntity entity = PcfResponseEntity.builder().pcfData(pcfData).requestId(requestId)
-				.responseId(UUID.randomUUID().toString()).lastUpdatedTime(Instant.now().getEpochSecond()).build();
+		PcfResponseEntity entity = PcfResponseEntity.builder()
+				.pcfData(pcfData)
+				.requestId(requestId)
+				.message(message)
+				.responseId(UUID.randomUUID().toString())
+				.lastUpdatedTime(Instant.now().getEpochSecond())
+				.build();
 
 		pcfReqsponseRepository.save(entity);
 
-		if (PCFRequestStatusEnum.APPROVED.equals(status) || PCFRequestStatusEnum.PUSHING_DATA.equals(status)
-				|| PCFRequestStatusEnum.PUSHING_UPDATED_DATA.equals(status)) {
+		if(StringUtils.isBlank(requestId))
+			throw new ServiceException("RequestId not recieved from provider to marked PCF exchange request");
+		
+		if (pcfData != null) {
 			status = PCFRequestStatusEnum.RECEIVED;
-		}
-
+		} else if (StringUtils.isNotBlank(requestId)) {
+			status = PCFRequestStatusEnum.REJECTED;
+		} else
+			status = PCFRequestStatusEnum.FAILED;
+		
 		pcfRepositoryService.savePcfStatus(requestId, status);
 
 	}

@@ -86,7 +86,7 @@ public class AsyncPushPCFDataForApproveRequest {
 						// push api call
 						Runnable runnable = () -> proxyRequestInterface.sendNotificationToConsumer(status,
 								calculatedPCFValue, request.getProductId(), request.getBpnNumber(),
-								request.getRequestId());
+								request.getRequestId(), request.getMessage());
 
 						new Thread(runnable).start();
 
@@ -122,7 +122,7 @@ public class AsyncPushPCFDataForApproveRequest {
 					String msg = "";
 					try {
 						
-						JsonObject calculatedPCFValue = jsonObjectList.stream()
+						jsonObjectList.stream()
 								.filter(ele -> request.getProductId()
 										.equals(JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID)))
 								.findAny().orElseThrow(() -> new NoDataFoundException(

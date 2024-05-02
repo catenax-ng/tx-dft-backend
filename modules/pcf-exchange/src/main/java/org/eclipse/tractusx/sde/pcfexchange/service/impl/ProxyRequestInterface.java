@@ -97,7 +97,7 @@ public class ProxyRequestInterface {
 	
 	@SneakyThrows
 	public void sendNotificationToConsumer(PCFRequestStatusEnum status, JsonObject calculatedPCFValue,
-			String productId, String bpnNumber, String requestId) {
+			String productId, String bpnNumber, String requestId, String message) {
 
 		// 1 fetch EDC connectors and DTR Assets from EDC connectors
 		List<QueryDataOfferModel> pcfExchangeUrlOffers = edcAssetUrlCacheService.getPCFExchangeUrlFromTwin(bpnNumber);
@@ -111,9 +111,9 @@ public class ProxyRequestInterface {
 			pcfExchangeUrlOffers.parallelStream().forEach(dtOffer -> {
 				
 				if (PCFRequestStatusEnum.SENDING_REJECT_NOTIFICATION.equals(status)) {
-					sendNotification(null, productId, bpnNumber, requestId, dtOffer, status);
+					sendNotification(null, productId, bpnNumber, requestId, dtOffer, status, message);
 				} else {
-					sendNotification(calculatedPCFValue, productId, bpnNumber, requestId, dtOffer, status);
+					sendNotification(calculatedPCFValue, productId, bpnNumber, requestId, dtOffer, status, message);
 				}
 				
 			});
@@ -122,11 +122,9 @@ public class ProxyRequestInterface {
 
 	@SneakyThrows
 	private void sendNotification(JsonObject calculatedPCFValue, String productId, String bpnNumber, String requestId,
-			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status) {
+			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status, String message) {
 		String sendNotificationStatus = "";
 		try {
-			String message = status.name();
-
 			EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(bpnNumber, dtOffer);
 
 			if (edrToken != null) {
