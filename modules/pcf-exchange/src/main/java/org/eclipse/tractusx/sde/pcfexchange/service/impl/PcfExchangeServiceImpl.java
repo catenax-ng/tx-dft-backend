@@ -200,7 +200,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		if(StringUtils.isBlank(requestId))
 			throw new ServiceException("RequestId not recieved from provider to marked PCF exchange request");
 		
-		if (pcfData != null) {
+		if (pcfData != null && !pcfData.isEmpty() && !pcfData.asText().equals("{}")) {
 			status = PCFRequestStatusEnum.RECEIVED;
 		} else if (StringUtils.isNotBlank(requestId)) {
 			status = PCFRequestStatusEnum.REJECTED;
