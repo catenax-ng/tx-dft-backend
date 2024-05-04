@@ -162,7 +162,7 @@ public class SubmodelOrchestartorService {
 					updatedcount);
 
 			// Push PCF value which already Approve request of consumer
-			if (submodelSchemaObject.getId().equalsIgnoreCase("pcf")) {
+			if (submodelSchemaObject.getId().contains("pcf")) {
 				databaseUsecaseHandler.init(submodelSchemaObject.getSchema());
 				List<JsonObject> readCreatedTwins = databaseUsecaseHandler.readCreatedTwins(processId, null);
 				asyncPushPCFDataForApproveRequest.pushPCFDataForApproveRequest(readCreatedTwins, submodelPolicyRequest);
@@ -212,7 +212,7 @@ public class SubmodelOrchestartorService {
 					updatedcount);
 
 			// Push PCF value which already Approve request of consumer
-			if (submodelSchemaObject.getId().equalsIgnoreCase("pcf")) {
+			if (submodelSchemaObject.getId().contains("pcf")) {
 				databaseUsecaseHandler.init(submodelSchemaObject.getSchema());
 				List<JsonObject> readCreatedTwins = databaseUsecaseHandler.readCreatedTwins(processId, null);
 				asyncPushPCFDataForApproveRequest.pushPCFDataForApproveRequest(readCreatedTwins, policy);

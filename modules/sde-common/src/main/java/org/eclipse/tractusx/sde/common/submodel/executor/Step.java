@@ -20,6 +20,8 @@
 
 package org.eclipse.tractusx.sde.common.submodel.executor;
 
+import java.util.List;
+
 import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,6 +81,18 @@ public abstract class Step {
 
 	public String getIdentifierOfModel() {
 		return this.getAddOnOfModel().get("identifier").getAsString();
+	}
+	
+	public List<String> getDatabaseIdentifierSpecsOfModel() {
+		JsonElement jsonElement = this.getAddOnOfModel().get("databaseIdentifierSpecs");
+		return jsonElement == null || jsonElement.isJsonNull()
+				? List.of(extractExactFieldName(this.getIdentifierOfModel()))
+				: converJsonArrayToList(jsonElement);
+	}
+	
+	protected List<String> converJsonArrayToList(JsonElement jsonArray) {
+		return jsonArray.getAsJsonArray().asList().stream().map(ele -> extractExactFieldName(ele.getAsString()))
+				.toList();
 	}
 
 	public boolean checkShellCreateOption() {
@@ -142,6 +156,7 @@ public abstract class Step {
 		return JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject,
 				extractExactFieldName(identifierOfModel));
 	}
+	
 	
 	public String extractExactFieldName(String str) {
 

@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings("unchecked")
 public class AsyncPushPCFDataForApproveRequest {
 
-	private static final String PRODUCT_ID = "product_id";
+	private static final String PRODUCT_ID = "productId";
 
 	private final PCFRepositoryService pcfRepositoryService;
 
@@ -60,7 +60,7 @@ public class AsyncPushPCFDataForApproveRequest {
 
 		PagingResponse pcfData = pcfRepositoryService.getPcfData(
 				List.of(PCFRequestStatusEnum.PUSHED, PCFRequestStatusEnum.PUSHED_UPDATED_DATA), PCFTypeEnum.PROVIDER, 0,
-				1000);
+				100000);
 		List<PcfRequestModel> requestList = (List<PcfRequestModel>) pcfData.getItems();
 
 		if (!requestList.isEmpty()) {
@@ -113,7 +113,7 @@ public class AsyncPushPCFDataForApproveRequest {
 			List<JsonObject> jsonObjectList) {
 
 		PagingResponse pcfData = pcfRepositoryService
-				.getPcfData(List.of(PCFRequestStatusEnum.PENDING_DATA_FROM_PROVIDER), PCFTypeEnum.PROVIDER, 0, 1000);
+				.getPcfData(List.of(PCFRequestStatusEnum.PENDING_DATA_FROM_PROVIDER), PCFTypeEnum.PROVIDER, 0, 100000);
 		List<PcfRequestModel> requestList = (List<PcfRequestModel>) pcfData.getItems();
 
 		if (!requestList.isEmpty()) {

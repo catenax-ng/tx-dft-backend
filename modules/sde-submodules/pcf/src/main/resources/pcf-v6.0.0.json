@@ -971,6 +971,7 @@
 		"bpnDiscoverySpecs": {
 			"manufacturerPartId": "${productId}"
 		},
+		"databaseIdentifierSpecs": ["${productId}"],
 		"responseTemplate": {
 			"specVersion": "${specVersion}",
 			"companyIds": [
