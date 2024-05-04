@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
 import org.eclipse.tractusx.sde.core.utils.ValueReplacerUtility;
@@ -71,6 +72,8 @@ public class PCFExchangeAssetProvider {
 		String baseUrl = sdeHostname + "/pcf";
 		assetEntryRequest.getDataAddress().getProperties().put("baseUrl", baseUrl);
 		assetEntryRequest.getProperties().put(REGISTRY_TYPE, baseUrl);
+		assetEntryRequest.getProperties().put(EDCAssetConstant.CX_COMMON_VERSION, "1.1");
+		
 
 		Map<String, String> inputData = new HashMap<>();
 		inputData.put("baseUrl", baseUrl);
@@ -83,9 +86,19 @@ public class PCFExchangeAssetProvider {
 
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
 			
+			List<Policies> usagePolicy = List.of(
+					Policies.builder()
+	        		.technicalKey(EDCAssetConstant.PCF_FRAMEWORK_AGREEMENT_LEFT_OPERAND)
+	        		.value(List.of(EDCAssetConstant.PCF_FRAMEWORK_AGREEMENT_RIGHT_OPERAND))
+	        		.build(),
+	        		 Policies.builder()
+	        		.technicalKey(EDCAssetConstant.MEMBERSHIP_LEFT_OPERAND)
+	        		.value(List.of(EDCAssetConstant.ACTIVE_VALUE))
+	        		.build());
+			
 			PolicyModel policy= PolicyModel.builder()
 					.accessPolicies(List.of())
-					.usagePolicies(List.of())
+					.usagePolicies(usagePolicy)
 					.build();
 			
 			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, policy);
