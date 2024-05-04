@@ -60,7 +60,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 		String tableName = submoduleUtility.getTableName(schemaObj);
 
 		submodelCustomHistoryGenerator.saveSubmodelData(columns, tableName, processId, jsonObject,
-				extractExactFieldName(getIdentifierOfModel()));
+				getDatabaseIdentifierSpecsOfModel());
 
 		return jsonObject;
 	}
