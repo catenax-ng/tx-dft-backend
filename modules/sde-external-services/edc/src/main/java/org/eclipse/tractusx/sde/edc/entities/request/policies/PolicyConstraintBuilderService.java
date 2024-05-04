@@ -39,34 +39,42 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PolicyConstraintBuilderService {
-	
+
 	private static final String BUSINESS_PARTNER_NUMBER = "BusinessPartnerNumber";
 
 	private final PolicyRequestFactory policyRequestFactory;
 
 	private final JsonObjectMapper jsonobjectMapper;
-	
+
 	@Value("${manufacturerId}")
 	private String manufacturerId;
 
-	// private final IPolicyHubProxyService policyHubProxyService;
-
-//	public JsonNode getAccessPoliciesConstraints(PolicyModel policy) {
-//		return policyHubProxyService.getPolicyContent(
-//				mapPolicy(PolicyTypeIdEnum.ACCESS, ConstraintOperandIdEnum.OR, policy.getAccessPolicies()));
+//	private final IPolicyHubProxyService policyHubProxyService;
+//
+//	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
+//		
+//		return policyRequestFactory.setPolicyIdAndGetObject(assetId,
+//				policyHubProxyService.getPolicyContent(
+//						mapPolicy(PolicyTypeIdEnum.ACCESS, ConstraintOperandIdEnum.OR, policy.getAccessPolicies())),
+//				"a");
 //	}
 //
-//	public JsonNode getUsagePoliciesConstraints(PolicyModel policy) {
-//		return policyHubProxyService.getPolicyContent(
-//				mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies()));
+//	public JsonNode getUsagePolicy(String assetId, PolicyModel policy) {
+//		
+//		return policyRequestFactory.setPolicyIdAndGetObject(assetId,
+//				policyHubProxyService.getPolicyContent(
+//						mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies())),
+//				"u");
 //	}
-
+	
 //	private PolicyContentRequest mapPolicy(PolicyTypeIdEnum policyType, ConstraintOperandIdEnum constraintOperandId,
 //			List<Policies> policies) {
 //
 //		List<Constraint> constraintsList = new ArrayList<>();
 //		policies.forEach(policy -> {
-//			List<String> valueList = policy.getValue();
+//			
+//			List<String> valueList = getAndOwnerBPNIfNotExist(policy);
+//			
 //			OperatorIdEnum operator = OperatorIdEnum.EQUALS;
 //
 //			if (valueList.size() > 1) {
@@ -75,12 +83,19 @@ public class PolicyConstraintBuilderService {
 //
 //			for (String value : valueList) {
 //				constraintsList.add(
-//						Constraint.builder().key(policy.getTechnicalKey()).operator(operator).value(value).build());
+//						Constraint.builder()
+//						.key(policy.getTechnicalKey())
+//						.operator(operator)
+//						.value(value)
+//						.build());
 //			}
 //		});
 //
-//		return PolicyContentRequest.builder().policyType(policyType).constraintOperand(constraintOperandId)
-//				.constraints(constraintsList).build();
+//		return PolicyContentRequest.builder()
+//				.policyType(policyType)
+//				.constraintOperand(constraintOperandId)
+//				.constraints(constraintsList)
+//				.build();
 //	}
 
 	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
@@ -119,27 +134,36 @@ public class PolicyConstraintBuilderService {
 	private void preparePolicyConstraint(List<ConstraintRequest> policies, Policies policy) {
 
 		String operator = "odrl:eq";
-		
-		List<String> values= policy.getValue();
-		
-		if (policy.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER) && !values.isEmpty()
-				&& !values.contains(manufacturerId) && (values.size() == 1 && !values.get(0).equals(""))) {
-			List<String> temp = new ArrayList<>();
-			values.stream().forEach(temp::add);
-			temp.add(manufacturerId);
-			values = temp;
-		}
+
+		List<String> values = getAndOwnerBPNIfNotExist(policy);
 
 		for (String value : values) {
 			if (StringUtils.isNotBlank(value)) {
 				ConstraintRequest request = ConstraintRequest.builder()
 						.leftOperand(policy.getTechnicalKey())
 						.operator(Operator.builder().id(operator).build())
-						.rightOperand(value)
-						.build();
+						.rightOperand(value).build();
 				policies.add(request);
 			}
 		}
+	}
+
+	private List<String> getAndOwnerBPNIfNotExist(Policies policy) {
+		
+		List<String> values= policy.getValue();
+		
+		if (policy.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER) && !values.isEmpty()
+				&& !values.contains(manufacturerId) && (values.size() == 1 && !values.get(0).equals(""))) {
+			
+			List<String> temp = new ArrayList<>();
+			values.stream().forEach(temp::add);
+			temp.add(manufacturerId);
+			values = temp;
+			
+		}
+		
+		return values;
+		
 	}
 
 }

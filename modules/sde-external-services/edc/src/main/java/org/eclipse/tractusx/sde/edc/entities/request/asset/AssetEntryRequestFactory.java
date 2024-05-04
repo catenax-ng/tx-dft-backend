@@ -86,8 +86,8 @@ public class AssetEntryRequestFactory {
 		assetProperties.put(EDCAssetConstant.ASSET_PROP_VERSION, EDCAssetConstant.ASSET_PROP_VERSION_VALUE);
 		assetProperties.put(EDCAssetConstant.RDFS_LABEL, assetName);
 		assetProperties.put(EDCAssetConstant.RDFS_COMMENT, assetName);
-		assetProperties.put(EDCAssetConstant.DCAT_VERSION, EDCAssetConstant.ASSET_PROP_TWIN_VERSION);
-		assetProperties.put(EDCAssetConstant.CX_COMMON_VERSION, EDCAssetConstant.ASSET_PROP_TWIN_VERSION);
+		assetProperties.put(EDCAssetConstant.DCAT_VERSION, EDCAssetConstant.ASSET_PROP_DCAT_VERSION);
+		assetProperties.put(EDCAssetConstant.CX_COMMON_VERSION, EDCAssetConstant.ASSET_PROP_COMMON_VERSION);
 
 		if (StringUtils.isNotBlank(sematicId))
 			assetProperties.put(EDCAssetConstant.AAS_SEMANTICS_SEMANTIC_ID, Map.of("@id", sematicId));
