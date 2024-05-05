@@ -109,6 +109,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 			try {
 				List<String> columns = submoduleUtility.getTableColomnHeader(schemaObj);
 				String tableName = submoduleUtility.getTableName(schemaObj);
+				submoduleResponseHandler.init(schemaObj.getSchema());
 				return submodelCustomHistoryGenerator
 						.readCreatedTwinsDetails(columns, tableName, value, basedCol)
 						.stream()
