@@ -17,5 +17,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
+ 
+DO $$ 
+BEGIN 
+	IF EXISTS (select 1 as foundtable from pg_tables WHERE tablename = 'pcf_aspect') 
+	THEN 
+	DELETE FROM pcf_aspect WHERE id IN (SELECT id FROM (SELECT id, ROW_NUMBER() OVER( PARTITION BY productid ORDER BY  id ) AS row_num FROM pcf_aspect ) t WHERE t.row_num > 1);
+END IF;
+END $$;
+
 ALTER TABLE IF EXISTS pcf_aspect DROP CONSTRAINT IF EXISTS "pcf_aspect_un";
+
 ALTER TABLE IF EXISTS pcf_aspect ADD CONSTRAINT pcf_aspect_un UNIQUE (productid);
+
