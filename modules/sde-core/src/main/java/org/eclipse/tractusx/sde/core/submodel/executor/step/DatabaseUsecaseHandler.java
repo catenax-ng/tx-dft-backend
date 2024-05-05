@@ -29,9 +29,11 @@ import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.common.model.Submodel;
 import org.eclipse.tractusx.sde.common.submodel.executor.DatabaseUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
+import org.eclipse.tractusx.sde.common.submodel.executor.SubmoduleMapperUsecaseStep;
 import org.eclipse.tractusx.sde.core.processreport.repository.SubmodelCustomHistoryGenerator;
 import org.eclipse.tractusx.sde.core.service.SubmodelService;
 import org.eclipse.tractusx.sde.core.utils.SubmoduleUtility;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,6 +53,10 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 
 	private final SubmodelService submodelService;
 	private final SubmoduleUtility submoduleUtility;
+	
+	@Qualifier("SubmoduleResponseHandler")
+	private final SubmoduleMapperUsecaseStep submoduleResponseHandler;
+	
 
 	@SneakyThrows
 	public JsonNode run(Integer rowIndex, ObjectNode jsonObject, String processId, PolicyModel policy) {
@@ -103,7 +109,10 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 			try {
 				List<String> columns = submoduleUtility.getTableColomnHeader(schemaObj);
 				String tableName = submoduleUtility.getTableName(schemaObj);
-				return submodelCustomHistoryGenerator.readCreatedTwinsDetails(columns, tableName, value, basedCol).stream();
+				return submodelCustomHistoryGenerator
+						.readCreatedTwinsDetails(columns, tableName, value, basedCol)
+						.stream()
+						.map(submoduleResponseHandler::mapJsonbjectToFormatedResponse);
 			} catch (Exception e) {
 				log.debug("Exception for {}, {}, {}, {}", sematicId, basedCol, value, e.getMessage());
 			}
