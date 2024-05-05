@@ -59,8 +59,10 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 	private final PCFRepositoryService pcfRepositoryService;
 	private final PcfReqsponseRepository pcfReqsponseRepository;
 	private final EDCAssetUrlCacheService edcAssetUrlCacheService;
+	
 	@Qualifier("DatabaseUsecaseHandler")
 	private final DatabaseUsecaseStep databaseUsecaseStep;
+	
 	private final ProxyRequestInterface proxyRequestInterface;
 
 	@SneakyThrows
@@ -133,7 +135,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 
 			JsonObject calculatedPCFValue = databaseUsecaseStep.readCreatedTwinsBySpecifyColomn(
 					"urn:bamm:io.catenax.pcf", "productId", pcfRequestModel.getProductId());
-
+			
 			PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(pcfRequestModel.getRequestId(),
 					pcfRequestModel.getStatus());
 
