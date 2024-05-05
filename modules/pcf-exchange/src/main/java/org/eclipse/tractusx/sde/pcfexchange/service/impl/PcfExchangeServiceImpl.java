@@ -134,7 +134,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		try {
 
 			JsonObject calculatedPCFValue = databaseUsecaseStep.readCreatedTwinsBySpecifyColomn(
-					"urn:bamm:io.catenax.pcf", "productId", pcfRequestModel.getProductId());
+					"urn:bamm:io.catenax.pcf", "productId", pcfRequestModel.getProductId()).get("json").getAsJsonObject();
 			
 			PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(pcfRequestModel.getRequestId(),
 					pcfRequestModel.getStatus());
