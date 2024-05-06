@@ -89,9 +89,13 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
 		List<String> columns = submoduleUtility.getTableColomnHeader(schemaObj);
 		String tableName = submoduleUtility.getTableName(schemaObj);
-
+		
+		submoduleResponseHandler.init(schemaObj.getSchema());
+		
 		List<JsonObject> allSubmoduleAsJsonList = submodelCustomHistoryGenerator.findAllSubmoduleAsJsonList(columns,
-				tableName, refProcessId, fetchNotDeletedRecord);
+				tableName, refProcessId, fetchNotDeletedRecord)
+				.stream()
+				.map(submoduleResponseHandler::mapJsonbjectToFormatedResponse).toList();
 
 		if (allSubmoduleAsJsonList.isEmpty())
 			throw new NoDataFoundException("No data founds for deletion " + refProcessId);
