@@ -22,6 +22,7 @@ package org.eclipse.tractusx.sde.core.submodel.executor.step;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.configuration.properties.SDEConfigurationProperties;
@@ -55,6 +56,8 @@ import lombok.SneakyThrows;
 @Service("digitalTwinUseCaseHandler")
 @RequiredArgsConstructor
 public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecaseStep {
+	
+	private static final String FORWARD_SLASH = "/";
 
 	private final DigitalTwinsFacilitator digitalTwinFacilitator;
 
@@ -162,15 +165,21 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 	public JsonNode checkAndCreateSubmodulIfNotExist(Integer rowIndex, ObjectNode jsonObject, String shellId,
 			ShellDescriptorRequest aasDescriptorRequest, SubModelResponse foundSubmodel) {
 
-		String identification = findIdentificationForSubmodule(rowIndex, jsonObject);
+		Map<String, String> identification = findIdentificationForSubmodule(rowIndex, jsonObject);
 
 		if (foundSubmodel == null) {
 
 			logDebug(String.format("No submodels for '%s'", shellId));
 
+			String path = getSubmoduleUriPathOfSubmodule();
+
+			if (StringUtils.isNotBlank(path))
+				path = FORWARD_SLASH + getNameOfModel() + FORWARD_SLASH + path + FORWARD_SLASH
+						+ identification.get("submodelRequestidentifier");
+
 			CreateSubModelRequest createSubModelRequest = digitalTwinsUtility.getCreateSubModelRequest(shellId,
-					getsemanticIdOfModel(), getIdShortOfModel(), identification, getNameOfModel(),
-					getSubmoduleUriPathOfSubmodule(), getSubmodelShortDescriptionOfModel());
+					getsemanticIdOfModel(), getIdShortOfModel(), identification.get("submodelIdentifier"), path,
+					getSubmodelShortDescriptionOfModel());
 
 			digitalTwinFacilitator.updateShellDetails(shellId, aasDescriptorRequest, createSubModelRequest);
 			jsonObject.put(SubmoduleCommonColumnsConstant.SUBMODULE_ID, createSubModelRequest.getId());
@@ -227,9 +236,13 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 	}
 
 	@SneakyThrows
-	private String findIdentificationForSubmodule(Integer rowIndex, ObjectNode jsonObject) {
-
-		List<String> identificationFields = getDatabaseIdentifierSpecsOfModel();
+	private Map<String, String> findIdentificationForSubmodule(Integer rowIndex, ObjectNode jsonObject) {
+		
+		String submodelIdentifier =null;
+		String identificationField = extractExactFieldName(getIdentifierOfModel());
+		
+		List<String> databaseIdentifierFields = getDatabaseIdentifierSpecsOfModel();
+		
 		JsonArray jArray = checkIsAutoPopulatedfieldsSubmodel();
 		List<JsonElement> allAutoPopulateField = null;
 
@@ -248,15 +261,24 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 
 				String identificationLocal = findIdentificationForSubmodule(rowIndex, jsonObject, asJsonObject);
 				jsonObject.put(shemaIdentificationKey, identificationLocal);
+				
+				if (identificationField.equals(shemaIdentificationKey)) {
+					submodelIdentifier = identificationLocal;
+				}
 			}
 		} 
 		
-		String identifierValue = getDatabaseIdentifierValues(jsonObject, identificationFields);
-		if(StringUtils.isBlank(identifierValue)) {
-			identifierValue =UUIdGenerator.getUrnUuid();
+		if(submodelIdentifier == null) {
+			submodelIdentifier = UUIdGenerator.getUrnUuid();
 		}
 		
-		return identifierValue;
+		String submodelRequestidentifier = getDatabaseIdentifierValues(jsonObject, databaseIdentifierFields);
+		
+		Map<String, String> output= new TreeMap<>();
+		output.put("submodelIdentifier", submodelIdentifier);
+		output.put("submodelRequestidentifier", submodelRequestidentifier);
+		
+		return output;
 	}
 
 	private String findIdentificationForSubmodule(Integer rowIndex, ObjectNode jsonObject, JsonObject asJsonObject) {

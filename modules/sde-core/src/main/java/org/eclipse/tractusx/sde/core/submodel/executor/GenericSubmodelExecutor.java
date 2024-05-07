@@ -86,6 +86,7 @@ public class GenericSubmodelExecutor extends SubmodelExecutor {
 	@SneakyThrows
 	private void nextSteps(Integer rowIndex, ObjectNode jsonObject, String processId, PolicyModel policy) {
 
+		generateUrnUUID.init(getSubmodelSchema());
 		generateUrnUUID.run(jsonObject, processId);
 
 		jsonRecordValidate.init(getSubmodelSchema());

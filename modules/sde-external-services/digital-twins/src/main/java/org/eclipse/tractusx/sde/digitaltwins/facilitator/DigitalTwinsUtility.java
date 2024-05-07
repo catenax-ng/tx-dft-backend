@@ -105,15 +105,12 @@ public class DigitalTwinsUtility {
 
 	@SneakyThrows
 	public CreateSubModelRequest getCreateSubModelRequest(String shellId, String sematicId, String idShortofModel,
-			String identification, String submodel, String productIdPath, String description) {
+			String identification, String path, String description) {
 
 		SemanticId semanticId = SemanticId.builder().type(CommonConstants.EXTERNAL_REFERENCE)
 				.keys(List.of(new Keys(CommonConstants.SUBMODEL, sematicId))).build();
 
-		if (StringUtils.isNotBlank(productIdPath))
-			productIdPath = FORWARD_SLASH + submodel + FORWARD_SLASH + productIdPath + FORWARD_SLASH + identification;
-
-		List<Endpoint> endpoints = prepareDtEndpoint(shellId, identification, productIdPath);
+		List<Endpoint> endpoints = prepareDtEndpoint(shellId, identification, path);
 
 		MultiLanguage engLang = MultiLanguage.builder().language("en").text(description).build();
 
@@ -121,12 +118,12 @@ public class DigitalTwinsUtility {
 				.description(List.of(engLang)).endpoints(endpoints).build();
 	}
 
-	public List<Endpoint> prepareDtEndpoint(String shellId, String submodelIdentification, String productIdPath) {
+	public List<Endpoint> prepareDtEndpoint(String shellId, String submodelIdentification, String path) {
 
 		List<Endpoint> endpoints = new ArrayList<>();
 		endpoints.add(Endpoint.builder().endpointInterface(CommonConstants.INTERFACE)
 				.protocolInformation(ProtocolInformation.builder()
-						.endpointAddress(digitalTwinEdcDataplaneEndpoint + productIdPath)
+						.endpointAddress(digitalTwinEdcDataplaneEndpoint + path)
 						.endpointProtocol(CommonConstants.HTTP)
 						.endpointProtocolVersion(List.of(CommonConstants.ENDPOINT_PROTOCOL_VERSION))
 						.subProtocol(CommonConstants.SUB_PROTOCOL)
