@@ -130,6 +130,10 @@ public class SubmodelCustomHistoryGenerator {
 		
 		String pkColomns = String.join(" =? AND p.", pkColomn);
 		
+		if(pkColomn.size()==1) {
+			pkColomns = pkColomn.get(0)+ "=?";
+		}
+		
 		Query query = entityManager.createNativeQuery(
 				"SELECT " + columns + " FROM " + tableEntityName + " as p Where p." + pkColomns + "");
 		
