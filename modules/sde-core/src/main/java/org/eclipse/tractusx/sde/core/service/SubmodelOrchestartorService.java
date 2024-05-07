@@ -245,13 +245,15 @@ public class SubmodelOrchestartorService {
 			processReportUseCase.startDeleteProcess(oldProcessReport, refProcessId, submodel,
 					readCreatedTwinsforDelete.size(), delProcessId);
 
-			readCreatedTwinsforDelete.stream().forEach(obj -> {
+			List<JsonObject> filterList = readCreatedTwinsforDelete.stream().map(obj-> {
+				JsonObject rowjObj = obj.get("csv").getAsJsonObject();
 				int andIncrement = atInt.incrementAndGet();
-				obj.addProperty(ROW_NUMBER, andIncrement);
-				obj.addProperty(PROCESS_ID, refProcessId);
-			});
+				rowjObj.addProperty(ROW_NUMBER, andIncrement);
+				rowjObj.addProperty(PROCESS_ID, refProcessId);
+				return rowjObj;
+			}).toList();
 
-			readCreatedTwinsforDelete.parallelStream().forEach(rowjObj -> {
+			filterList.parallelStream().forEach(rowjObj -> {
 				try {
 					executor.executeDeleteRecord(rowjObj.get(ROW_NUMBER).getAsInt(), rowjObj, delProcessId,
 							refProcessId);
