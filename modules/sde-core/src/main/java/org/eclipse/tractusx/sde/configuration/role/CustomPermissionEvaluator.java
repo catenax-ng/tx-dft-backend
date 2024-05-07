@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.eclipse.tractusx.sde.core.service.RoleManagementService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,6 +60,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
 		List<String> list = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
+		if(list.isEmpty())
+			throw new AccessDeniedException("No Access for configured resources");
+		
 		return !roleManagementService.findAll(list, List.of(permissionLs)).isEmpty();
 	}
 }
