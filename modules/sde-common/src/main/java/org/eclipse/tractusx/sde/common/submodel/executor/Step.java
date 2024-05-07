@@ -22,6 +22,7 @@ package org.eclipse.tractusx.sde.common.submodel.executor;
 
 import java.util.List;
 
+import org.assertj.core.util.Arrays;
 import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -157,6 +158,16 @@ public abstract class Step {
 				extractExactFieldName(identifierOfModel));
 	}
 	
+	protected String getDatabaseIdentifierValues(JsonNode jsonObject, List<String> databaseIdentifier) {
+		return String.join("@",
+				databaseIdentifier.stream().map(
+						str -> JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject, extractExactFieldName(str)))
+						.toList());
+	}
+	
+	protected List<String> getIdentifierValuesAsList(String value) {
+		return Arrays.asList(value.split("@")).stream().map(Object::toString).toList();
+	}
 	
 	public String extractExactFieldName(String str) {
 

@@ -210,7 +210,9 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 			List<JsonElement> allGlobalFiled = jArray.asList().stream()
 					.filter(ele -> {
 						JsonElement refElement = ele.getAsJsonObject().get("ref");
-						return refElement!= null && refElement.equals("shellGlobalAssetId");
+						return refElement != null && refElement.isJsonPrimitive()
+								&& refElement.getAsJsonPrimitive().isString()
+								&& refElement.getAsJsonPrimitive().getAsString().equals("shellGlobalAssetId");
 					})
 					.toList();
 			if (!allGlobalFiled.isEmpty()) {
@@ -227,15 +229,14 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 	@SneakyThrows
 	private String findIdentificationForSubmodule(Integer rowIndex, ObjectNode jsonObject) {
 
-		String identification = null;
-		String identificationField = extractExactFieldName(getIdentifierOfModel());
+		List<String> identificationFields = getDatabaseIdentifierSpecsOfModel();
 		JsonArray jArray = checkIsAutoPopulatedfieldsSubmodel();
 		List<JsonElement> allAutoPopulateField = null;
 
 		if (jArray != null) {
 			allAutoPopulateField = jArray.asList().stream().filter(ele -> {
 				JsonElement ref = ele.getAsJsonObject().get("ref");
-				return ref != null && ref.isJsonObject();
+				return ref != null && ref.isJsonPrimitive() && ref.getAsJsonPrimitive().isJsonObject();
 			}).toList();
 
 		}
@@ -247,15 +248,15 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 
 				String identificationLocal = findIdentificationForSubmodule(rowIndex, jsonObject, asJsonObject);
 				jsonObject.put(shemaIdentificationKey, identificationLocal);
-				if (identificationField.equals(shemaIdentificationKey)) {
-					identification = identificationLocal;
-				}
 			}
-		} else {
-			identification = UUIdGenerator.getUrnUuid();
+		} 
+		
+		String identifierValue = getDatabaseIdentifierValues(jsonObject, identificationFields);
+		if(StringUtils.isBlank(identifierValue)) {
+			identifierValue =UUIdGenerator.getUrnUuid();
 		}
-
-		return identification;
+		
+		return identifierValue;
 	}
 
 	private String findIdentificationForSubmodule(Integer rowIndex, ObjectNode jsonObject, JsonObject asJsonObject) {

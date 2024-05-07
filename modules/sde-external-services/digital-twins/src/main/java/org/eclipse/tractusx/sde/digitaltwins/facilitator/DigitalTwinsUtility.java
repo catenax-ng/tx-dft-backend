@@ -105,14 +105,6 @@ public class DigitalTwinsUtility {
 
 	@SneakyThrows
 	public CreateSubModelRequest getCreateSubModelRequest(String shellId, String sematicId, String idShortofModel,
-			String submodel, String productIdPath, String description) {
-		String identification = UUIdGenerator.getUrnUuid();
-		return getCreateSubModelRequest(shellId, sematicId, idShortofModel, identification, submodel, productIdPath,
-				description);
-	}
-
-	@SneakyThrows
-	public CreateSubModelRequest getCreateSubModelRequest(String shellId, String sematicId, String idShortofModel,
 			String identification, String submodel, String productIdPath, String description) {
 
 		SemanticId semanticId = SemanticId.builder().type(CommonConstants.EXTERNAL_REFERENCE)
