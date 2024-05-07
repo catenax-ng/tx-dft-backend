@@ -81,7 +81,9 @@ public class AsyncPushPCFDataForApproveRequest {
 									ele = ele.get("csv").getAsJsonObject();
 									return request.getProductId().equals(JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID));
 								})
-								.findAny().orElseThrow(() -> new NoDataFoundException(
+								.map(obj-> obj.get("json").getAsJsonObject())
+								.findAny()
+								.orElseThrow(() -> new NoDataFoundException(
 										"No data found for product_id " + request.getProductId()));
 
 						PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(request.getRequestId(),
