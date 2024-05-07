@@ -50,6 +50,7 @@ public class CommonConstants {
 	
 	public static final String EXTERNAL_REFERENCE = "ExternalReference";
 	public static final String GLOBAL_REFERENCE = "GlobalReference";
+	public static final String SUBMODEL = "Submodel";
 	public static final String BODY_ENCODING = "plain";
 	public static final String INTERFACE = "SUBMODEL-3.0";
 	

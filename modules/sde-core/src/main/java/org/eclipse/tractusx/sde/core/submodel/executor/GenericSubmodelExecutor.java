@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.entities.csv.RowData;
+import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.common.submodel.executor.BPNDiscoveryUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.DatabaseUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.DigitalTwinUsecaseStep;
@@ -121,7 +122,10 @@ public class GenericSubmodelExecutor extends SubmodelExecutor {
 	@Override
 	public List<JsonObject> readCreatedTwinsforDelete(String refProcessId) {
 		getDatabaseExecutorStep().init(getSubmodelSchema());
-		return getDatabaseExecutorStep().readCreatedTwins(refProcessId, CommonConstants.DELETED_Y);
+		List<JsonObject> allSubmoduleAsJsonList= getDatabaseExecutorStep().readCreatedTwins(refProcessId, CommonConstants.DELETED_Y);
+		if (allSubmoduleAsJsonList.isEmpty())
+			throw new NoDataFoundException("No data founds for deletion " + refProcessId);
+		return allSubmoduleAsJsonList;
 	}
 
 	@Override
