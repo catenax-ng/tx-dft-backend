@@ -30,7 +30,6 @@ import org.eclipse.tractusx.sde.common.constants.SubmoduleCommonColumnsConstant;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerDigitalTwinUseCaseException;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerUseCaseException;
-import org.eclipse.tractusx.sde.common.submodel.executor.DatabaseUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.DigitalTwinUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
 import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
@@ -42,7 +41,6 @@ import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorRe
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubModelResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsUtility;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,7 +52,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-@Service("DigitalTwinUseCaseHandler")
+@Service("digitalTwinUseCaseHandler")
 @RequiredArgsConstructor
 public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecaseStep {
 

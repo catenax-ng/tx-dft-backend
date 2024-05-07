@@ -33,28 +33,23 @@ public class GenericSubmodelExecutor extends SubmodelExecutor {
 	private final GenerateUrnUUID generateUrnUUID;
 	private final JsonRecordValidate jsonRecordValidate;
 
-	@Qualifier("DigitalTwinUseCaseHandler")
 	private final DigitalTwinUsecaseStep digitalTwinUseCaseStep;
 
-	@Qualifier("EDCUsecaseHandler")
 	private final EDCUsecaseStep edcUseCaseStep;
 
-	@Qualifier("BPNDiscoveryUseCaseHandler")
 	private final BPNDiscoveryUsecaseStep bpnUseCaseTwinStep;
 
-	@Qualifier("DatabaseUsecaseHandler")
 	private final DatabaseUsecaseStep databaseUseCaseStep;
 
-	@Qualifier("SubmoduleResponseHandler")
 	private final SubmoduleMapperUsecaseStep submodelMapperUseCaseStep;
 
 	public GenericSubmodelExecutor(CsvParse csvParseStep, JsonRecordFormating jsonRecordformater,
 			GenerateUrnUUID generateUrnUUID, JsonRecordValidate jsonRecordValidate,
-			@Qualifier("DigitalTwinUseCaseHandler") DigitalTwinUsecaseStep digitalTwinUseCaseStep,
-			@Qualifier("EDCUsecaseHandler") EDCUsecaseStep edcUseCaseStep,
-			@Qualifier("BPNDiscoveryUseCaseHandler") BPNDiscoveryUsecaseStep bpnUseCaseTwinStep,
-			@Qualifier("DatabaseUsecaseHandler") DatabaseUsecaseStep databaseUseCaseStep,
-			@Qualifier("SubmoduleResponseHandler") SubmoduleMapperUsecaseStep submodelMapperUseCaseStep) {
+			@Qualifier("digitalTwinUseCaseHandler") DigitalTwinUsecaseStep digitalTwinUseCaseStep,
+			@Qualifier("eDCUsecaseHandler") EDCUsecaseStep edcUseCaseStep,
+			@Qualifier("bPNDiscoveryUseCaseHandler") BPNDiscoveryUsecaseStep bpnUseCaseTwinStep,
+			@Qualifier("databaseUsecaseHandler") DatabaseUsecaseStep databaseUseCaseStep,
+			@Qualifier("submoduleResponseHandler") SubmoduleMapperUsecaseStep submodelMapperUseCaseStep) {
 		this.csvParseStep = csvParseStep;
 		this.jsonRecordformater = jsonRecordformater;
 		this.generateUrnUUID = generateUrnUUID;
