@@ -76,12 +76,11 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	public void saveSubmoduleWithDeleted(Integer rowIndex, JsonObject jsonObject, String delProcessId,
 			String refProcessId) {
 
-		String uuid = jsonObject.get(extractExactFieldName(getIdentifierOfModel())).getAsString();
+		String identifier = extractExactFieldName(getIdentifierOfModel());
+		String uuid = jsonObject.get(identifier).getAsString();
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
 		String tableName = submoduleUtility.getTableName(schemaObj);
-
-		submodelCustomHistoryGenerator.saveAspectWithDeleted(uuid, tableName,
-				extractExactFieldName(getIdentifierOfModel()));
+		submodelCustomHistoryGenerator.saveAspectWithDeleted(uuid, tableName, identifier);
 	}
 
 	@SneakyThrows
