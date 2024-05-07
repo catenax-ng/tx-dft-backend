@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.tractusx.sde.common.configuration.properties.SDEConfigurationProperties;
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
@@ -33,7 +34,6 @@ import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequestFactory;
 import org.eclipse.tractusx.sde.edc.facilitator.CreateEDCAssetFacilator;
 import org.eclipse.tractusx.sde.edc.gateways.external.EDCGateway;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
@@ -56,9 +56,7 @@ public class PCFExchangeAssetProvider {
 	private final EDCGateway edcGateway;
 	private final CreateEDCAssetFacilator createEDCAssetFacilator;
 	private final ValueReplacerUtility valueReplacerUtility;
-
-	@Value("${dft.hostname}")
-	private String sdeHostname;
+	private final SDEConfigurationProperties sdeConfigurationProperties;
 
 	@PostConstruct
 	@SneakyThrows
@@ -69,7 +67,7 @@ public class PCFExchangeAssetProvider {
 		AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest("", "PCF Exchange endpoint information",
 				assetId, "1", "", "", sematicId, EDCAssetConstant.DATA_CORE_PCF_EXCHANGE_ENPOINT_TYPE);
 
-		String baseUrl = sdeHostname + "/pcf";
+		String baseUrl = sdeConfigurationProperties.getSdeHostname() + "/pcf";
 		assetEntryRequest.getDataAddress().getProperties().put("baseUrl", baseUrl);
 		assetEntryRequest.getProperties().put(REGISTRY_TYPE, baseUrl);
 		assetEntryRequest.getProperties().put(EDCAssetConstant.CX_COMMON_VERSION, "1.1");

@@ -20,19 +20,15 @@
 
 package org.eclipse.tractusx.sde.common.configuration.properties;
 
-import java.net.URI;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.Data;
-import lombok.SneakyThrows;
 
 @Configuration
 @Data
 public class DigitalTwinConfigurationProperties {
-
+	
     @Value("${digital-twins.hostname:default}")
     private String digitalTwinsHostname;
 
@@ -54,10 +50,10 @@ public class DigitalTwinConfigurationProperties {
     @Value(value = "${digital-twins.authentication.grantType}")
     private String digitalTwinsAuthenticationGrantType;
 
-    @Value("${digital-twins.registry.uri:/api/v3.0}")
+    @Value("${digital-twins.registry.uri:/api/v3}")
     private String digitalTwinsRegistryPath;
 
-    @Value("${digital-twins.lookup.uri:/api/v3.0}")
+    @Value("${digital-twins.lookup.uri:/api/v3}")
     private String digitalTwinsLookupPath;
 
     @Value(value = "${manufacturerId}")
