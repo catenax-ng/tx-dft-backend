@@ -68,11 +68,11 @@ public class PolicyRequestFactory {
 	
 	private String getGeneratedPolicyId(String assetId, String type) {
 		String submodelId = assetId;
-		if (assetId.indexOf("urn:uuid") != -1) {
-			submodelId = assetId.substring(assetId.indexOf("urn:uuid", 9));
-			submodelId =submodelId.replace("urn:uuid:", "");
+		if (assetId.length() > 45) {
+			submodelId = assetId.substring(46);
+			submodelId = submodelId.replace("urn:uuid:", "");
 		}
-		return type+"-"+submodelId;
+		return type + "-" + submodelId;
 	}
 	
 

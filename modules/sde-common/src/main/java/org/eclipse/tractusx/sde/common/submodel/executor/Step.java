@@ -100,6 +100,12 @@ public abstract class Step {
 		JsonElement jsonElement = this.getAddOnOfModel().get("createShellIfNotExist");
 		return jsonElement == null || jsonElement.isJsonNull() || jsonElement.getAsBoolean();
 	}
+	
+	public boolean checkAppendURNUUIDWithIdentifier() {
+		JsonElement jsonElement = this.getAddOnOfModel().get("appendURNUUIDWithIdentifier");
+		return jsonElement == null || jsonElement.isJsonNull() || jsonElement.getAsBoolean();
+	}
+	
 
 	public JsonObject checkIsRelationSubmodel() {
 		JsonElement jsonElement = this.getAddOnOfModel().get("isRelationSubmodel");
