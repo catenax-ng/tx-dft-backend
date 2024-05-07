@@ -54,7 +54,9 @@ public class AsyncPushPCFDataForApproveRequest {
 		List<String> accessBPNList = PolicyOperationUtil.getAccessBPNList(policy);
 
 		List<String> productList = jsonObjectList.stream()
-				.map(ele -> JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID)).toList();
+				.map(obj-> obj.get("csv").getAsJsonObject())
+				.map(ele -> JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID))
+				.toList();
 
 		markedPCFDataForPendingProviderRequestAsRequested(productList, jsonObjectList);
 
@@ -75,8 +77,10 @@ public class AsyncPushPCFDataForApproveRequest {
 						request.setStatus(PCFRequestStatusEnum.PUSHING_UPDATED_DATA);
 
 						JsonObject calculatedPCFValue = jsonObjectList.stream()
-								.filter(ele -> request.getProductId()
-										.equals(JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID)))
+								.filter(ele -> {
+									ele = ele.get("csv").getAsJsonObject();
+									return request.getProductId().equals(JsonObjectUtility.getValueFromJsonObject(ele, PRODUCT_ID));
+								})
 								.findAny().orElseThrow(() -> new NoDataFoundException(
 										"No data found for product_id " + request.getProductId()));
 
