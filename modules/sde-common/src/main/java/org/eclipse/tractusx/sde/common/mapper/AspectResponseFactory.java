@@ -44,7 +44,7 @@ public class AspectResponseFactory {
 	@SneakyThrows
 	public JsonObject maptoReponse(Object csvObject, Object aspectObject) {
 		JsonObject jobj = new JsonObject();
-		jobj.add("csv", fasterJsonMapper(csvObject));
+		jobj.add("csv", formatJsonRespone(fasterJsonMapper(csvObject)));
 		jobj.add("json", formatJsonRespone(gsonMapper(aspectObject)));
 		return jobj;
 	}
@@ -103,5 +103,4 @@ public class AspectResponseFactory {
 	private boolean isBoolean(String str) {
 		return str.equalsIgnoreCase("true") || str.equalsIgnoreCase("false");
 	}
-
 }
