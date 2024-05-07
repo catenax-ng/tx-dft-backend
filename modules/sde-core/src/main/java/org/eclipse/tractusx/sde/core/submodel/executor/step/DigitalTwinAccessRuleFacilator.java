@@ -162,7 +162,7 @@ public class DigitalTwinAccessRuleFacilator extends Step {
 				});
 			}
 		} catch (NoDataFoundException e) {
-			log.info(String.format("Row: %s: DigitalTwin: no existing digital twin access rule data found %s", rowIndex,
+			log.warn(String.format("Row: %s: DigitalTwin: no existing digital twin access rule data found %s", rowIndex,
 					identifier));
 		}
 	}
