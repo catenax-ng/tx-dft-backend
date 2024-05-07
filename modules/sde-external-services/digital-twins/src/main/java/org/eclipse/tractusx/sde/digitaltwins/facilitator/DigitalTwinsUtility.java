@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
@@ -115,7 +116,7 @@ public class DigitalTwinsUtility {
 			String identification, String submodel, String productIdPath, String description) {
 
 		SemanticId semanticId = SemanticId.builder().type(CommonConstants.EXTERNAL_REFERENCE)
-				.keys(List.of(new Keys(CommonConstants.GLOBAL_REFERENCE, sematicId))).build();
+				.keys(List.of(new Keys(CommonConstants.SUBMODEL, sematicId))).build();
 
 		if (StringUtils.isNotBlank(productIdPath))
 			productIdPath = FORWARD_SLASH + submodel + FORWARD_SLASH + productIdPath + FORWARD_SLASH + identification;
@@ -144,6 +145,49 @@ public class DigitalTwinsUtility {
 				.build());
 		return endpoints;
 	}
+	
+	public String createAccessRuleMandatorySpecificAssetIds(Map<String, String> specificAssetIds) {
+		StringBuilder sb= new StringBuilder();
+		specificAssetIds.entrySet().stream().forEach(ele->{
+			 if(sb.isEmpty()) {
+				 sb.append(extractedMandatorySpecificAssetIds(ele));
+			 } else {
+				 sb.append(","+extractedMandatorySpecificAssetIds(ele) );
+			 }
+		});
+		return sb.toString();
+	}
+
+	private String extractedMandatorySpecificAssetIds(Entry<String, String> ele) {
+		return "{"
+		 		+ "\"attribute\":\""+ele.getKey()+"\","
+		 		+ "\"operator\":\"eq\","
+		 		+ "\"value\":\""+ele.getValue()+"\""
+		 		+ "}";
+	}
+	
+	public String createAccessRuleVisibleSpecificAssetIdNames(Map<String, String> specificAssetIds) {
+		
+		StringBuilder sb= new StringBuilder();
+		specificAssetIds.entrySet().stream().forEach(ele->{
+			 if(sb.isEmpty()) {
+				 sb.append(extractedVisibleSpecificAssetIdNames(ele));
+			 } else {
+				 sb.append(","+extractedVisibleSpecificAssetIdNames(ele));
+			 }
+		});
+		return sb.toString();
+	}
+
+	private String extractedVisibleSpecificAssetIdNames(Entry<String, String> ele) {
+		return "{"
+		 		+ "\"attribute\":\"name\","
+		 		+ "\"operator\":\"eq\","
+		 		+ "\"value\":\""+ele.getKey()+"\""
+		 		+ "}";
+	}
+	
+	
 
 	@SneakyThrows
 	public List<Object> getSpecificAssetIds(Map<String, String> specificAssetIds, PolicyModel policy) {

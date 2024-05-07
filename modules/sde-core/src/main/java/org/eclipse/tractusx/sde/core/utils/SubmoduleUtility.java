@@ -27,6 +27,7 @@ public class SubmoduleUtility {
 		tableColomnHeader.add(SubmoduleCommonColumnsConstant.PROCESS_ID);
 		tableColomnHeader.add(SubmoduleCommonColumnsConstant.DELETED);
 		tableColomnHeader.add(SubmoduleCommonColumnsConstant.UPDATED);
+		tableColomnHeader.add(SubmoduleCommonColumnsConstant.SHELL_ACCESS_RULE_IDS);
 		return tableColomnHeader;
 	}
 	

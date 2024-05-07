@@ -30,6 +30,7 @@ import org.eclipse.tractusx.sde.common.constants.SubmoduleCommonColumnsConstant;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerDigitalTwinUseCaseException;
 import org.eclipse.tractusx.sde.common.exception.CsvHandlerUseCaseException;
+import org.eclipse.tractusx.sde.common.submodel.executor.DatabaseUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.DigitalTwinUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
 import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
@@ -41,6 +42,7 @@ import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorRe
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubModelResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsUtility;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,7 +65,9 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 	private final SDEConfigurationProperties sdeConfigProperties;
 
 	private final DigitalTwinLookUpInRegistry digitalTwinLookUpInRegistry;
-
+	
+	private final DigitalTwinAccessRuleFacilator digitalTwinAccessRuleFacilator;
+	
 	public void delete(Integer rowIndex, JsonObject jsonObject, String delProcessId, String refProcessId) {
 		String shellId = JsonObjectUtility.getValueFromJsonObject(jsonObject, SubmoduleCommonColumnsConstant.SHELL_ID);
 		String submodelId = JsonObjectUtility.getValueFromJsonObject(jsonObject,
@@ -102,6 +106,9 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 			SubModelResponse foundSubmodel = findSubmoduleInShells(jsonObject, List.of(shellId));
 
 			checkAndCreateSubmodulIfNotExist(rowIndex, jsonObject, shellId, aasDescriptorRequest, foundSubmodel);
+			
+			digitalTwinAccessRuleFacilator.init(getSubmodelSchema());
+			digitalTwinAccessRuleFacilator.createAccessRule(rowIndex, jsonObject, specificAssetIds, policy, getsemanticIdOfModel());
 
 		} catch (Exception e) {
 			throw new CsvHandlerUseCaseException(rowIndex, ": DigitalTwins: " + e.getMessage());

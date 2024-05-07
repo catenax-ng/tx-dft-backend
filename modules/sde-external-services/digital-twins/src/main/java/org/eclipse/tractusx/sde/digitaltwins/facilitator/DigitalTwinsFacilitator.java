@@ -32,10 +32,13 @@ import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorRe
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellLookupResponse;
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.SubModelListResponse;
 import org.eclipse.tractusx.sde.digitaltwins.gateways.external.DigitalTwinsFeignClient;
+import org.eclipse.tractusx.sde.digitaltwins.gateways.external.IAccessRuleManagementApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DigitalTwinsFacilitator {
 
 	private final DigitalTwinsFeignClient digitalTwinsFeignClient;
-
+	
 	@Value(value = "${manufacturerId}")
 	private String manufacturerId;
 
@@ -56,6 +59,8 @@ public class DigitalTwinsFacilitator {
 	private boolean managedThirdParty;
 	
 	private final DigitalTwinsUtility digitalTwinsUtility;
+	
+	private final IAccessRuleManagementApi iAccessRuleManagementApi;
 	
 
 	@SneakyThrows
@@ -147,6 +152,22 @@ public class DigitalTwinsFacilitator {
 			responseBody = registerSubmodel.getBody();
 		}
 		return responseBody;
+	}
+	
+	public JsonNode createAccessControlsRule(String edcBpn, JsonNode request) {
+		return iAccessRuleManagementApi.createAccessControlsRule(edcBpn, request);
+	}
+	
+	public void updateAccessControlsRule(String ruleId, String edcBpn, JsonNode request) {
+		iAccessRuleManagementApi.updateAccessControlsRule(ruleId, edcBpn, request);
+	}
+	
+	public JsonNode getAccessControlsRule(String ruleId, String edcBpn) {
+		return iAccessRuleManagementApi.getAccessControlsRuleById(ruleId, edcBpn);
+	}
+	
+	public void deleteAccessControlsRule(String ruleId, String edcBpn) {
+		iAccessRuleManagementApi.deleteAccessControlsRule(ruleId, edcBpn);
 	}
 
 	public void updateShellDetails(String shellId, ShellDescriptorRequest aasDescriptorRequest,
