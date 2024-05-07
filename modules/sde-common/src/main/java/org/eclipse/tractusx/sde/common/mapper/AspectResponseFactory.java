@@ -20,13 +20,18 @@
 
 package org.eclipse.tractusx.sde.common.mapper;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import lombok.SneakyThrows;
 
@@ -40,8 +45,7 @@ public class AspectResponseFactory {
 	public JsonObject maptoReponse(Object csvObject, Object aspectObject) {
 		JsonObject jobj = new JsonObject();
 		jobj.add("csv", fasterJsonMapper(csvObject));
-		jobj.add("json", gsonMapper(aspectObject));
-
+		jobj.add("json", formatJsonRespone(gsonMapper(aspectObject)));
 		return jobj;
 	}
 
@@ -61,6 +65,43 @@ public class AspectResponseFactory {
 		}
 		writeValueAsString = writeValueAsString.replace(":null", ": \"\"");
 		return gson.fromJson(writeValueAsString, JsonObject.class);
+	}
+
+	private JsonElement formatJsonRespone(JsonElement element) {
+		if (element.isJsonPrimitive()) {
+			JsonPrimitive primitive = element.getAsJsonPrimitive();
+			if (primitive != null && isNumeric(primitive.getAsString())) {
+				return new JsonPrimitive(primitive.getAsNumber());
+			} else if (primitive != null && isBoolean(primitive.getAsString())) {
+				return new JsonPrimitive(primitive.getAsBoolean());
+			} else {
+				return primitive;
+			}
+		} else if (element.isJsonArray()) {
+			JsonArray jsonArray = element.getAsJsonArray();
+			JsonArray cleanedNewArray = new JsonArray();
+			for (JsonElement jsonElement : jsonArray) {
+				cleanedNewArray.add(formatJsonRespone(jsonElement));
+			}
+			return cleanedNewArray;
+		} else if (element.isJsonNull()) {
+			return element.getAsJsonNull();
+		} else {
+			JsonObject obj = element.getAsJsonObject();
+			JsonObject encodedJsonObject = new JsonObject();
+			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
+				encodedJsonObject.add(entry.getKey(), formatJsonRespone(entry.getValue()));
+			}
+			return encodedJsonObject;
+		}
+	}
+
+	private boolean isNumeric(String str) {
+		return str.matches("-?\\d+(\\.\\d+)?");
+	}
+
+	private boolean isBoolean(String str) {
+		return str.equalsIgnoreCase("true") || str.equalsIgnoreCase("false");
 	}
 
 }
