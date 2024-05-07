@@ -134,7 +134,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		try {
 
 			JsonObject calculatedPCFValue = databaseUsecaseStep.readCreatedTwinsBySpecifyColomn(
-					"urn:bamm:io.catenax.pcf", "productId", pcfRequestModel.getProductId()).get("json").getAsJsonObject();
+					"urn:bamm:io.catenax.pcf", pcfRequestModel.getProductId()).get("json").getAsJsonObject();
 			
 			PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(pcfRequestModel.getRequestId(),
 					pcfRequestModel.getStatus());
@@ -169,8 +169,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		PCFRequestStatusEnum status = PCFRequestStatusEnum.REQUESTED;
 		String remark = "";
 		try {
-			databaseUsecaseStep.readCreatedTwinsBySpecifyColomn("urn:bamm:io.catenax.pcf", "productId",
-					productId);
+			databaseUsecaseStep.readCreatedTwinsBySpecifyColomn("urn:bamm:io.catenax.pcf", productId);
 		} catch (NoDataFoundException e) {
 			String msg = "The PCF calculated value does not exist in system, please upload PCF value for '" + productId
 					+ "' in systems using Manual/Recurring Upload";

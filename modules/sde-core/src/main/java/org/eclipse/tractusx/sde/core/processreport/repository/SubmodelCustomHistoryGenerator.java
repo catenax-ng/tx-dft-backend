@@ -123,17 +123,23 @@ public class SubmodelCustomHistoryGenerator {
 	@Modifying
 	@Transactional
 	@SneakyThrows
-	public List<JsonObject> readCreatedTwinsDetails(List<String> colNames, String tableEntityName, String uuid,
-			String pkColomn) {
+	public List<JsonObject> readCreatedTwinsDetails(List<String> colNames, String tableEntityName, List<String> uuids,
+			List<String> pkColomn) {
 
 		String columns = String.join(",", colNames);
+		
+		String pkColomns = String.join(" =? AND p.", pkColomn);
+		
 		Query query = entityManager.createNativeQuery(
-				"SELECT " + columns + " FROM " + tableEntityName + " as p Where p." + pkColomn + "=? ");
-		query.setParameter(1, uuid);
+				"SELECT " + columns + " FROM " + tableEntityName + " as p Where p." + pkColomns + "");
+		
+		AtomicInteger atInt = new AtomicInteger(1);
+		uuids.stream().forEach(uuid -> query.setParameter(atInt.getAndIncrement(), uuid));
+		
 		List<Object[]> resultList = query.getResultList();
 
 		if (resultList.isEmpty())
-			throw new NoDataFoundException(String.format("No data found for %s ", uuid));
+			throw new NoDataFoundException(String.format("No data found for %s ", uuids));
 
 		List<JsonObject> records = new LinkedList<>();
 		
@@ -142,6 +148,7 @@ public class SubmodelCustomHistoryGenerator {
 		}
 		return records;
 	}
+	
 
 	private JsonObject getJsonNodes(List<String> colNames, Object[] objectArray) {
 		JsonObject innerObject = new JsonObject();
