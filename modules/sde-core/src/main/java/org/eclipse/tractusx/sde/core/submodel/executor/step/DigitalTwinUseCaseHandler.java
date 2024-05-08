@@ -35,6 +35,7 @@ import org.eclipse.tractusx.sde.common.submodel.executor.DigitalTwinUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
 import org.eclipse.tractusx.sde.common.utils.JsonObjectUtility;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
+import org.eclipse.tractusx.sde.digitaltwins.entities.common.Endpoint;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.CreateSubModelRequest;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.ShellDescriptorRequest;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.ShellLookupRequest;
@@ -167,29 +168,44 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 
 		Map<String, String> identification = findIdentificationForSubmodule(rowIndex, jsonObject);
 
+		String path = getSubmoduleUriPathOfSubmodule();
+		
+		String submodelRequestidentifier= identification.get("submodelRequestidentifier");
+		String submodelIdentifier = identification.get("submodelIdentifier");
+		
+		if (StringUtils.isNotBlank(path)) {
+			path = FORWARD_SLASH + getNameOfModel() + FORWARD_SLASH + path + FORWARD_SLASH
+					+ submodelRequestidentifier;
+		}
+		
+		CreateSubModelRequest createSubModelRequest = digitalTwinsUtility.getCreateSubModelRequest(shellId,
+				getsemanticIdOfModel(), getIdShortOfModel(), submodelIdentifier, path,
+				getSubmodelShortDescriptionOfModel());
+		
 		if (foundSubmodel == null) {
-
 			logDebug(String.format("No submodels for '%s'", shellId));
-
-			String path = getSubmoduleUriPathOfSubmodule();
-
-			if (StringUtils.isNotBlank(path))
-				path = FORWARD_SLASH + getNameOfModel() + FORWARD_SLASH + path + FORWARD_SLASH
-						+ identification.get("submodelRequestidentifier");
-
-			CreateSubModelRequest createSubModelRequest = digitalTwinsUtility.getCreateSubModelRequest(shellId,
-					getsemanticIdOfModel(), getIdShortOfModel(), identification.get("submodelIdentifier"), path,
-					getSubmodelShortDescriptionOfModel());
-
 			digitalTwinFacilitator.updateShellDetails(shellId, aasDescriptorRequest, createSubModelRequest);
 			jsonObject.put(SubmoduleCommonColumnsConstant.SUBMODULE_ID, createSubModelRequest.getId());
 
 		} else {
 			// There is no need to send submodel because of nothing to change in it so
 			// sending null of it
-			jsonObject.put(SubmoduleCommonColumnsConstant.SUBMODULE_ID, foundSubmodel.getId());
-			digitalTwinFacilitator.updateShellDetails(shellId, aasDescriptorRequest, null);
-			logDebug("Complete Digital Twins Update Update Digital Twins");
+			boolean isSubmodelRequestidentifierSame = false;
+			if(foundSubmodel.getEndpoints()!=null) {
+				isSubmodelRequestidentifierSame = foundSubmodel.getEndpoints().stream()
+						.map(Endpoint::getProtocolInformation)
+						.anyMatch(ele-> ele.getEndpointAddress().contains(submodelRequestidentifier));
+			}
+			
+			if(!(foundSubmodel.getId().equals(submodelIdentifier)) || !isSubmodelRequestidentifierSame ) {
+				logDebug(String.format("Found submodel but need to update submodels for '%s'", shellId));
+				digitalTwinFacilitator.updateShellDetails(shellId, aasDescriptorRequest, createSubModelRequest);
+				jsonObject.put(SubmoduleCommonColumnsConstant.SUBMODULE_ID, createSubModelRequest.getId());
+			} else {
+				jsonObject.put(SubmoduleCommonColumnsConstant.SUBMODULE_ID, foundSubmodel.getId());
+				digitalTwinFacilitator.updateShellDetails(shellId, aasDescriptorRequest, null);
+				logDebug("Complete Digital Twins Update Update Digital Twins");
+			}
 		}
 
 		return jsonObject;
@@ -257,7 +273,7 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 
 			for (JsonElement jsonElement : allAutoPopulateField) {
 				JsonObject asJsonObject = jsonElement.getAsJsonObject().get("ref").getAsJsonObject();
-				String shemaIdentificationKey = jsonElement.getAsJsonObject().get("key").getAsString();
+				String shemaIdentificationKey = extractExactFieldName(jsonElement.getAsJsonObject().get("key").getAsString());
 
 				String identificationLocal = findIdentificationForSubmodule(rowIndex, jsonObject, asJsonObject);
 				jsonObject.put(shemaIdentificationKey, identificationLocal);

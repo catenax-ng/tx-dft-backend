@@ -100,23 +100,23 @@ public class PolicyConstraintBuilderService {
 
 	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getAccessPolicies(), "odrl:or"), Collections.emptyMap(), "a"));
+				getPoliciesConstraints(policy.getAccessPolicies(), "odrl:or", "a"), Collections.emptyMap(), "a"));
 	}
 
 	public JsonNode getUsagePolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getUsagePolicies(), "odrl:and"), Collections.emptyMap(), "u"));
+				getPoliciesConstraints(policy.getUsagePolicies(), "odrl:and", "u"), Collections.emptyMap(), "u"));
 	}
 
 	public ActionRequest getUsagePoliciesConstraints(List<Policies> policies) {
-		return getPoliciesConstraints(policies, "odrl:and");
+		return getPoliciesConstraints(policies, "odrl:and", "u");
 	}
 
-	public ActionRequest getPoliciesConstraints(List<Policies> usagePolicies, String operator) {
+	public ActionRequest getPoliciesConstraints(List<Policies> usagePolicies, String operator, String type) {
 		List<ConstraintRequest> constraintList = new ArrayList<>();
 
 		if (usagePolicies != null && !usagePolicies.isEmpty()) {
-			usagePolicies.forEach(policy -> preparePolicyConstraint(constraintList, policy));
+			usagePolicies.forEach(policy -> preparePolicyConstraint(constraintList, policy, type));
 		}
 
 		constraintList.sort(Comparator.comparing(ConstraintRequest::getLeftOperand));
@@ -131,12 +131,15 @@ public class PolicyConstraintBuilderService {
 
 	}
 
-	private void preparePolicyConstraint(List<ConstraintRequest> policies, Policies policy) {
+	private void preparePolicyConstraint(List<ConstraintRequest> policies, Policies policy, String type) {
 
 		String operator = "odrl:eq";
-
-		List<String> values = getAndOwnerBPNIfNotExist(policy);
-
+		
+		List<String> values = policy.getValue();
+		
+		if (type.equals("a"))
+			values = getAndOwnerBPNIfNotExist(policy, values);
+		
 		for (String value : values) {
 			if (StringUtils.isNotBlank(value)) {
 				ConstraintRequest request = ConstraintRequest.builder()
@@ -148,9 +151,7 @@ public class PolicyConstraintBuilderService {
 		}
 	}
 
-	private List<String> getAndOwnerBPNIfNotExist(Policies policy) {
-		
-		List<String> values= policy.getValue();
+	private List<String> getAndOwnerBPNIfNotExist(Policies policy, List<String> values) {
 		
 		if (policy.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER) && !values.isEmpty()
 				&& !values.contains(manufacturerId) && (values.size() == 1 && !values.get(0).equals(""))) {

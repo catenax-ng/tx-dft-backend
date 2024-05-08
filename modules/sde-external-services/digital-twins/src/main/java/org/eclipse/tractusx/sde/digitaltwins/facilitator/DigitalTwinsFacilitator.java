@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.CreateSubModelRequest;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.ShellDescriptorRequest;
@@ -190,7 +191,11 @@ public class DigitalTwinsFacilitator {
 			
 			if (shellDescriptorResponse != null) {
 				
-				shellDescriptorResponse.getSubmodelDescriptors().forEach(e -> 
+				shellDescriptorResponse.getSubmodelDescriptors()
+				.stream()
+						.filter(ele -> createSubModelRequest == null || (createSubModelRequest != null
+								&& !ele.getIdShort().equals(createSubModelRequest.getIdShort())))
+				.forEach(e -> 
 					aasDescriptorRequest.getSubmodelDescriptors().add(CreateSubModelRequest.builder()
 							.id(e.getId())
 							.idShort(e.getIdShort())
@@ -199,10 +204,15 @@ public class DigitalTwinsFacilitator {
 							.description(e.getDescription())
 							.build())
 				);
-				
 			}
 			
+			if (StringUtils.isBlank(aasDescriptorRequest.getIdShort()) && (shellDescriptorResponse != null
+					&& StringUtils.isNotBlank(shellDescriptorResponse.getIdShort()))) {
+				aasDescriptorRequest.setIdShort(shellDescriptorResponse.getIdShort());
+			}
+				
 			aasDescriptorRequest.setId(shellId);
+			log.debug(aasDescriptorRequest.toJsonString());
 			
 			ResponseEntity<Void> updateShellDescriptorByShellId = digitalTwinsFeignClient
 					.updateShellDescriptorByShellId(digitalTwinsUtility.encodeValueAsBase64Utf8(shellId),
