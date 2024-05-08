@@ -249,7 +249,7 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 		if (jArray != null) {
 			allAutoPopulateField = jArray.asList().stream().filter(ele -> {
 				JsonElement ref = ele.getAsJsonObject().get("ref");
-				return ref != null && ref.isJsonPrimitive() && ref.getAsJsonPrimitive().isJsonObject();
+				return ref != null && ref.isJsonObject();
 			}).toList();
 
 		}
