@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,8 +30,8 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class PartSiteInformationAsPlannedSubmodel extends SubmodelExtension {
 
-private Submodel submodel = null;
-	
+	private Submodel submodel = null;
+
 	@PostConstruct
 	public void init() {
 
@@ -46,8 +46,9 @@ private Submodel submodel = null;
 		submodel = loadSubmodel(input);
 
 		submodel.addProperties("tableName", "Part_site_information_as_planned");
+
 	}
-	
+
 	@Override
 	public Submodel submodel() {
 		return submodel;

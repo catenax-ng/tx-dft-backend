@@ -37,7 +37,7 @@ public class SingleLevelBomAsBuiltV300 extends SubmodelExtension {
 
 		String resource = "single-level-bom-as-built-v3.0.0.json";
 		// this is the path within the jar file
-		InputStream input = this.getClass().getResourceAsStream("/resources/" + resource);
+		InputStream input = SingleLevelBomAsBuiltV300.class.getResourceAsStream("/resources/" + resource);
 		if (input == null) {
 			// this is how we load file within editor (eg eclipse)
 			input = this.getClass().getClassLoader().getResourceAsStream(resource);
@@ -45,7 +45,7 @@ public class SingleLevelBomAsBuiltV300 extends SubmodelExtension {
 
 		submodel = loadSubmodel(input);
 		
-		submodel.addProperties("tableName", "singlelevelbomasbuilt_v_300");
+		submodel.addProperties("tableName", "single_level_bom_asbuilt_v_300");
 	}
 
 	@Override

@@ -18,8 +18,7 @@
 			"name_at_manufacturer",
 			"function"
 		],
-		"dependentRequired": {
-		},
+		"dependentRequired": {},
 		"properties": {
 			"uuid": {
 				"type": [
@@ -120,8 +119,9 @@
 		"identifier": "${uuid}",
 		"lookupShellSpecificAssetIdsSpecs": {
 			"manufacturerPartId": "${manufacturer_part_id}",
-			"assetLifecyclePhase" :"AsPlanned"
+			"assetLifecyclePhase": "AsPlanned"
 		},
+		"createShellIfNotExist": true,
 		"shortIdSpecs": [
 			"${name_at_manufacturer}",
 			"${manufacturer_part_id}"
