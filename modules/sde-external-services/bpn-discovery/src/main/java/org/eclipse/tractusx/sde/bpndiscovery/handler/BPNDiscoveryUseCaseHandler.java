@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023, 2024 T-Systems International GmbH
- * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023,2024 T-Systems International GmbH
+ * Copyright (c) 2023,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-@Service
+@Service("bPNDiscoveryUseCaseHandler")
 @RequiredArgsConstructor
 public class BPNDiscoveryUseCaseHandler extends Step implements BPNDiscoveryUsecaseStep {
 
@@ -96,7 +96,7 @@ public class BPNDiscoveryUseCaseHandler extends Step implements BPNDiscoveryUsec
 
 	private Map<String, String> generateBPNDiscoveryIdentifiersIds(JsonNode jsonObject) {
 		return getBPNDiscoverySpecsOfModel().entrySet().stream().map(entry -> {
-			String value = JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject, entry.getValue().getAsString());
+			String value = JsonObjectUtility.getValueFromJsonObjectAsString(jsonObject, extractExactFieldName(entry.getValue().getAsString()));
 			if (StringUtils.isBlank(value)) {
 				value = entry.getValue().getAsString();
 			}

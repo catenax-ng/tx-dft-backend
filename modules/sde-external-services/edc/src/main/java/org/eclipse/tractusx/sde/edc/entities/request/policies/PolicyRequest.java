@@ -1,7 +1,7 @@
 /********************************************************************************
  * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2024 T-Systems International GmbH
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2024 T-Systems International GmbH
+ * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -55,6 +55,9 @@ public class PolicyRequest {
 	
 	@JsonProperty("@id")
 	private String id;
+	
+	@JsonProperty("profile")
+	private String profile;
 	
 	@JsonProperty("odrl:permission")
 	private Object permissions;

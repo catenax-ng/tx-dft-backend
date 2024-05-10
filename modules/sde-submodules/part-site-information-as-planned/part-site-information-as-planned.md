@@ -14,7 +14,7 @@ This module use for PartSiteInformationAsPlanned submodel specification and desc
 
 Please find below links for schema details:
 
-- [part-site-information-as-planned-schema](src/main/resources/part-site-information-as-planned.json)
+- [schema](src/main/resources/part-site-information-as-planned.json)
 
 
 ### CSV file headers
@@ -33,6 +33,8 @@ Please find below links for schema details:
 
 #### Example for submodel PartSiteInformationAsPlanned
 
+<br/><br/><img src="src/main/resources/images/partsiteinformationasplanned.png" height="60%" width="80%"/><br/><br/>
+
 ### Work Flow 
 
  - CSV to POJO
@@ -47,4 +49,3 @@ Please find below links for schema details:
 
  - DigitalTwins
  - EDC Connectors
- - BPN Discovery
