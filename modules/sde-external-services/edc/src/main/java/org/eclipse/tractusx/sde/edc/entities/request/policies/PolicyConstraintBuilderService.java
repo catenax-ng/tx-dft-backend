@@ -21,7 +21,6 @@
 package org.eclipse.tractusx.sde.edc.entities.request.policies;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -31,6 +30,7 @@ import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.mapper.JsonObjectMapper;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
+import org.eclipse.tractusx.sde.policyhub.handler.IPolicyHubProxyService;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,13 +49,13 @@ public class PolicyConstraintBuilderService {
 
 	private final SDEConfigurationProperties sdeConfigurationProperties;
 
-//	private final IPolicyHubProxyService policyHubProxyService;
-//
+	private final IPolicyHubProxyService policyHubProxyService;
+
 //	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
 //		
 //		return policyRequestFactory.setPolicyIdAndGetObject(assetId,
 //				policyHubProxyService.getPolicyContent(
-//						mapPolicy(PolicyTypeIdEnum.ACCESS, ConstraintOperandIdEnum.OR, policy.getAccessPolicies())),
+//						mapPolicy(PolicyTypeIdEnum.ACCESS, ConstraintOperandIdEnum.OR, policy.getAccessPolicies(), "a")).get("content"),
 //				"a");
 //	}
 //
@@ -63,17 +63,20 @@ public class PolicyConstraintBuilderService {
 //		
 //		return policyRequestFactory.setPolicyIdAndGetObject(assetId,
 //				policyHubProxyService.getPolicyContent(
-//						mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies())),
+//						mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies(), "u")).get("content"),
 //				"u");
 //	}
-
+//
 //	private PolicyContentRequest mapPolicy(PolicyTypeIdEnum policyType, ConstraintOperandIdEnum constraintOperandId,
-//			List<Policies> policies) {
+//			List<Policies> policies, String type) {
 //
 //		List<Constraint> constraintsList = new ArrayList<>();
 //		policies.forEach(policy -> {
 //			
-//			List<String> valueList = getAndOwnerBPNIfNotExist(policy);
+//			List<String> valueList = policy.getValue();
+//
+//			if (type.equals("a"))
+//				valueList = getAndOwnerBPNIfNotExist(policy, valueList);
 //			
 //			OperatorIdEnum operator = OperatorIdEnum.EQUALS;
 //
@@ -82,12 +85,14 @@ public class PolicyConstraintBuilderService {
 //			}
 //
 //			for (String value : valueList) {
-//				constraintsList.add(
-//						Constraint.builder()
-//						.key(policy.getTechnicalKey())
-//						.operator(operator)
-//						.value(value)
-//						.build());
+//				if (StringUtils.isNotBlank(value)) {
+//					constraintsList.add(
+//							Constraint.builder()
+//							.key(policy.getTechnicalKey())
+//							.operator(operator)
+//							.value(value)
+//							.build());
+//				}
 //			}
 //		});
 //
@@ -100,12 +105,12 @@ public class PolicyConstraintBuilderService {
 
 	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getAccessPolicies(), "odrl:or", "a"), Collections.emptyMap(), "a"));
+				getPoliciesConstraints(policy.getAccessPolicies(), "odrl:or", "a"), "a"));
 	}
 
 	public JsonNode getUsagePolicy(String assetId, PolicyModel policy) {
 		return jsonobjectMapper.objectToJsonNode(policyRequestFactory.getPolicy(assetId,
-				getPoliciesConstraints(policy.getUsagePolicies(), "odrl:and", "u"), Collections.emptyMap(), "u"));
+				getPoliciesConstraints(policy.getUsagePolicies(), "odrl:and", "u"), "u"));
 	}
 
 	public ActionRequest getUsagePoliciesConstraints(List<Policies> policies) {

@@ -39,15 +39,13 @@ public class PolicyRequestFactory {
 
 	private final EDCAssetConfigurableConstant edcAssetConfigurableConstant;
 	
-	public PolicyDefinitionRequest getPolicy(String assetId, ActionRequest action,
-			Map<String, String> extensibleProperties, String type) {
+	public PolicyDefinitionRequest getPolicy(String assetId, ActionRequest action, String type) {
 
 		List<PermissionRequest> permissions = getPermissions(assetId, action);
 
 		PolicyRequest policyRequest = PolicyRequest.builder()
 				.permissions(permissions)
 				.obligations(new ArrayList<>())
-				.extensibleProperties(extensibleProperties)
 				.prohibitions(new ArrayList<>())
 				.profile(edcAssetConfigurableConstant.getCxPolicyPrefix()
 						+ edcAssetConfigurableConstant.getCxPolicyProfile())
