@@ -208,8 +208,8 @@ public class ConsumerService {
 
 				offerList.stream()
 						.forEach(offer -> prepareFromOfferResponse(
-								downloadFileFromEDCUsingifAlreadyTransferStatusCompleted, failedCount, successCount,
-								dataWithValue, offer, true, type));
+								downloadFileFromEDCUsingifAlreadyTransferStatusCompleted.get(offer.getAssetId()),
+								failedCount, successCount, dataWithValue, offer, true, type));
 
 				entity.setEndDate(LocalDateTime.now());
 				entity.setOffers(mapper.writeValueAsString(offerList));
