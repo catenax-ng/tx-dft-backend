@@ -24,7 +24,7 @@ public class EDCAssetConfigurableConstant {
 	@Value("${edc.asset.prop.type.pcfexchange.value:PcfExchange}")
 	private String assetPropTypePCFExchangeType;
 
-	@Value("${edc.policy.profile:cx-policy:}")
+	@Value("${edc.policy.prefix:cx-policy:}")
 	private String cxPolicyPrefix;
 	
 	@Value("${edc.policy.profile:profile2405}")

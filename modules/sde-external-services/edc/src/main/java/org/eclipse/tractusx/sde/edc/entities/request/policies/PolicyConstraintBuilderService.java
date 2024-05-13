@@ -150,9 +150,11 @@ public class PolicyConstraintBuilderService {
 
 				String policyPrefix = "";
 
-				if (!policy.getTechnicalKey().equals(edcAssetConfigurableConstant.getBpnNumberTechnicalKey())) {
+//				if (!policy.getTechnicalKey().equals(edcAssetConfigurableConstant.getBpnNumberTechnicalKey())) {
+				if (!policy.getTechnicalKey().startsWith(edcAssetConfigurableConstant.getCxPolicyPrefix())) {
 					policyPrefix = edcAssetConfigurableConstant.getCxPolicyPrefix();
 				}
+//				}
 
 				ConstraintRequest request = ConstraintRequest.builder()
 						.leftOperand(policyPrefix + policy.getTechnicalKey())
