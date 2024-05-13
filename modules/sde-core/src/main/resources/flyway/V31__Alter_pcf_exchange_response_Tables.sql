@@ -19,4 +19,3 @@
  ********************************************************************************/
 
 ALTER TABLE IF EXISTS pcf_response_tbl ADD IF NOT EXISTS message text NULL;
-

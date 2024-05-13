@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2024 T-Systems International GmbH
+ * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -43,7 +43,7 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 	private final EDCGateway edcGateway;
 	private final ContractDefinitionRequestFactory contractFactory;
 	private final PolicyConstraintBuilderService policyConstraintBuilderService;
-	
+
 	public Map<String, String> createEDCAsset(AssetEntryRequest assetEntryRequest, PolicyModel policy) {
 
 		Map<String, String> output = new HashMap<>();
@@ -51,7 +51,7 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 		edcGateway.createAsset(assetEntryRequest);
 
 		String assetId = assetEntryRequest.getId();
-		
+
 		JsonNode accessPolicyDefinitionRequest = policyConstraintBuilderService.getAccessPolicy(assetId, policy);
 		String accessPolicyUUId = accessPolicyDefinitionRequest.get("@id").asText();
 		edcGateway.createPolicyDefinition(accessPolicyDefinitionRequest);
@@ -76,7 +76,7 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 	public Map<String, String> updateEDCAsset(AssetEntryRequest assetEntryRequest, PolicyModel policy) {
 
 		Map<String, String> output = new HashMap<>();
-		
+
 		edcGateway.updateAsset(assetEntryRequest);
 
 		String assetId = assetEntryRequest.getId();
@@ -99,7 +99,5 @@ public class CreateEDCAssetFacilator extends AbstractEDCStepsHelper {
 		output.put(SubmoduleCommonColumnsConstant.USAGE_POLICY_ID, usagePolicyUUId);
 		output.put(SubmoduleCommonColumnsConstant.CONTRACT_DEFINATION_ID, contractDefinitionRequest.getId());
 		return output;
-
 	}
-
 }

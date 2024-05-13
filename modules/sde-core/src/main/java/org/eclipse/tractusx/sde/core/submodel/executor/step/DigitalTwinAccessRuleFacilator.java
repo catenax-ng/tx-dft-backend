@@ -21,11 +21,11 @@
 package org.eclipse.tractusx.sde.core.submodel.executor.step;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Arrays;
 import org.eclipse.tractusx.sde.common.configuration.properties.SDEConfigurationProperties;
 import org.eclipse.tractusx.sde.common.constants.SubmoduleCommonColumnsConstant;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
@@ -148,10 +148,10 @@ public class DigitalTwinAccessRuleFacilator extends Step {
 				String accessRules = datinRow.get(SubmoduleCommonColumnsConstant.SHELL_ACCESS_RULE_IDS).getAsString();
 
 				Arrays.asList(accessRules.split(",")).stream()
-				.filter(ele->StringUtils.isNotBlank(ele.toString()))
+				.filter(StringUtils::isNotBlank)
 				.forEach(str -> {
 					try {
-						str = str.toString().trim();
+						str = str.trim();
 						digitalTwinFacilitator.deleteAccessControlsRule(accessRules,
 								sdeConfigProperties.getManufacturerId());
 					} catch (Exception e) {

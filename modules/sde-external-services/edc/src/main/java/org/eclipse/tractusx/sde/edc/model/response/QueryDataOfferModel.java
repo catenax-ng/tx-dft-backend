@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2024 T-Systems International GmbH
+ * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -44,7 +44,7 @@ public class QueryDataOfferModel {
 	private String connectorId;
 
 	private String assetId;
-
+	
 	private String manufacturerPartId;
 
 	private String offerId;
@@ -56,7 +56,7 @@ public class QueryDataOfferModel {
 	private String type;
 
 	private String version;
-
+	
 	private String sematicVersion;
 
 	private String description;

@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.7</version>
+			<version>2.16.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
@@ -80,11 +80,12 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<version>42.7.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.0.2</version>
+			<version>2.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -108,7 +109,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
-			<version>1.8</version>
+			<version>1.11.0</version>
 		</dependency>
  		<dependency>  
             <groupId>org.springframework.boot</groupId>  
@@ -120,6 +121,17 @@
 			<version>0.0.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.tractusx</groupId>
+			<artifactId>edc</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.tractusx</groupId>
+			<artifactId>digital-twins</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>policy-hub</artifactId>
@@ -167,19 +179,33 @@
 			<artifactId>part-site-information-as-planned</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>single-level-usage-as-built</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
-			<artifactId>sde-notification</artifactId>
+			<artifactId>pcf</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.tractusx</groupId>
 			<artifactId>pcf-exchange</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.opencsv</groupId>
+		    <artifactId>opencsv</artifactId>
+		    <version>5.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.tractusx</groupId>
+			<artifactId>sde-notification</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
@@ -266,6 +292,29 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.processor.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<compilerArg>
+							-Amapstruct.unmappedTargetPolicy=IGNORE
+						</compilerArg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 		</plugins>

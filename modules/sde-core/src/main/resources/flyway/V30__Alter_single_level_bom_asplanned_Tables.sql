@@ -19,4 +19,3 @@
  ********************************************************************************/
 
 ALTER TABLE IF EXISTS single_level_bom_as_planned ADD IF NOT EXISTS measurement_unit VARCHAR NULL;
-

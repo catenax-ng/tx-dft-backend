@@ -29,4 +29,3 @@ END $$;
 ALTER TABLE IF EXISTS pcf_aspect DROP CONSTRAINT IF EXISTS "pcf_aspect_un";
 
 ALTER TABLE IF EXISTS pcf_aspect ADD CONSTRAINT pcf_aspect_un UNIQUE (productid);
-

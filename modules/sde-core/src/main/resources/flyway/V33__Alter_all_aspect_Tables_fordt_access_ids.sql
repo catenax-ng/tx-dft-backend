@@ -45,4 +45,3 @@ ALTER TABLE IF EXISTS single_level_bom_asbuilt_v_300 ADD IF NOT EXISTS shell_acc
 ALTER TABLE IF EXISTS single_level_usage_as_built ADD IF NOT EXISTS shell_access_rule_ids text NULL;
 
 ALTER TABLE IF EXISTS single_level_usage_as_built_v_300 ADD IF NOT EXISTS shell_access_rule_ids text NULL;
-

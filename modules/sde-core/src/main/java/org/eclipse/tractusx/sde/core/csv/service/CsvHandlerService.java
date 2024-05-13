@@ -1,8 +1,8 @@
 /********************************************************************************
  * Copyright (c) 2022 Critical TechWorks GmbH
  * Copyright (c) 2022 BMW GmbH
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2024 T-Systems International GmbH
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -81,13 +81,21 @@ public class CsvHandlerService {
             }
 
             UUID uuid = UUID.randomUUID();
+            
+            if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+        		throw new IllegalArgumentException("Invalid csv filename");
+        	}
+            
             fileName = fileName.replace(
                     fileName.substring(0, fileName.lastIndexOf(".")),
                     uuid.toString()
             );
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
 
-
+            if (!targetLocation.startsWith(this.fileStorageLocation + File.separator)) {
+        		throw new IllegalArgumentException("Invalid csv filename");
+        	}
+            
             Files.copy(stream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
             stream.close();
 

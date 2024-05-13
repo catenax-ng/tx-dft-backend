@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 T-Systems International GmbH
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -39,5 +39,5 @@ INSERT INTO sde_role_permission_mapping (sde_permission,sde_role)
 	VALUES ('search_pcf','Creator');
 INSERT INTO sde_role_permission_mapping (sde_permission,sde_role)
 	VALUES ('request_for_pcf_value','Creator');
-	INSERT INTO sde_role_permission_mapping (sde_permission,sde_role)
+INSERT INTO sde_role_permission_mapping (sde_permission,sde_role)
 	VALUES ('view_pcf_history','Creator');

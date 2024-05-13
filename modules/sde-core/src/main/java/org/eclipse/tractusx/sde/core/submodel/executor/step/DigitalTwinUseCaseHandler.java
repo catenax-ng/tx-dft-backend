@@ -339,8 +339,7 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 		return digitalTwinFacilitator.shellLookup(shellLookupRequest);
 	}
 
-	// public ShellDescriptorResponse createShellDescriptor(ShellDescriptorRequest
-	// aasDescriptorRequest) {
+// 	public ShellDescriptorResponse createShellDescriptor(ShellDescriptorRequest aasDescriptorRequest) {
 //		return digitalTwinFacilitator.createShellDescriptor(aasDescriptorRequest);
 //	}
 //

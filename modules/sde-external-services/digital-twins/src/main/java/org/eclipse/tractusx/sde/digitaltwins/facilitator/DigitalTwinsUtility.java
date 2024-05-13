@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2022, 2023 T-Systems International GmbH
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022,2024 T-Systems International GmbH
+ * Copyright (c) 2022,2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.utils.PolicyOperationUtil;
@@ -60,8 +59,6 @@ import lombok.SneakyThrows;
 @Component
 @Getter
 public class DigitalTwinsUtility {
-
-	private static final String FORWARD_SLASH = "/";
 
 	private static final String PUBLIC_READABLE = "PUBLIC_READABLE";
 

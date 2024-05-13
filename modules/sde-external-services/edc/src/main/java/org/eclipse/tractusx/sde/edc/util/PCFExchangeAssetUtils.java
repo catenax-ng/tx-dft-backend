@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2023 T-Systems International GmbH
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 T-Systems International GmbH
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,6 +21,7 @@ package org.eclipse.tractusx.sde.edc.util;
 
 import java.util.List;
 
+import org.eclipse.tractusx.sde.common.utils.LogUtil;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConstant;
 import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
 import org.springframework.cache.annotation.CacheEvict;
@@ -44,7 +45,7 @@ public class PCFExchangeAssetUtils {
 
 	@CacheEvict(value = "bpn-pcfexchange", key = "#bpnNumber")
 	public void removePCFExchangeCache(String bpnNumber) {
-		log.info("Cleared '" + bpnNumber + "' bpn-pcfexchange cache");
+		log.info(LogUtil.encode("Cleared '" + bpnNumber + "' bpn-pcfexchange cache"));
 	}
 
 	@CacheEvict(value = "bpn-pcfexchange", allEntries = true)

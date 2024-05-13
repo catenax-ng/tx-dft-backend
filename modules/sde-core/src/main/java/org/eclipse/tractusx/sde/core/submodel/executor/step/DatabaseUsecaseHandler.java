@@ -30,6 +30,7 @@ import org.eclipse.tractusx.sde.common.model.Submodel;
 import org.eclipse.tractusx.sde.common.submodel.executor.DatabaseUsecaseStep;
 import org.eclipse.tractusx.sde.common.submodel.executor.Step;
 import org.eclipse.tractusx.sde.common.submodel.executor.SubmoduleMapperUsecaseStep;
+import org.eclipse.tractusx.sde.common.utils.LogUtil;
 import org.eclipse.tractusx.sde.core.processreport.repository.SubmodelCustomHistoryGenerator;
 import org.eclipse.tractusx.sde.core.service.SubmodelService;
 import org.eclipse.tractusx.sde.core.utils.SubmoduleUtility;
@@ -59,6 +60,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	
 
 	@SneakyThrows
+	@Override
 	public JsonNode run(Integer rowIndex, ObjectNode jsonObject, String processId, PolicyModel policy) {
 
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
@@ -84,6 +86,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	}
 
 	@SneakyThrows
+	@Override
 	public List<JsonObject> readCreatedTwins(String refProcessId, String fetchNotDeletedRecord) {
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
 		List<String> columns = submoduleUtility.getTableColomnHeader(schemaObj);
@@ -98,6 +101,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	}
 
 	@SneakyThrows
+	@Override
 	public JsonObject readCreatedTwinsBySpecifyColomn(String sematicId, String value) {
 
 		List<Submodel> allSubmodels = submodelService.getAllSubmodels();
@@ -116,7 +120,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 								getDatabaseIdentifierSpecsOfModel())
 						.stream().map(submoduleResponseHandler::mapJsonbjectToFormatedResponse);
 			} catch (Exception e) {
-				log.debug("Exception for {}, {}, {}", sematicId, value, e.getMessage());
+				log.debug(LogUtil.encode("Exception for " + sematicId +", " + value + ", " + e.getMessage()));
 			}
 			return null;
 		}).filter(ele -> Optional.ofNullable(ele).isPresent()).toList();
@@ -128,6 +132,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	}
 
 	@SneakyThrows
+	@Override
 	public JsonObject readCreatedTwinsDetails(String uuid) {
 
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
@@ -139,6 +144,7 @@ public class DatabaseUsecaseHandler extends Step implements DatabaseUsecaseStep 
 	}
 
 	@SneakyThrows
+	@Override
 	public int getUpdatedData(String processId) {
 		Submodel schemaObj = submodelService.findSubmodelByNameAsSubmdelObject(getNameOfModel());
 		String tableName = submoduleUtility.getTableName(schemaObj);

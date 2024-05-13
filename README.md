@@ -62,12 +62,15 @@ Listed below are configuration keys needed to get the `sde-backend` up and runni
 | digital-twins.authentication.clientSecret            | X         | your secrete                                | Digital twin registry secrete      |
 | digital-twins.authentication.grantType               | X         | client_credentials                          | Default value, no need to change   |
 | edc.hostname                                         | X         | https://example.provider-connector.com      | Your EDC provider connector url    |
+| edc.managementpath                                   | X         | default                                     | edc provider management path       |
 | edc.apiKeyHeader                                     | X         | x-api-key                                   | Your connector api key             |
 | edc.apiKey                                           | X         | yourpass                                    | Your connector apikey value        |
 | edc.consumer.hostname                                | X         | https://example.consumer-connector.com      | Your EDC consumer connector        |
 | edc.consumer.apikeyheader                            | X         | x-api-key                                   | Your connector api key             |
 | edc.consumer.apikey                                  | X         | yourpass                                    | Your connector apikey value        |
 | edc.consumer.datauri                                 | X         | /api/v1/ids/data                            | IDS endpoint path                  |
+| edc.consumer.protocol.path                           | X         | default                                     | edc consumer protocol path         |
+| edc.consumer.managementpath                          | X         | default                                     | edc consumer management path       |
 | dft.hostname                                         | X         | https://example.sdehost.com                 | Your SDE hostname                  |
 | dft.apiKeyHeader                                     | X         | API_KEY                                     | Your default key                   |
 | dft.apiKey                                           | X         | yourpass                                    | Your default key password          |
@@ -77,7 +80,28 @@ Listed below are configuration keys needed to get the `sde-backend` up and runni
 | connector.discovery.clientId                         | X         | default                                     | client ID for connector discovery  |
 | connector.discovery.clientSecret                     | X         | default                                     | password for connector discovery   |
 | portal.backend.hostname                              | X         | default                                     | Portal backend svc URL based on BPN|
-| springdoc.api-docs.path                              | X         | /api-docs                                   | swagger API path                   |
+| springdoc.api-docs.path                              | X         | default                                     | swagger API path                   |
+| bpndiscovery.hostname                                | X         | default                                     | bpn discovery hostname             |
+| discovery.authentication.url                         | X         | default                                     | discovery authentication url       |
+| discovery.clientId                                   | X         | default                                     | discovery clientId                 |
+| discovery.clientSecret                               | X         | default                                     | discovery clientSecret             |
+| discovery.grantType                                  | X         | default                                     | discovery grantType                |
+| partner.pool.hostname                                | X         | default                                     | partner pool hostname              |
+| partner.pool.authentication.url                      | X         | default                                     | partner pool authentication url    |
+| partner.pool.clientId                                | X         | default                                     | partner pool clientId              |
+| partner.pool.clientSecret                            | X         | default                                     | partner pool clientSecret          |
+| partner.pool.grantType                               | X         | default                                     | partner pool grantType             |
+| portal.backend.hostname                              | X         | default                                     | portal backend hostname            |
+| portal.backend.authentication.url                    | X         | default                                     | portal authentication url          |
+| portal.backend.clientId                              | X         | default                                     | portal clientId                    |
+| portal.backend.clientSecret                          | X         | default                                     | portal clientSecret                |
+| portal.backend.grantType                             | X         | default                                     | portal grantType                   |
+| policy.hub.hostname	                               | X         | default                                     | policy hub hostname                |
+| policy.hub.authentication.url	                       | X         | default                                     | policy hub authentication url      |
+| policy.hub.clientId			                       | X         | default                                     | policy hub clientId                |
+| policy.hub.clientSecret			                   | X         | default                                     | policy hub clientSecret            |
+| policy.hub.grantType			              		   | X         | default                                     | policy hub grantType            |
+
 
 #### Example Configuration/application.properties
 
@@ -170,6 +194,29 @@ portal.backend.authentication.url=default
 portal.backend.clientId=default
 portal.backend.clientSecret=default
 portal.backend.grantType=default
+bpndiscovery.hostname=default
+discovery.authentication.url=default
+discovery.clientId=default
+discovery.clientSecret=default
+discovery.grantType=default
+edc.consumer.protocol.path=default
+edc.consumer.managementpath=default
+edc.managementpath=default
+partner.pool.hostname=default
+partner.pool.authentication.url=default
+partner.pool.clientId=default
+partner.pool.clientSecret=default
+partner.pool.grantType=default
+portal.backend.hostname=default
+portal.backend.authentication.url=default
+portal.backend.clientId=default
+portal.backend.clientSecret=default
+portal.backend.grantType=default
+policy.hub.hostname=default
+policy.hub.authentication.url=default
+policy.hub.clientId=default
+policy.hub.clientSecret=default
+policy.hub.grantType=default
 ```
 
 The above configuration we can use as for different deployment as specified here [InstallationGuide.md](InstallationGuide.md)
@@ -186,6 +233,7 @@ To find information about supported submodules and there version in SDE please v
     * SingleLevelBoMAsBuilt
     * Batch
     * PartAsPlanned
+    * PartTypeInformation
     * SingleLevelBoMAsPlanned
     * PartSiteInformationAsPlanned
     * SingleLevelUsageAsBuilt
@@ -195,6 +243,7 @@ To find information about supported submodules and there version in SDE please v
     * SingleLevelBoMAsBuilt
     * Batch
     * PartAsPlanned
+    * PartTypeInformation
     * SingleLevelBoMAsPlanned
     * PartSiteInformationAsPlanned
  	* SingleLevelUsageAsBuilt
@@ -204,6 +253,7 @@ To find information about supported submodules and there version in SDE please v
     * SingleLevelBoMAsBuilt
     * Batch
     * PartAsPlanned
+    * PartTypeInformation
     * SingleLevelBoMAsPlanned
     * PartSiteInformationAsPlanned
     * SingleLevelUsageAsBuilt
@@ -252,7 +302,23 @@ To find information about supported submodules and there version in SDE please v
 | **GET:- localhost:8080/api/contract-offers** |This API is used to get all contract offers | Refer Api Doc |Refer Api Doc|
 | **GET:- localhost:8080/api/legal-entities** |This API is used to fetch legal entities (list of company's) for Process| Refer Api Doc |Refer Api Doc|
 | **POST:- localhost:8080/api/connectors-discovery** |This API is used to fetch connectors information | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy-attributes** |This API is used to fetch policy attributes | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy-types** |This API is used to fetch type of policy attributes | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy-content** |This API is used to fetch policy content | Refer Api Doc |Refer Api Doc|
+| **POST:- localhost:8080/api/policy-content** |This API is used to create policy content | Refer Api Doc |Refer Api Doc|
+| **POST:- localhost:8080/api/policy** |This API is used to save policy | Refer Api Doc |Refer Api Doc|
+| **PUT:- localhost:8080/api/policy/{uuid}** |This API is used to update policy | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy/{uuid}** |This API is used to get policy | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy/is-policy-name-valid** |This API is used to check policy name valid or not | Refer Api Doc |Refer Api Doc|
+| **GET:- localhost:8080/api/policy** |This API is used to all policy | Refer Api Doc |Refer Api Doc|
+| **DELETE:- localhost:8080/api/policy/{uuid}** |This API is used to delete policy | Refer Api Doc |Refer Api Doc|
 
+## Detailed API specs available under:
+
+- [SDE-OPEN-API](src/main/resources/sde-open-api.yml)
+
+## Backend API Swagger-ui : 
+https://<host-url>/backend/api/swagger-ui/index.html
 
 ---
 #### **Response Status**
@@ -284,10 +350,16 @@ To find information about supported submodules and there version in SDE please v
 | Tables | Description |  Unique Id |
 | ------ | ------ | ------ |
 | **aspect** | Table used to Store Date About Serialized Part |  **Primary Key**:UUID |
+| **serialpart_v_300** | Table used to Store Date About Serialized Part |  **Primary Key**:UUID |
 | **aspect_relationship** |Data about the relationship of parts to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
+| **single_level_bom_asbuilt_v_300** |Data about the relationship of parts to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
 | **batch** |Table used to Store Date about Serialized Part. |  **Primary Key**:UUID |
+| **batch_v_300** |Table used to Store Date about Serialized Part. |  **Primary Key**:UUID |
 | **part_as_planned** |Table used to Store Date about Part As Planned. |  **Primary Key**:UUID |
+| **part_type_information** |Table used to Store Date about Part As Planned. |  **Primary Key**:UUID |
+| **pcf_aspect** |Table used to Store Date about Part As Planned. |  **Primary Key**:UUID |
 | **single_level_bom_as_planned** |Data about the relationship of part As Planned to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
+| **single_level_bom_as_planned_v_300** |Data about the relationship of part As Planned to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
 | **part_site_information_as_planned** |Table used to Store Date about Part Site Information As Planned. |  **Primary Key**:UUID |
 | **contract_negotiation_info** |Tables Contains Contract Negotiation Info and offerid |  **Primary Key**: connector_id, offer_id |
 | **failure_log** |Table Contains Data About Failure Entries |  **Primary Key**:UUID |
@@ -297,6 +369,7 @@ To find information about supported submodules and there version in SDE please v
 | **sde_permission** |Table Contains list of permissions |  **Primary Key**:sde_permission |
 | **sde_role_permission_mapping** |Table Contains mapping of role with permissions |  **Primary Key**:sde_role, sde_permission |
 | **single_level_usage_as_built** |Data about the relationship of parts to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
+| **single_level_usage_as_built_v_300** |Data about the relationship of parts to its child-components. | **Primary Key**:parent_catenax_id, child_catenax_id |
 
 ---
 ## flyway
@@ -312,29 +385,17 @@ Authentication for the backend is handled via an API Key. This can be set in the
 ### EDC
 GitHub repository with correct version of the Eclipse DataSpace Connector Project: [repository](https://github.com/eclipse-tractusx/tractusx-edc).
 
-### Licenses
+## Licenses
 For used licenses, please see the [NOTICE](https://github.com/eclipse-tractusx/managed-simple-data-exchanger-backend/blob/main/NOTICE.md).
+
+## Eclipse Dash Tool
+
+The Eclipse Dash tool is used to analyze the dependencies used in the project and ensure all legal requirements are met. We're using the official maven plugin to resolve all project dependencies and then run the tool and update the summary in the DEPENDENCIES file.
 
 ## Notice for Docker image
 
-This application provides container images for demonstration purposes.
+Bellow you can find the information regarding Docker Notice for this application.
 
-DockerHub: https://hub.docker.com/r/tractusx/managed-simple-data-exchanger-backend
+  - [Managed-simple-data-exchanger](DOCKER_NOTICE.md)
 
-Eclipse Tractus-X product(s) installed within the image:
-
-- GitHub: https://github.com/eclipse-tractusx/managed-simple-data-exchanger-backend
-- Project home: https://projects.eclipse.org/projects/automotive.tractusx
-- Dockerfile: https://github.com/eclipse-tractusx/managed-simple-data-exchanger-backend/blob/main/build/Dockerfile
-- Project license: [Apache License, Version 2.0] https://github.com/eclipse-tractusx/managed-simple-data-exchanger-backend/blob/main/LICENSE
-
-**Used base image**
-- [eclipse-temurin:19-jdk-jammy](https://github.com/adoptium/containers)
-- Official Eclipse Temurin DockerHub page: https://hub.docker.com/_/eclipse-temurin  
-- Eclipse Temurin Project: https://projects.eclipse.org/projects/adoptium.temurin  
-- Additional information about the Eclipse Temurin images: https://github.com/docker-library/repo-info/tree/master/repos/eclipse-temurin
-
-As with all Docker images, these likely also contain other software which may be under other licenses (such as Bash, etc from the base distribution, along with any direct or indirect dependencies of the primary software being contained).
-
-As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses for all software contained within.
 
