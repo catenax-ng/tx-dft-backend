@@ -27,7 +27,7 @@ public class EDCAssetConfigurableConstant {
 	@Value("${edc.policy.profile:cx-policy:}")
 	private String cxPolicyPrefix;
 	
-	@Value("${edc.policy.profile:edc.policy.profile:profile2405}")
+	@Value("${edc.policy.profile:profile2405}")
 	private String cxPolicyProfile;
 
 	@Value("${edc.policy.bpnnumber.technicalkey:BusinessPartnerNumber}")

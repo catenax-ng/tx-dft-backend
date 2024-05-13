@@ -56,9 +56,6 @@ public class PolicyRequest {
 	@JsonProperty("@id")
 	private String id;
 	
-	@JsonProperty("profile")
-	private String profile;
-	
 	@JsonProperty("odrl:permission")
 	private Object permissions;
 
@@ -69,6 +66,9 @@ public class PolicyRequest {
 	private List<Obligation> obligations;
 
 	private Map<String, String> extensibleProperties;
+	
+	@JsonProperty("profile")
+	private String profile;
 
 	@JsonProperty("odrl:target")
 	private Map<String, String> target;

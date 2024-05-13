@@ -29,6 +29,7 @@ import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
 import org.eclipse.tractusx.sde.core.utils.ValueReplacerUtility;
+import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConstant;
 import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.asset.AssetEntryRequestFactory;
@@ -57,6 +58,7 @@ public class PCFExchangeAssetProvider {
 	private final CreateEDCAssetFacilator createEDCAssetFacilator;
 	private final ValueReplacerUtility valueReplacerUtility;
 	private final SDEConfigurationProperties sdeConfigurationProperties;
+	private final EDCAssetConfigurableConstant edcAssetConfigurableConstant;
 
 	@PostConstruct
 	@SneakyThrows
@@ -65,7 +67,7 @@ public class PCFExchangeAssetProvider {
 		String assetId = UUIdGenerator.getUuid();
 		String sematicId = "urn:bamm:io.catenax.pcf:6.0.0#Pcf";
 		AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest("", "PCF Exchange endpoint information",
-				assetId, "1", "", "", sematicId, EDCAssetConstant.DATA_CORE_PCF_EXCHANGE_ENPOINT_TYPE);
+				assetId, "1", "", "", sematicId, edcAssetConfigurableConstant.getAssetPropTypePCFExchangeType());
 
 		String baseUrl = sdeConfigurationProperties.getSdeHostname() + "/pcf";
 		assetEntryRequest.getDataAddress().getProperties().put("baseUrl", baseUrl);
@@ -76,7 +78,7 @@ public class PCFExchangeAssetProvider {
 		Map<String, String> inputData = new HashMap<>();
 		inputData.put("baseUrl", baseUrl);
 		inputData.put(REGISTRY_TYPE, REGISTRY_TYPE);
-		inputData.put("assetType", EDCAssetConstant.DATA_CORE_PCF_EXCHANGE_ENPOINT_TYPE);
+		inputData.put("assetType", edcAssetConfigurableConstant.getAssetPropTypePCFExchangeType());
 
 		ObjectNode requestBody = (ObjectNode) new ObjectMapper().readTree(valueReplacerUtility
 				.valueReplacerUsingFileTemplate("/edc_request_template/edc_asset_lookup.json", inputData));
@@ -86,12 +88,12 @@ public class PCFExchangeAssetProvider {
 			
 			List<Policies> usagePolicy = List.of(
 					Policies.builder()
-	        		.technicalKey(EDCAssetConstant.PCF_FRAMEWORK_AGREEMENT_LEFT_OPERAND)
-	        		.value(List.of(EDCAssetConstant.PCF_FRAMEWORK_AGREEMENT_RIGHT_OPERAND))
+	        		.technicalKey(edcAssetConfigurableConstant.getPcfFrameworkAgreementLeftOperand())
+	        		.value(List.of(edcAssetConfigurableConstant.getPcfFrameworkAgreementRightOperand()))
 	        		.build(),
 	        		 Policies.builder()
-	        		.technicalKey(EDCAssetConstant.MEMBERSHIP_LEFT_OPERAND)
-	        		.value(List.of(EDCAssetConstant.ACTIVE_VALUE))
+	        		.technicalKey(edcAssetConfigurableConstant.getMembershipAgreementLeftOperand())
+	        		.value(List.of(edcAssetConfigurableConstant.getMembershipAgreementRightOperand()))
 	        		.build());
 			
 			PolicyModel policy= PolicyModel.builder()
