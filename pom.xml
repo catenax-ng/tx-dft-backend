@@ -51,6 +51,9 @@
 		<module>modules/sde-external-services/digital-twins</module>
 		<module>modules/sde-external-services/portal</module>
 		<module>modules/sde-external-services/bpn-discovery</module>
+		<module>modules/sde-external-services/sde-agent</module>
+		<module>modules/sde-external-services/sde-notification</module>
+		
 		<module>modules/sde-external-services/policy-hub</module>
 
 		<module>modules/sde-common</module>
