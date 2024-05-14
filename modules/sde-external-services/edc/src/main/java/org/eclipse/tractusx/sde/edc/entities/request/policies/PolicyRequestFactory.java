@@ -49,7 +49,7 @@ public class PolicyRequestFactory {
 				.prohibitions(new ArrayList<>())
 				.profile(edcAssetConfigurableConstant.getCxPolicyPrefix()
 						+ edcAssetConfigurableConstant.getCxPolicyProfile())
-				//.target(Map.of("@id", assetId))
+				.target(Map.of("@id", assetId))
 				.build();
 		
 		//Use submodel id to generate unique policy id for asset use policy type as prefix asset/usage
@@ -81,7 +81,7 @@ public class PolicyRequestFactory {
 		if (action != null) {
 			PermissionRequest permissionRequest = PermissionRequest
 					.builder().action(Map.of("odrl:type", "USE"))
-					.target(assetId)
+//					.target(assetId)
 					.constraint(action.getAction())
 					.build();
 			permissions.add(permissionRequest);

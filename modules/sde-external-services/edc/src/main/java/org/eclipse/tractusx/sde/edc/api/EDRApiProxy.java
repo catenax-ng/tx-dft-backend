@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public interface EDRApiProxy {
 
 	@PostMapping(path = "/v2/edrs", consumes = MediaType.APPLICATION_JSON_VALUE)
-	AcknowledgementId edrCacheCreate(URI url, @RequestBody ContractNegotiations requestBody,
+	AcknowledgementId edrCacheCreate(URI url, @RequestBody JsonNode requestBody,
 			@RequestHeader Map<String, String> requestHeader);
 
 	@PostMapping(path = "/v2/edrs/request", consumes = MediaType.APPLICATION_JSON_VALUE)

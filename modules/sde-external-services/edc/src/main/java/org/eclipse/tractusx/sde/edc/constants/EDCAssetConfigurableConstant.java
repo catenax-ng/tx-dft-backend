@@ -44,5 +44,11 @@ public class EDCAssetConfigurableConstant {
 
 	@Value("${edc.policy.membership.rightoperand:active}")
 	private String membershipAgreementRightOperand;
+	
+	@Value("${edc.policy.usage-purpose.leftoperand:UsagePurpose}")
+	private String usagePurposeLeftOperand;
+
+	@Value("${edc.policy.usage-purpose.rightoperand:cx.pcf.base:1}")
+	private String usagePurposeRightOperand;
 
 }

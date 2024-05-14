@@ -115,13 +115,13 @@ public class DigitalTwinAssetProvider {
 
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
 
-			List<Policies> usagePolicy = List.of(
+			List<Policies> membershipPolicy = List.of(
 	        		 Policies.builder()
 	        		.technicalKey(edcAssetConfigurableConstant.getMembershipAgreementLeftOperand())
 	        		.value(List.of(edcAssetConfigurableConstant.getMembershipAgreementRightOperand()))
 	        		.build());
 			
-			PolicyModel policy = PolicyModel.builder().accessPolicies(List.of()).usagePolicies(usagePolicy).build();
+			PolicyModel policy = PolicyModel.builder().accessPolicies(membershipPolicy).usagePolicies(membershipPolicy).build();
 
 			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, policy);
 			log.info("Digital twin " + registryType + " asset creates :" + createEDCAsset.toString());

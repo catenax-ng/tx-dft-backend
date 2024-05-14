@@ -86,6 +86,12 @@ public class PCFExchangeAssetProvider {
 
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
 			
+			List<Policies> accessPolicy = List.of(
+	        		 Policies.builder()
+	        		.technicalKey(edcAssetConfigurableConstant.getMembershipAgreementLeftOperand())
+	        		.value(List.of(edcAssetConfigurableConstant.getMembershipAgreementRightOperand()))
+	        		.build());
+			
 			List<Policies> usagePolicy = List.of(
 					Policies.builder()
 	        		.technicalKey(edcAssetConfigurableConstant.getPcfFrameworkAgreementLeftOperand())
@@ -94,10 +100,14 @@ public class PCFExchangeAssetProvider {
 	        		 Policies.builder()
 	        		.technicalKey(edcAssetConfigurableConstant.getMembershipAgreementLeftOperand())
 	        		.value(List.of(edcAssetConfigurableConstant.getMembershipAgreementRightOperand()))
+	        		.build(),
+	        		 Policies.builder()
+	        		.technicalKey(edcAssetConfigurableConstant.getUsagePurposeLeftOperand())
+	        		.value(List.of(edcAssetConfigurableConstant.getUsagePurposeRightOperand()))
 	        		.build());
 			
 			PolicyModel policy= PolicyModel.builder()
-					.accessPolicies(List.of())
+					.accessPolicies(accessPolicy)
 					.usagePolicies(usagePolicy)
 					.build();
 			
