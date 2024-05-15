@@ -30,7 +30,6 @@ import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.mapper.JsonObjectMapper;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
-import org.eclipse.tractusx.sde.policyhub.handler.IPolicyHubProxyService;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,7 +48,7 @@ public class PolicyConstraintBuilderService {
 
 	private final SDEConfigurationProperties sdeConfigurationProperties;
 
-	private final IPolicyHubProxyService policyHubProxyService;
+//	private final IPolicyHubProxyService policyHubProxyService;
 
 //	public JsonNode getAccessPolicy(String assetId, PolicyModel policy) {
 //		
@@ -150,11 +149,9 @@ public class PolicyConstraintBuilderService {
 
 				String policyPrefix = "";
 
-//				if (!policy.getTechnicalKey().equals(edcAssetConfigurableConstant.getBpnNumberTechnicalKey())) {
 				if (!policy.getTechnicalKey().startsWith(edcAssetConfigurableConstant.getCxPolicyPrefix())) {
 					policyPrefix = edcAssetConfigurableConstant.getCxPolicyPrefix();
 				}
-//				}
 
 				ConstraintRequest request = ConstraintRequest.builder()
 						.leftOperand(policyPrefix + policy.getTechnicalKey())

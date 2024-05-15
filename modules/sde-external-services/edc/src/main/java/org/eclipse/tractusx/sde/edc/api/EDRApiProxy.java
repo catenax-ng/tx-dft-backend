@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.tractusx.sde.edc.model.contractnegotiation.AcknowledgementId;
-import org.eclipse.tractusx.sde.edc.model.contractnegotiation.ContractNegotiations;
 import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedByIdResponse;
 import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedResponse;
 import org.springframework.cloud.openfeign.FeignClient;

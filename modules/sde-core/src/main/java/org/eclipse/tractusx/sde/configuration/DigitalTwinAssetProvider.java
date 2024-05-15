@@ -29,6 +29,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.eclipse.tractusx.sde.common.configuration.properties.DigitalTwinConfigurationProperties;
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
+import org.eclipse.tractusx.sde.common.utils.PolicyOperationUtil;
 import org.eclipse.tractusx.sde.common.utils.UUIdGenerator;
 import org.eclipse.tractusx.sde.core.utils.ValueReplacerUtility;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
@@ -115,13 +116,14 @@ public class DigitalTwinAssetProvider {
 
 		if (!edcGateway.assetExistsLookupBasedOnType(requestBody)) {
 
-			List<Policies> membershipPolicy = List.of(
-	        		 Policies.builder()
-	        		.technicalKey(edcAssetConfigurableConstant.getMembershipAgreementLeftOperand())
-	        		.value(List.of(edcAssetConfigurableConstant.getMembershipAgreementRightOperand()))
-	        		.build());
+			List<Policies> accessPolicy = PolicyOperationUtil
+					.getStringPolicyAsPolicyList(edcAssetConfigurableConstant.getDigitalTwinExchangeAccessPolicy());
+			List<Policies> usagePolicy = PolicyOperationUtil
+					.getStringPolicyAsPolicyList(edcAssetConfigurableConstant.getDigitalTwinExchangeUsagePolicy());
 			
-			PolicyModel policy = PolicyModel.builder().accessPolicies(membershipPolicy).usagePolicies(membershipPolicy).build();
+			PolicyModel policy = PolicyModel.builder().accessPolicies(accessPolicy)
+					.usagePolicies(usagePolicy)
+					.build();
 
 			Map<String, String> createEDCAsset = createEDCAssetFacilator.createEDCAsset(assetEntryRequest, policy);
 			log.info("Digital twin " + registryType + " asset creates :" + createEDCAsset.toString());

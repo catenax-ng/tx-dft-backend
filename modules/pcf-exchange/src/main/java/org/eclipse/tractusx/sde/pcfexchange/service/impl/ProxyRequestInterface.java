@@ -77,9 +77,10 @@ public class ProxyRequestInterface {
 
 				Map<String, String> header = new HashMap<>();
 				header.put("authorization", edrToken.getAuthorization());
+				header.put("Edc-Bpn", sdeConfigurationProperties.getManufacturerId());
 
 				// Send request to data provider for PCF value push
-				pcfExchangeProxy.getPcfByProduct(pcfpushEnpoint, header, sdeConfigurationProperties.getManufacturerId(), requestId, message);
+				pcfExchangeProxy.getPcfByProduct(pcfpushEnpoint, header, requestId, message);
 				reponseMap.append("Successfully requested to provider '"+ dataset.getConnectorOfferUrl()+"' for '"+productId+"' product PCF value");
 				pcfRepositoryService.savePcfStatus(requestId, PCFRequestStatusEnum.REQUESTED);
 			} else {
@@ -136,8 +137,9 @@ public class ProxyRequestInterface {
 
 				Map<String, String> header = new HashMap<>();
 				header.put("authorization", edrToken.getAuthorization());
-
-				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, bpnNumber, requestId, message,
+				header.put("Edc-Bpn", bpnNumber);
+				
+				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, requestId, message,
 						jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
 
 				sendNotificationStatus = "SUCCESS";

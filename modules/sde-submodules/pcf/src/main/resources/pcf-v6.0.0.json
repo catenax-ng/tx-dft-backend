@@ -5,6 +5,7 @@
 	"id": "pcf",
 	"idShort": "PCFExchangeEndpoint",
 	"submodelUriPath":"productIds",
+	"submodelDataPlaneUrl":"https://edc.data.plane",
 	"version": "6.0.0",
 	"semantic_id": "urn:bamm:io.catenax.pcf:6.0.0#Pcf",
 	"title": "Product Carbon Footprint (pcf)",
