@@ -26,10 +26,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.tractusx.sde.common.configuration.properties.SDEConfigurationProperties;
 import org.eclipse.tractusx.sde.common.entities.Policies;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.mapper.JsonObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,14 +41,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PolicyConstraintBuilderService {
 
-	private static final String BUSINESS_PARTNER_NUMBER = "BusinessPartnerNumber";
-
 	private final PolicyRequestFactory policyRequestFactory;
 
 	private final JsonObjectMapper jsonobjectMapper;
 
-	@Value("${manufacturerId}")
-	private String manufacturerId;
+	private final EDCAssetConfigurableConstant edcAssetConfigurableConstant;
+
+	private final SDEConfigurationProperties sdeConfigurationProperties;
 
 //	private final IPolicyHubProxyService policyHubProxyService;
 //
@@ -66,7 +66,7 @@ public class PolicyConstraintBuilderService {
 //						mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies())),
 //				"u");
 //	}
-	
+
 //	private PolicyContentRequest mapPolicy(PolicyTypeIdEnum policyType, ConstraintOperandIdEnum constraintOperandId,
 //			List<Policies> policies) {
 //
@@ -134,37 +134,43 @@ public class PolicyConstraintBuilderService {
 	private void preparePolicyConstraint(List<ConstraintRequest> policies, Policies policy, String type) {
 
 		String operator = "odrl:eq";
-		
+
 		List<String> values = policy.getValue();
-		
+
 		if (type.equals("a"))
 			values = getAndOwnerBPNIfNotExist(policy, values);
-		
+
 		for (String value : values) {
 			if (StringUtils.isNotBlank(value)) {
+
+				String policyPrefix = "";
+
+				if (!policy.getTechnicalKey().equals(edcAssetConfigurableConstant.getBpnNumberTechnicalKey())) {
+					policyPrefix = edcAssetConfigurableConstant.getCxPolicyPrefix();
+				}
+
 				ConstraintRequest request = ConstraintRequest.builder()
-						.leftOperand(policy.getTechnicalKey())
-						.operator(Operator.builder().id(operator).build())
-						.rightOperand(value).build();
+						.leftOperand(policyPrefix + policy.getTechnicalKey())
+						.operator(Operator.builder().id(operator).build()).rightOperand(value).build();
 				policies.add(request);
 			}
 		}
 	}
 
 	private List<String> getAndOwnerBPNIfNotExist(Policies policy, List<String> values) {
-		
-		if (policy.getTechnicalKey().equals(BUSINESS_PARTNER_NUMBER) && !values.isEmpty()
-				&& (values.size() == 1 && StringUtils.isNotBlank(values.get(0))) && !values.contains(manufacturerId)) {
-			
+
+		if (policy.getTechnicalKey().equals(edcAssetConfigurableConstant.getBpnNumberTechnicalKey())
+				&& !values.isEmpty() && !values.contains(sdeConfigurationProperties.getManufacturerId())
+				&& (values.size() == 1 && !values.get(0).equals(""))) {
 			List<String> temp = new ArrayList<>();
 			values.stream().forEach(temp::add);
-			temp.add(manufacturerId);
+			temp.add(sdeConfigurationProperties.getManufacturerId());
 			values = temp;
-			
+
 		}
-		
+
 		return values;
-		
+
 	}
 
 }

@@ -73,7 +73,7 @@ public class ContractNegotiationService extends AbstractEDCStepsHelper {
 				log.info(LogUtil.encode("The EDR process was not completed, no EDR status found "
 						+ "and not valid contract agreementId for " + recipientURL + ", " + assetId
 						+ ", so initiating EDR process"));
-				edrRequestHelper.edrRequestInitiate(recipientURL, connectorId, offer.getOfferId(), assetId, action,
+				edrRequestHelper.edrRequestInitiate(recipientURL, connectorId, offer, assetId, action,
 						extensibleProperty);
 				checkContractNegotiationStatus = verifyEDRRequestStatus(assetId);
 			} else {

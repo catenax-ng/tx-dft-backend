@@ -40,7 +40,15 @@ public class PolicyDefinitionRequest {
 
 	@JsonProperty("@context")
 	@Builder.Default
-	private Map<String, String> context = Map.of("odrl","http://www.w3.org/ns/odrl/2/");
+	private Map<String, String> context = Map.of(
+			"@vocab", "https://w3id.org/edc/v0.0.1/ns/",
+	        "edc", "https://w3id.org/edc/v0.0.1/ns/",
+			"odrl","http://www.w3.org/ns/odrl/2/",
+			"tx", "https://w3id.org/tractusx/v0.0.1/ns/",
+			"cx-common", "https://w3id.org/catenax/ontology/common#",
+	        "cx-taxo", "https://w3id.org/catenax/taxonomy#",
+	        "cx-policy", "https://w3id.org/catenax/policy/"
+			);
 
 	@JsonProperty("@type")
 	@Builder.Default
