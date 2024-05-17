@@ -118,6 +118,7 @@ public class DigitalTwinAssetProvider {
 
 			List<Policies> accessPolicy = PolicyOperationUtil
 					.getStringPolicyAsPolicyList(edcAssetConfigurableConstant.getDigitalTwinExchangeAccessPolicy());
+			
 			List<Policies> usagePolicy = PolicyOperationUtil
 					.getStringPolicyAsPolicyList(edcAssetConfigurableConstant.getDigitalTwinExchangeUsagePolicy());
 			

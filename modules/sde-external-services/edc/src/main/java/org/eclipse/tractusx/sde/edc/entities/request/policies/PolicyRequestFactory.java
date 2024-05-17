@@ -45,6 +45,8 @@ public class PolicyRequestFactory {
 
 		PolicyRequest policyRequest = PolicyRequest.builder()
 				.permissions(permissions)
+				.profile(edcAssetConfigurableConstant.getCxPolicyPrefix()
+						+ edcAssetConfigurableConstant.getCxPolicyProfile())
 				.obligations(new ArrayList<>())
 				.prohibitions(new ArrayList<>())
 				.profile(edcAssetConfigurableConstant.getCxPolicyPrefix()

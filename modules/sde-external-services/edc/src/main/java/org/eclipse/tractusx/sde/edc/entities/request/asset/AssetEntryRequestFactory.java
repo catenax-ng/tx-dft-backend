@@ -98,8 +98,7 @@ public class AssetEntryRequestFactory {
 			assetProperties.put(EDCAssetConstant.AAS_SEMANTICS_SEMANTIC_ID, Map.of("@id", sematicId));
 
 		if (StringUtils.isNotBlank(edcAssetType)) {
-			assetProperties.put(EDCAssetConstant.DCT_TYPE,
-					Map.of("@id", EDCAssetConstant.CX_TAXO_PREFIX + edcAssetType));
+			assetProperties.put(EDCAssetConstant.DCT_TYPE, Map.of("@id", edcAssetType));
 			assetProperties.put(EDCAssetConstant.ASSET_PROP_TYPE, edcAssetType);
 		} else {
 			assetProperties.put(EDCAssetConstant.ASSET_PROP_TYPE,

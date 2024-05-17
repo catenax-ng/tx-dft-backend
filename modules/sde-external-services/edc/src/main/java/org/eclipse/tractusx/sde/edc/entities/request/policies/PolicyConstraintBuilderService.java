@@ -65,7 +65,7 @@ public class PolicyConstraintBuilderService {
 //						mapPolicy(PolicyTypeIdEnum.USAGE, ConstraintOperandIdEnum.AND, policy.getUsagePolicies(), "u")).get("content"),
 //				"u");
 //	}
-//
+
 //	private PolicyContentRequest mapPolicy(PolicyTypeIdEnum policyType, ConstraintOperandIdEnum constraintOperandId,
 //			List<Policies> policies, String type) {
 //
