@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
+import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.ActionRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.PolicyConstraintBuilderService;
 import org.eclipse.tractusx.sde.edc.model.edr.EDRCachedByIdResponse;
@@ -47,12 +48,16 @@ public class EDCAssetUrlCacheService {
 
 	private static final Map<String, LocalDateTime> dDTRmap = new ConcurrentHashMap<>();
 	private static final Map<String, LocalDateTime> pcfExchangeURLMap = new ConcurrentHashMap<>();
+	private static final Map<String, LocalDateTime> bpdmMap = new ConcurrentHashMap<>();
 
 	private final ContractNegotiationService contractNegotiationService;
 	private final PolicyConstraintBuilderService policyConstraintBuilderService;
 
 	private final DDTRUrlCacheUtility dDTRUrlCacheUtility;
 	private final PCFExchangeAssetUtils pcfExchangeAssetUtils;
+	private final BPDMEdcAssetUtility bpdmEdcAssetUtility;
+	
+	private final EDCAssetConfigurableConstant edcAssetConfigurableConstant;
 
 	@SneakyThrows
 	public EDRCachedByIdResponse verifyAndGetToken(String bpnNumber, QueryDataOfferModel queryDataOfferModel) {
@@ -90,6 +95,7 @@ public class EDCAssetUrlCacheService {
 		return null;
 	}
 
+	// dDTR
 	public List<QueryDataOfferModel> getDDTRUrl(String bpnNumber) {
 
 		LocalDateTime cacheExpTime = dDTRmap.get(bpnNumber);
@@ -120,6 +126,7 @@ public class EDCAssetUrlCacheService {
 		dDTRmap.remove(bpnNumber);
 	}
 
+	// PCF
 	public List<QueryDataOfferModel> getPCFExchangeUrlFromTwin(String bpnNumber) {
 
 		LocalDateTime cacheExpTime = pcfExchangeURLMap.get(bpnNumber);
@@ -149,4 +156,37 @@ public class EDCAssetUrlCacheService {
 		pcfExchangeAssetUtils.removePCFExchangeCache(bpnNumber);
 		pcfExchangeURLMap.remove(bpnNumber);
 	}
+	
+	//BPDM
+	public List<QueryDataOfferModel> getBpdmUrl() {
+
+		LocalDateTime cacheExpTime = bpdmMap.get(edcAssetConfigurableConstant.getBpdmProviderBpnl());
+		LocalDateTime currDate = LocalDateTime.now();
+
+		if (cacheExpTime == null)
+			cacheExpTime = currDate.plusHours(12);
+		else if (currDate.isAfter(cacheExpTime)) {
+			bpdmEdcAssetUtility.removeBpdmCache(edcAssetConfigurableConstant.getBpdmProviderBpnl());
+			cacheExpTime = currDate.plusHours(12);
+		}
+		bpdmMap.put(edcAssetConfigurableConstant.getBpdmProviderBpnl(), cacheExpTime);
+		List<QueryDataOfferModel> pcfExchangeurls = bpdmEdcAssetUtility.getBpdmUrl(edcAssetConfigurableConstant.getBpdmProviderBpnl());
+		if (pcfExchangeurls.isEmpty()) {
+			log.info("Found connector list empty so removing existing cache and retry to fetch");
+			removeBpdmCache();
+		}
+		return pcfExchangeurls;
+	}
+
+	public void clearBpdmUrlCache() {
+		bpdmMap.clear();
+		bpdmEdcAssetUtility.cleareBpdmAllCache();
+	}
+
+	public void removeBpdmCache() {
+		bpdmEdcAssetUtility.removeBpdmCache(edcAssetConfigurableConstant.getBpdmProviderBpnl());
+		bpdmMap.remove(edcAssetConfigurableConstant.getBpdmProviderBpnl());
+	}
+	
+	
 }

@@ -67,5 +67,18 @@ public class EDCAssetConfigurableConstant {
 	
 	@Value("${edc.policy.digital-twin.usage:Membership@active}")
 	private String digitalTwinExchangeUsagePolicy;
+	
+	
+	@Value("${edc.bpdm.asset.search.criteria:https://purl.org/dc/terms/subject@cx-taxo:ReadAccessPoolForCatenaXMember;https://w3id.org/catenax/ontology/common/version@6.0}")
+	private String edcBPDMSearchCriteria;
+	
+	@Value("${bpdm.provider.edc.dataspace.api}")
+	private String bpdmProviderEdcDataspaceApi;
+	
+	@Value("${bpdm.provider.edc.public.api}")
+	private String bpdmProviderEdcPublicApi;
+	
+	@Value("${bpdm.provider.bpnl}")
+	private String bpdmProviderBpnl;
 
 }

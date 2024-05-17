@@ -22,6 +22,7 @@ package org.eclipse.tractusx.sde.edc.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.tractusx.sde.edc.entities.request.contractdefinition.Criterion;
 import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
 import org.eclipse.tractusx.sde.edc.services.CatalogResponseBuilder;
 import org.eclipse.tractusx.sde.portal.handler.PortalProxyService;
@@ -44,49 +45,48 @@ public class EDCAssetLookUp {
 	private String consumerHost;
 
 	private String filterExpressionTemplate = """
-			 "filterExpression": [{
-                "operandLeft": "'http://purl.org/dc/terms/type'.'@id'",
-                "operator": "=",
-                "operandRight": "https://w3id.org/catenax/taxonomy#%s"
-			}]""";
+			"filterExpression": [%s]""";
 
-	public List<QueryDataOfferModel> getEDCAssetsByType(String bpnNumber, String assetType) {
+	public List<QueryDataOfferModel> getEDCAssetsByType(String bpnNumber, List<Criterion> filtercriteria) {
 
 		List<ConnectorInfo> connectorInfos = portalProxyService.fetchConnectorInfo(List.of(bpnNumber));
-		
 		List<ConnectorInfo> distinctList = connectorInfos.stream().distinct().toList();
+		return getEDCAssetsByType(distinctList, filtercriteria);
+
+	}
+
+	public List<QueryDataOfferModel> getEDCAssetsByType(List<ConnectorInfo> distinctList,
+			List<Criterion> filtercriteria) {
 
 		List<QueryDataOfferModel> offers = new ArrayList<>();
-
-		String filterExpression = String.format(filterExpressionTemplate, assetType);
+		String filterExpression = String.format(filterExpressionTemplate, filtercriteria.toString());
 
 		distinctList.stream().forEach(
 				connectorInfo -> connectorInfo.getConnectorEndpoint().parallelStream().distinct().forEach(connector -> {
 					try {
 						if (!connector.contains(consumerHost)) {
-							
-							List<QueryDataOfferModel> queryDataOfferModel = catalogResponseBuilder
-									.queryOnDataOffers(connector, bpnNumber, 0, 100, filterExpression);
 
-							log.info("For Connector " + connector + ", found " + assetType + " assets :"
+							List<QueryDataOfferModel> queryDataOfferModel = catalogResponseBuilder
+									.queryOnDataOffers(connector, connectorInfo.getBpn(), 0, 100, filterExpression);
+
+							log.info("For Connector " + connector + ", found " + filtercriteria.toString() + " assets :"
 									+ queryDataOfferModel.size());
 
 							queryDataOfferModel.forEach(each -> each.setConnectorOfferUrl(connector));
 
 							offers.addAll(queryDataOfferModel);
-						
+
 						} else {
 							log.warn("The Consumer and Provider Connector are same so ignoring it for lookup "
-									+ assetType + " in to " + connector);
+									+ filtercriteria.toString() + " in to " + connector);
 						}
 
 					} catch (Exception e) {
-						log.error("Error while looking EDC catalog for " + assetType + ", " + connector
+						log.error("Error while looking EDC catalog for " + filtercriteria.toString() + ", " + connector
 								+ ", Exception :" + e.getMessage());
 					}
 				}));
 
 		return offers;
 	}
-
 }
