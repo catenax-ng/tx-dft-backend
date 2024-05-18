@@ -59,7 +59,7 @@ public class EDCAssetConfigurableConstant {
 	@Value("${edc.policy.pcf.access:Membership@active}")
 	private String pcfExcahngeAccessPolicy;
 	
-	@Value("${edc.policy.pcf.usage:FrameworkAgreement@pcf:1.0;Membership@active;UsagePurpose@cx.pcf.base:1}")
+	@Value("${edc.policy.pcf.usage:FrameworkAgreement@Pcf:1.0;Membership@active;UsagePurpose@cx.pcf.base:1}")
 	private String pcfExcahngeUsagePolicy;
 	
 	@Value("${edc.policy.digital-twin.access:Membership@active}")
