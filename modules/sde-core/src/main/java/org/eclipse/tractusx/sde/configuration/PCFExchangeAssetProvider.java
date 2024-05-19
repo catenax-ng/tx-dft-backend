@@ -66,7 +66,7 @@ public class PCFExchangeAssetProvider {
 	public void init() {
 
 		String assetId = UUIdGenerator.getUuid();
-		String sematicId = "urn:bamm:io.catenax.pcf:6.0.0#Pcf";
+		String sematicId = "urn:samm:io.catenax.pcf:6.0.0#Pcf";
 		AssetEntryRequest assetEntryRequest = assetFactory.getAssetRequest("", "PCF Exchange endpoint information",
 				assetId, "1", "", "", sematicId, edcAssetConfigurableConstant.getAssetPropTypePCFExchangeType());
 
