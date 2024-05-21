@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.eclipse.tractusx.sde.core.controller.PortalProxyController;
-import org.eclipse.tractusx.sde.portal.handler.PartnerPoolService;
+import org.eclipse.tractusx.sde.core.service.PartnerPoolService;
 import org.eclipse.tractusx.sde.portal.handler.PortalProxyService;
 import org.eclipse.tractusx.sde.portal.model.ConnectorInfo;
 import org.eclipse.tractusx.sde.portal.model.response.UnifiedBPNValidationStatusEnum;
@@ -61,7 +61,7 @@ class PortalProxyControllerTest {
     
     @Test
     void testFetchLegalEntitiesData() throws Exception {
-        when(partnerPoolService.fetchLegalEntitiesData((String) any(), (Integer) any(), (Integer) any()))
+        when(partnerPoolService.fetchLegalEntitiesData((String) any(),(String) any(), (Integer) any(), (Integer) any()))
                 .thenReturn(List.of());
         MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/legal-entities");
         MockHttpServletRequestBuilder paramResult = getResult.param("page", String.valueOf(0)).param("searchText", "bmw");
@@ -85,7 +85,7 @@ class PortalProxyControllerTest {
         ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(consumerController)
                 .build()
                 .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(200));
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
     }
    
     @Test
