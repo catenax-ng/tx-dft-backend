@@ -53,7 +53,7 @@ public class PortalProxyController {
 	
 	@GetMapping(value = "/legal-entities")
 	@PreAuthorize("hasPermission('','consumer_search_connectors')")
-	public ResponseEntity<List<LegalEntityResponse>> fetchLegalEntitiesData(@RequestParam String bpnLs, @RequestParam String searchText,
+	public ResponseEntity<List<LegalEntityResponse>> fetchLegalEntitiesData(@RequestParam (required = false) String bpnLs, @RequestParam String searchText,
 			@RequestParam Integer page, @RequestParam Integer size) throws Exception {
 		log.info("Request received : /api/legal-entities");
 		List<LegalEntityResponse> legalEntitiesResponse = partnerPoolService.fetchLegalEntitiesData(bpnLs, searchText,

@@ -83,8 +83,9 @@ public class PartnerPoolService {
 	}
 
 	
-	private LegalEntityData fetchLegalEntityDataByEdrToken(String bpnLs, String legalName, String bpdmProviderEdcPublicUrl, EDRCachedByIdResponse edrToken, Integer page, Integer size) {
-		
+	private LegalEntityData fetchLegalEntityDataByEdrToken(String bpnLs, String legalName,
+			String bpdmProviderEdcPublicUrl, EDRCachedByIdResponse edrToken, Integer page, Integer size) {
+
 		LegalEntityData legalEntityData = null;
 		try {
 
@@ -92,16 +93,16 @@ public class PartnerPoolService {
 			header.put("authorization", edrToken.getAuthorization());
 
 			legalEntityData = partnerPoolExternalServiceApi.fetchLegalEntityData(bpnLs, legalName, page, size, header);
-			
-		}catch (FeignException e) {
-			
+
+		} catch (FeignException e) {
 			String err = e.contentUTF8();
 			err = StringUtils.isBlank(err) ? e.getMessage() : err;
-			String errorMsg = "Unable to fetch LegalEntity Data for  " + legalName + "Or BpnLs "+ bpnLs +" because: " + err;
+			String errorMsg = "Unable to fetch LegalEntity Data for  " + legalName + "Or BpnLs " + bpnLs + " because: "
+					+ err;
 			log.error("FeignException : " + errorMsg);
-			
-		}catch (Exception e) {
-			String errorMsg = "Unable to fetch LegalEntity Data for  " + legalName + "Or BpnLs "+ bpnLs + "because: " + e.getMessage();
+		} catch (Exception e) {
+			String errorMsg = "Unable to fetch LegalEntity Data for  " + legalName + "Or BpnLs " + bpnLs + "because: "
+					+ e.getMessage();
 			log.error("Exception : " + errorMsg);
 		}
 		return legalEntityData;

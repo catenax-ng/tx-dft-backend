@@ -30,6 +30,8 @@ import org.eclipse.tractusx.sde.portal.model.ConnectorInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +47,7 @@ public class EDCAssetLookUp {
 	private String consumerHost;
 
 	private String filterExpressionTemplate = """
-			"filterExpression": [%s]""";
+			"filterExpression": %s""";
 
 	public List<QueryDataOfferModel> getEDCAssetsByType(String bpnNumber, List<Criterion> filtercriteria) {
 
@@ -56,10 +58,13 @@ public class EDCAssetLookUp {
 	}
 
 	public List<QueryDataOfferModel> getEDCAssetsByType(List<ConnectorInfo> distinctList,
-			List<Criterion> filtercriteria) {
+			List<Criterion> filterCriteria) {
 
 		List<QueryDataOfferModel> offers = new ArrayList<>();
-		String filterExpression = String.format(filterExpressionTemplate, filtercriteria.toString());
+		
+		 Gson gson = new Gson();
+		 String filterCriteriaList = gson.toJson(filterCriteria);
+		String filterExpression = String.format(filterExpressionTemplate, filterCriteriaList);
 
 		distinctList.stream().forEach(
 				connectorInfo -> connectorInfo.getConnectorEndpoint().parallelStream().distinct().forEach(connector -> {
@@ -69,7 +74,7 @@ public class EDCAssetLookUp {
 							List<QueryDataOfferModel> queryDataOfferModel = catalogResponseBuilder
 									.queryOnDataOffers(connector, connectorInfo.getBpn(), 0, 100, filterExpression);
 
-							log.info("For Connector " + connector + ", found " + filtercriteria.toString() + " assets :"
+							log.info("For Connector " + connector + ", found " + filterCriteria.toString() + " assets :"
 									+ queryDataOfferModel.size());
 
 							queryDataOfferModel.forEach(each -> each.setConnectorOfferUrl(connector));
@@ -78,11 +83,11 @@ public class EDCAssetLookUp {
 
 						} else {
 							log.warn("The Consumer and Provider Connector are same so ignoring it for lookup "
-									+ filtercriteria.toString() + " in to " + connector);
+									+ filterCriteria.toString() + " in to " + connector);
 						}
 
 					} catch (Exception e) {
-						log.error("Error while looking EDC catalog for " + filtercriteria.toString() + ", " + connector
+						log.error("Error while looking EDC catalog for " + filterCriteria.toString() + ", " + connector
 								+ ", Exception :" + e.getMessage());
 					}
 				}));
