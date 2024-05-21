@@ -28,4 +28,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PcfReqsponseRepository extends JpaRepository<PcfResponseEntity, String> {
 
 	public Optional<PcfResponseEntity> findFirstByRequestIdOrderByLastUpdatedTimeDesc(String requestId);
+
 }

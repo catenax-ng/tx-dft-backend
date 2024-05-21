@@ -35,6 +35,7 @@ import org.eclipse.tractusx.sde.common.utils.LogUtil;
 import org.eclipse.tractusx.sde.edc.model.request.ConsumerRequest;
 import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
 import org.eclipse.tractusx.sde.edc.util.EDCAssetUrlCacheService;
+import org.eclipse.tractusx.sde.pcfexchange.entity.PcfRequestEntity;
 import org.eclipse.tractusx.sde.pcfexchange.entity.PcfResponseEntity;
 import org.eclipse.tractusx.sde.pcfexchange.enums.PCFRequestStatusEnum;
 import org.eclipse.tractusx.sde.pcfexchange.enums.PCFTypeEnum;
@@ -60,10 +61,10 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 	private final PCFRepositoryService pcfRepositoryService;
 	private final PcfReqsponseRepository pcfReqsponseRepository;
 	private final EDCAssetUrlCacheService edcAssetUrlCacheService;
-	
+
 	@Qualifier("DatabaseUsecaseHandler")
 	private final DatabaseUsecaseStep databaseUsecaseStep;
-	
+
 	private final ProxyRequestInterface proxyRequestInterface;
 
 	@SneakyThrows
@@ -99,7 +100,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 
 	@Override
 	public Object requestForPcfNotExistDataOffer(PcfRequestModel pcfRequestModel) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		String requestId = UUID.randomUUID().toString();
 		List<QueryDataOfferModel> pcfExchangeUrlOffers = null;
@@ -109,8 +110,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 					PCFRequestStatusEnum.SENDING_REQUEST, "");
 
 			// 1 fetch EDC connectors and DTR Assets from EDC connectors
-			pcfExchangeUrlOffers = edcAssetUrlCacheService
-					.getPCFExchangeUrlFromTwin(pcfRequestModel.getBpnNumber());
+			pcfExchangeUrlOffers = edcAssetUrlCacheService.getPCFExchangeUrlFromTwin(pcfRequestModel.getBpnNumber());
 
 			// 2 request for PCF value for non existing sub model and send notification to
 			// call provider for data
@@ -142,9 +142,10 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		String remark = "";
 		try {
 
-			JsonObject calculatedPCFValue = databaseUsecaseStep.readCreatedTwinsBySpecifyColomn(
-					"urn:bamm:io.catenax.pcf", pcfRequestModel.getProductId()).get("json").getAsJsonObject();
-			
+			JsonObject calculatedPCFValue = databaseUsecaseStep
+					.readCreatedTwinsBySpecifyColomn("urn:samm:io.catenax.pcf", pcfRequestModel.getProductId())
+					.get("json").getAsJsonObject();
+
 			PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(pcfRequestModel.getRequestId(),
 					pcfRequestModel.getStatus());
 
@@ -197,19 +198,6 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 
 		PCFRequestStatusEnum status = null;
 
-		PcfResponseEntity entity = PcfResponseEntity.builder()
-				.pcfData(pcfData)
-				.requestId(requestId)
-				.message(message)
-				.responseId(UUID.randomUUID().toString())
-				.lastUpdatedTime(Instant.now().getEpochSecond())
-				.build();
-
-		pcfReqsponseRepository.save(entity);
-
-		if(StringUtils.isBlank(requestId))
-			throw new ServiceException("RequestId not recieved from provider to marked PCF exchange request");
-		
 		if (pcfData != null && !pcfData.isEmpty() && !pcfData.asText().equals("{}")) {
 			status = PCFRequestStatusEnum.RECEIVED;
 		} else if (StringUtils.isNotBlank(requestId)) {
@@ -217,8 +205,39 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		} else
 			status = PCFRequestStatusEnum.FAILED;
 		
-		pcfRepositoryService.savePcfStatus(requestId, status);
-
+		if (StringUtils.isNotBlank(requestId)) {
+			
+			PcfResponseEntity entity = PcfResponseEntity.builder()
+					.pcfData(pcfData)
+					.requestId(requestId)
+					.message(message)
+					.responseId(UUID.randomUUID().toString())
+					.lastUpdatedTime(Instant.now().getEpochSecond())
+					.build();
+			
+			pcfReqsponseRepository.save(entity);
+			
+			pcfRepositoryService.savePcfStatus(requestId, status);
+		}
+		else {
+			List<PcfRequestEntity> findByProductId = pcfRepositoryService.findByProductId(productId);
+			
+			for (PcfRequestEntity fentity : findByProductId) {
+				
+				PcfResponseEntity entity = PcfResponseEntity.builder()
+						.pcfData(pcfData)
+						.requestId(fentity.getRequestId())
+						.message(message)
+						.responseId(UUID.randomUUID().toString())
+						.lastUpdatedTime(Instant.now().getEpochSecond())
+						.build();
+				
+				pcfReqsponseRepository.save(entity);
+				
+				pcfRepositoryService.savePcfStatus(fentity.getRequestId(), status);
+			}
+	
+		}
 	}
 
 	@Override
