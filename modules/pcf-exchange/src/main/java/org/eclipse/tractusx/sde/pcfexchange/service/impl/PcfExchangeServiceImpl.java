@@ -155,7 +155,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 			// push api call
 			Runnable runnable = () -> proxyRequestInterface.sendNotificationToConsumer(status, calculatedPCFValue,
 					pcfRequestModel.getProductId(), pcfRequestModel.getBpnNumber(), pcfRequestModel.getRequestId(),
-					pcfRequestModel.getMessage());
+					pcfRequestModel.getMessage(), true);
 
 			new Thread(runnable).start();
 

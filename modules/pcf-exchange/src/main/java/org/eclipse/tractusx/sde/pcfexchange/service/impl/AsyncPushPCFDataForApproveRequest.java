@@ -95,7 +95,8 @@ public class AsyncPushPCFDataForApproveRequest {
 
 						// push api call
 						Runnable runnable = () -> proxyRequestInterface.sendNotificationToConsumer(status,
-								calculatedPCFValue, request.getProductId(), request.getBpnNumber(), "", request.getMessage());
+								calculatedPCFValue, request.getProductId(), request.getBpnNumber(),
+								request.getRequestId(), request.getMessage(), false);
 
 						new Thread(runnable).start();
 

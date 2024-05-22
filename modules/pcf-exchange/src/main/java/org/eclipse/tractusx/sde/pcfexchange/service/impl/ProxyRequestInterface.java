@@ -110,7 +110,7 @@ public class ProxyRequestInterface {
 	
 	@SneakyThrows
 	public void sendNotificationToConsumer(PCFRequestStatusEnum status, JsonObject calculatedPCFValue,
-			String productId, String bpnNumber, String requestId, String message) {
+			String productId, String bpnNumber, String requestId, String message, boolean isNeedToSendRequestIdtoConsumer) {
 
 		// 1 fetch EDC connectors and DTR Assets from EDC connectors
 		List<QueryDataOfferModel> pcfExchangeUrlOffers = edcAssetUrlCacheService.getPCFExchangeUrlFromTwin(bpnNumber);
@@ -124,9 +124,9 @@ public class ProxyRequestInterface {
 			pcfExchangeUrlOffers.parallelStream().forEach(dtOffer -> {
 				
 				if (PCFRequestStatusEnum.SENDING_REJECT_NOTIFICATION.equals(status)) {
-					sendNotification(null, productId, bpnNumber, requestId, dtOffer, status, message);
+					sendNotification(null, productId, bpnNumber, requestId, dtOffer, status, message, isNeedToSendRequestIdtoConsumer);
 				} else {
-					sendNotification(calculatedPCFValue, productId, bpnNumber, requestId, dtOffer, status, message);
+					sendNotification(calculatedPCFValue, productId, bpnNumber, requestId, dtOffer, status, message, isNeedToSendRequestIdtoConsumer);
 				}
 				
 			});
@@ -135,7 +135,7 @@ public class ProxyRequestInterface {
 
 	@SneakyThrows
 	private void sendNotification(JsonObject calculatedPCFValue, String productId, String bpnNumber, String requestId,
-			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status, String message) {
+			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status, String message, boolean isNeedToSendRequestIdtoConsumer) {
 		String sendNotificationStatus = "";
 		try {
 			EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(bpnNumber, dtOffer);
@@ -149,7 +149,11 @@ public class ProxyRequestInterface {
 				header.put("authorization", edrToken.getAuthorization());
 				header.put("Edc-Bpn", bpnNumber);
 				
-				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, requestId, message,
+				String sendRequestId = requestId;
+				if (isNeedToSendRequestIdtoConsumer)
+					sendRequestId = "";
+				
+				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, sendRequestId, message,
 						jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
 
 				sendNotificationStatus = "SUCCESS";
