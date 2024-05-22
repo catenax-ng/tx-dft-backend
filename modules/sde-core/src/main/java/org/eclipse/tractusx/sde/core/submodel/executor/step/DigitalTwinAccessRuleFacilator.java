@@ -113,7 +113,7 @@ public class DigitalTwinAccessRuleFacilator extends Step {
 			List<String> accessBPNList = PolicyOperationUtil.getAccessBPNList(policy);
 			List<String> accessruleIds = new ArrayList<>();
 
-			if (accessruleIds.isEmpty()) {
+			if (accessBPNList.isEmpty()) {
 				createAccessRuleMethod(specificAssetIds, sematicId, accessruleIds, PUBLIC_READABLE);
 			} else {
 				for (String bpn : accessBPNList) {

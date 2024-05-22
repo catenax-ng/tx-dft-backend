@@ -185,14 +185,13 @@ public class LookUpDTTwin {
 			manufacturerBPNId= searchBPN;
 		}
 
-		if (StringUtils.isNotBlank(shellDescriptorResponse.getIdShort()))
-			for (SubModelResponse subModelResponse : shellDescriptorResponse.getSubmodelDescriptors()) {
+		for (SubModelResponse subModelResponse : shellDescriptorResponse.getSubmodelDescriptors()) {
 
-				String sematicId = subModelResponse.getSemanticId().getKeys().get(0).getValue();
+			String sematicId = subModelResponse.getSemanticId().getKeys().get(0).getValue();
 
-				buildQdmOffer(submodel, queryOnDataOffers, shellDescriptorResponse, manufacturerPartId,
-						manufacturerBPNId, subModelResponse, sematicId);
-			}
+			buildQdmOffer(submodel, queryOnDataOffers, shellDescriptorResponse, manufacturerPartId,
+					manufacturerBPNId, subModelResponse, sematicId);
+		}
 	}
 
 	private void buildQdmOffer(String submodel, List<QueryDataOfferModel> queryOnDataOffers,
@@ -214,6 +213,11 @@ public class LookUpDTTwin {
 
 			String description = descriptionOptional.isPresent() ? descriptionOptional.get() : "";
 
+			String shellIdShort = shellDescriptorResponse.getIdShort();
+			
+			if(StringUtils.isBlank(shellIdShort))
+				shellIdShort ="ShellTwinIdShortNotVisible";
+			
 			QueryDataOfferModel qdm = QueryDataOfferModel.builder()
 					.publisher(manufacturerBPNId)
 					.manufacturerPartId(manufacturerPartId)
@@ -221,7 +225,7 @@ public class LookUpDTTwin {
 					.assetId(assetInfo[1])
 					.type(subModelResponse.getIdShort())
 					.sematicVersion(sematicId)
-					.title(shellDescriptorResponse.getIdShort())
+					.title(shellIdShort)
 					.description(description)
 					.build();
 			
