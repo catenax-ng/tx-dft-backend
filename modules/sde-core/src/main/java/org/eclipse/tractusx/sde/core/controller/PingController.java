@@ -57,4 +57,10 @@ public class PingController {
 		edcAssetUrlCacheService.clearDDTRUrlCache();
 		return ok().body("Cleared");
 	}
+	
+	@GetMapping(value = "/cache/clear-pcfurl")
+	public ResponseEntity<String> clearPCFExchangeUrlCache() {
+		edcAssetUrlCacheService.clearPCFExchangeUrlCache();
+		return ok().body("Cleared");
+	}
 }
