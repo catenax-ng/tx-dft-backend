@@ -20,6 +20,8 @@
 
 package org.eclipse.tractusx.sde.edc.constants;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -68,9 +70,8 @@ public class EDCAssetConfigurableConstant {
 	@Value("${edc.policy.digital-twin.usage:Membership@active}")
 	private String digitalTwinExchangeUsagePolicy;
 	
-	
-	@Value("${edc.bpdm.asset.search.criteria:https://purl.org/dc/terms/subject@cx-taxo:ReadAccessPoolForCatenaXMember;https://w3id.org/catenax/ontology/common/version@6.0}")
-	private String edcBPDMSearchCriteria;
+	@Value("#{'${edc.bpdm.asset.search.criteria}'.split(';')}")
+	private List<String> edcBPDMSearchCriteria;
 	
 	@Value("${bpdm.provider.edc.dataspace.api}")
 	private String bpdmProviderEdcDataspaceApi;

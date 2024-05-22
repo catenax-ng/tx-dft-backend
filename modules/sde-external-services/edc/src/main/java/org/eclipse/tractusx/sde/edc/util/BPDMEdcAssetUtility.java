@@ -66,23 +66,22 @@ public class BPDMEdcAssetUtility {
 	}
 	
 	private List<Criterion> getFilterCriteria() {
-		
+
 		List<Criterion> criterias = new ArrayList<>();
-		
-		String edcBPDMSearchCriteria = edcAssetConfigurableConstant.getEdcBPDMSearchCriteria();
-		if(StringUtils.isNotBlank(edcBPDMSearchCriteria)) {
-			String[] split = edcBPDMSearchCriteria.split(";");
-			for (int i = 0; i < split.length; i++) {
-				String[] split1 = split[i].split("@");
-				if (split1.length == 2) {
-					criterias.add(Criterion.builder()
-							.operandLeft(split1[0])
-							.operator("=")
-							.operandRight(split1[1]).build());
-				}
+
+		List<String> edcBPDMSearchCriteriaList = edcAssetConfigurableConstant.getEdcBPDMSearchCriteria();
+		for (String edcBPDMSearchCriteria : edcBPDMSearchCriteriaList) {
+			if (StringUtils.isNotBlank(edcBPDMSearchCriteria)) {
+					String[] split1 = edcBPDMSearchCriteria.split("@");
+					if (split1.length == 2) {
+						criterias.add(Criterion.builder()
+								.operandLeft(split1[0])
+								.operator("=")
+								.operandRight(split1[1])
+								.build());
+					}
 			}
 		}
-		
 		return criterias;
 	}
 
