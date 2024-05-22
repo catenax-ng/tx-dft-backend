@@ -37,10 +37,12 @@ import org.eclipse.tractusx.sde.agent.model.SchedulerConfigModel;
 import org.eclipse.tractusx.sde.agent.model.SchedulerType;
 import org.eclipse.tractusx.sde.bpndiscovery.handler.BPNDiscoveryUseCaseHandler;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
+import org.eclipse.tractusx.sde.core.submodel.executor.step.DigitalTwinAccessRuleFacilator;
 import org.eclipse.tractusx.sde.core.submodel.executor.step.DigitalTwinLookUpInRegistry;
 import org.eclipse.tractusx.sde.core.submodel.executor.step.EDCUsecaseHandler;
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorResponse;
 import org.eclipse.tractusx.sde.digitaltwins.facilitator.DigitalTwinsFacilitator;
+import org.eclipse.tractusx.sde.digitaltwins.gateways.external.IAccessRuleManagementApi;
 import org.eclipse.tractusx.sde.retrieverl.service.ActiveStorageMediaProvider;
 import org.eclipse.tractusx.sde.retrieverl.service.ProcessRemoteCsv;
 import org.eclipse.tractusx.sde.retrieverl.service.SchedulerConfigService;
@@ -87,6 +89,8 @@ public class SchedulerMinioTest extends MinioBase{
 	
 	@MockBean
 	DigitalTwinLookUpInRegistry digitalTwinLookUpInRegistry;
+	@MockBean
+	DigitalTwinAccessRuleFacilator digitalTwinAccessRuleFacilator;
 	
 	@Autowired
 	ApplicationContext applicationContext;
