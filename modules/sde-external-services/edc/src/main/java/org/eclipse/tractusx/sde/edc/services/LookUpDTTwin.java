@@ -35,6 +35,7 @@ import org.eclipse.tractusx.sde.common.constants.CommonConstants;
 import org.eclipse.tractusx.sde.common.utils.LogUtil;
 import org.eclipse.tractusx.sde.digitaltwins.entities.common.KeyValuePair;
 import org.eclipse.tractusx.sde.digitaltwins.entities.common.MultiLanguage;
+import org.eclipse.tractusx.sde.digitaltwins.entities.common.ProtocolInformation;
 import org.eclipse.tractusx.sde.digitaltwins.entities.request.ShellLookupRequest;
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorResponse;
 import org.eclipse.tractusx.sde.digitaltwins.entities.response.ShellDescriptorResponseList;
@@ -201,8 +202,17 @@ public class LookUpDTTwin {
 		if (!subModelResponse.getIdShort().isEmpty() && sematicId.toLowerCase().contains(submodel.toLowerCase())
 				&& subModelResponse.getEndpoints() != null) {
 
-			String subprotocolBody = subModelResponse.getEndpoints().get(0).getProtocolInformation()
-					.getSubprotocolBody();
+			ProtocolInformation protocolInformation = subModelResponse.getEndpoints().get(0).getProtocolInformation();
+			
+			String subprotocolBody = protocolInformation.getSubprotocolBody();
+			
+			String submodelIdShort = subModelResponse.getIdShort();
+			
+			String href = "";
+			if(submodelIdShort.equals("PCFExchangeEndpoint")) {
+				href = protocolInformation.getEndpointAddress();
+				href = href.replace("https://edc.data.plane", "@");
+			}
 
 			String[] edcInfo = subprotocolBody.split(";");
 			String[] assetInfo = edcInfo[0].split("=");
@@ -221,7 +231,7 @@ public class LookUpDTTwin {
 			QueryDataOfferModel qdm = QueryDataOfferModel.builder()
 					.publisher(manufacturerBPNId)
 					.manufacturerPartId(manufacturerPartId)
-					.connectorOfferUrl(connectorInfo[1])
+					.connectorOfferUrl(connectorInfo[1]+href)
 					.assetId(assetInfo[1])
 					.type(subModelResponse.getIdShort())
 					.sematicVersion(sematicId)

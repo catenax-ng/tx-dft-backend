@@ -59,6 +59,16 @@ public class ProxyRequestInterface {
 	public void requestToProviderForPCFValue(String productId, StringBuilder reponseMap, String requestId, String message,
 			QueryDataOfferModel dataset, boolean isRequestToNonexistingTwin) {
 		try {
+			String connectorOfferUrl = dataset.getConnectorOfferUrl();
+			String pcfProductPath = "";
+			if (connectorOfferUrl.contains("@")) {
+				String[] split = connectorOfferUrl.split("@");
+				if (split.length > 1) {
+					dataset.setConnectorOfferUrl(split[0]);
+					pcfProductPath = split[1];
+				}
+			}
+			
 			EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(dataset.getConnectorId(),
 					dataset);
 
@@ -73,7 +83,7 @@ public class ProxyRequestInterface {
 					pcfpushEnpoint = new URI(
 							edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId);
 				else
-					pcfpushEnpoint = new URI(edrToken.getEndpoint());
+					pcfpushEnpoint = new URI(edrToken.getEndpoint() + pcfProductPath);
 
 				Map<String, String> header = new HashMap<>();
 				header.put("authorization", edrToken.getAuthorization());

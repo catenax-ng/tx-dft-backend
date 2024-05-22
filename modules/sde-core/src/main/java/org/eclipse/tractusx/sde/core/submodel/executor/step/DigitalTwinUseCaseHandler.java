@@ -182,8 +182,7 @@ public class DigitalTwinUseCaseHandler extends Step implements DigitalTwinUsecas
 		String submodelIdentifier = identification.get("submodelIdentifier");
 		
 		if (StringUtils.isNotBlank(path)) {
-			path = FORWARD_SLASH + getNameOfModel() + FORWARD_SLASH + path + FORWARD_SLASH
-					+ submodelRequestidentifier;
+			path =  FORWARD_SLASH + path + FORWARD_SLASH+ submodelRequestidentifier;
 		}
 		
 		if (StringUtils.isBlank(submodelDataPlaneUrl)) {
