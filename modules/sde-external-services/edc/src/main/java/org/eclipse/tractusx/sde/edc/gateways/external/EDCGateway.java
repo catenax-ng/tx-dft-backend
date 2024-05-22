@@ -66,6 +66,17 @@ public class EDCGateway {
 		}
 		return true;
 	}
+	
+	public JsonNode assetExistsLookupBasedOnTypeGetAsAsset(ObjectNode requestBody) {
+		try {
+			return edcFeignClientApi.getAssetByType(requestBody);
+		} catch (FeignException e) {
+			if (e.status() == HttpStatus.NOT_FOUND.value()) {
+				return null;
+			}
+			throw e;
+		}
+	}
 
 	public String createAsset(AssetEntryRequest request) {
 		try {

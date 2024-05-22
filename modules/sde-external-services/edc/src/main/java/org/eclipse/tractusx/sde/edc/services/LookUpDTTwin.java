@@ -93,7 +93,7 @@ public class LookUpDTTwin {
 			header.put("Edc-Bpn", sdeConfigurationProperties.getManufacturerId());
 
 		if (StringUtils.isBlank(manufacturerPartId)) {
-			return lookUpAllShellForBPN(submodel, endpoint, dtOfferUrl, header, offset, limit);
+			return lookUpAllShellForBPN(bpnNumber, submodel, endpoint, dtOfferUrl, header, offset, limit);
 		} else {
 			return lookUpTwinBasedOnBPNAndManufacturerPartId(manufacturerPartId, bpnNumber, submodel, endpoint,
 					dtOfferUrl, header);
@@ -113,7 +113,7 @@ public class LookUpDTTwin {
 			ShellLookupResponse response = mapper.readValue(shellLookup, ShellLookupResponse.class);
 
 			return getSubmodelDetails(shellLookupRequest, endpoint, header, dtOfferUrl, response.getResult(),
-					submodel);
+					submodel, bpnNumber);
 
 		} catch (FeignException e) {
 			log.error(LogUtil.encode("LookUpTwinBasedOnBPNAndManufacturerPartId RequestBody: " + e.request()));
@@ -131,7 +131,7 @@ public class LookUpDTTwin {
 		return Collections.emptyList();
 	}
 
-	private List<QueryDataOfferModel> lookUpAllShellForBPN(String submodel, String endpoint, String dtOfferUrl,
+	private List<QueryDataOfferModel> lookUpAllShellForBPN(String searchBPN, String submodel, String endpoint, String dtOfferUrl,
 			Map<String, String> header, Integer offset, Integer limit) {
 		List<QueryDataOfferModel> queryOnDataOffers = new ArrayList<>();
 		try {
@@ -139,7 +139,7 @@ public class LookUpDTTwin {
 			ShellDescriptorResponseList allShell = eDCDigitalTwinProxyForLookUp.getAllShell(new URI(endpoint), offset,
 					limit, header);
 			for (ShellDescriptorResponse shellDescriptorResponse : allShell.getResult())
-				preapreSubmodelResult(submodel, queryOnDataOffers, shellDescriptorResponse);
+				preapreSubmodelResult(submodel, queryOnDataOffers, shellDescriptorResponse, searchBPN);
 
 		} catch (FeignException e) {
 			log.error(LogUtil.encode("FeignException LookUpAllShellForBPN request : "+e.request()));
@@ -159,7 +159,7 @@ public class LookUpDTTwin {
 
 	@SneakyThrows
 	private List<QueryDataOfferModel> getSubmodelDetails(ShellLookupRequest shellLookupRequest, String endpoint,
-			Map<String, String> header, String dtOfferUrl, List<String> shellIds, String submodel) {
+			Map<String, String> header, String dtOfferUrl, List<String> shellIds, String submodel, String searchBPN) {
 		List<QueryDataOfferModel> queryOnDataOffers = new ArrayList<>();
 
 		for (String shellId : shellIds) {
@@ -169,17 +169,21 @@ public class LookUpDTTwin {
 					+ shellDescriptorResponseStr));
 			ShellDescriptorResponse shellDescriptorResponse = mapper.readValue(shellDescriptorResponseStr,
 					ShellDescriptorResponse.class); 
-			preapreSubmodelResult(submodel, queryOnDataOffers, shellDescriptorResponse);
+			preapreSubmodelResult(submodel, queryOnDataOffers, shellDescriptorResponse, searchBPN);
 		}
 		return queryOnDataOffers;
 	}
 
 	private void preapreSubmodelResult(String submodel, List<QueryDataOfferModel> queryOnDataOffers,
-			ShellDescriptorResponse shellDescriptorResponse) {
+			ShellDescriptorResponse shellDescriptorResponse, String searchBPN) {
 
 		String manufacturerPartId = getSpecificKeyFromList(shellDescriptorResponse, "manufacturerPartId");
 
 		String manufacturerBPNId = getSpecificKeyFromList(shellDescriptorResponse, "manufacturerId");
+		
+		if(StringUtils.isBlank(manufacturerBPNId)) {
+			manufacturerBPNId= searchBPN;
+		}
 
 		if (StringUtils.isNotBlank(shellDescriptorResponse.getIdShort()))
 			for (SubModelResponse subModelResponse : shellDescriptorResponse.getSubmodelDescriptors()) {

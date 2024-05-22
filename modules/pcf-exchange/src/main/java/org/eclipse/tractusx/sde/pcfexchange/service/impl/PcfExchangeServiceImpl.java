@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.tractusx.sde.common.configuration.properties.PCFAssetStaticPropertyHolder;
 import org.eclipse.tractusx.sde.common.entities.PolicyModel;
 import org.eclipse.tractusx.sde.common.exception.NoDataFoundException;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
@@ -66,6 +67,8 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 	private final DatabaseUsecaseStep databaseUsecaseStep;
 
 	private final ProxyRequestInterface proxyRequestInterface;
+	
+	private final PCFAssetStaticPropertyHolder pcfAssetStaticPropertyHolder;
 
 	@SneakyThrows
 	@Override
@@ -143,7 +146,7 @@ public class PcfExchangeServiceImpl implements IPCFExchangeService {
 		try {
 
 			JsonObject calculatedPCFValue = databaseUsecaseStep
-					.readCreatedTwinsBySpecifyColomn("urn:samm:io.catenax.pcf", pcfRequestModel.getProductId())
+					.readCreatedTwinsBySpecifyColomn(pcfAssetStaticPropertyHolder.getSematicIdPart(), pcfRequestModel.getProductId())
 					.get("json").getAsJsonObject();
 
 			PCFRequestStatusEnum status = pcfRepositoryService.identifyRunningStatus(pcfRequestModel.getRequestId(),

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.sde.common.exception.ServiceException;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.ActionRequest;
 import org.eclipse.tractusx.sde.edc.entities.request.policies.PolicyConstraintBuilderService;
@@ -70,7 +71,7 @@ public class EDCAssetUrlCacheService {
 			EDRCachedResponse eDRCachedResponse = contractNegotiationService.verifyOrCreateContractNegotiation(
 					bpnNumber, Map.of(), queryDataOfferModel.getConnectorOfferUrl(), action, offer);
 
-			if (eDRCachedResponse == null) {
+			if (eDRCachedResponse == null || StringUtils.isBlank(eDRCachedResponse.getTransferProcessId())) {
 				throw new ServiceException("Time out!! to get EDC EDR status to lookup '"
 						+ queryDataOfferModel.getConnectorOfferUrl() + ", " + queryDataOfferModel.getAssetId()
 						+ "', The current status is null");
