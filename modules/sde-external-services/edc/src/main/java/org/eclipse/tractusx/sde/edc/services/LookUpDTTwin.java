@@ -248,8 +248,22 @@ public class LookUpDTTwin {
 		
 		String joinStr = StringUtils.join(assetId.stream().map(QueryDataOfferRequest::getAssetId).toList(), "\",\"");
 		String filterExpression = String.format(filterExpressionTemplate, joinStr);
-		return catalogResponseBuilder.queryOnDataOffers(queryDataOfferRequestKey.getLeft(),
+		
+		String connectorOfferUrl = queryDataOfferRequestKey.getLeft();
+		if (connectorOfferUrl.contains("@")) {
+			String[] split = connectorOfferUrl.split("@");
+			if (split.length > 1) {
+				connectorOfferUrl = split[0];
+			}
+		}
+		
+		List<QueryDataOfferModel> queryOnDataOffers = catalogResponseBuilder.queryOnDataOffers(connectorOfferUrl,
 				queryDataOfferRequestKey.getRight(), 0, 1000, filterExpression);
+		
+		return queryOnDataOffers.stream().map(obj-> {
+				obj.setConnectorOfferUrl(queryDataOfferRequestKey.getLeft());
+				return obj;
+			}).toList();
 	}
 
 	private String getSpecificKeyFromList(ShellDescriptorResponse shellDescriptorResponse, String key) {
