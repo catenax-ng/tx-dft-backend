@@ -150,7 +150,7 @@ public class ProxyRequestInterface {
 				header.put("Edc-Bpn", bpnNumber);
 				
 				String sendRequestId = requestId;
-				if (isNeedToSendRequestIdtoConsumer)
+				if (!isNeedToSendRequestIdtoConsumer)
 					sendRequestId = "";
 				
 				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, sendRequestId, message,
