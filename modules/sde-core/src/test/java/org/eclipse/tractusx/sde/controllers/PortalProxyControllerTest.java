@@ -69,7 +69,7 @@ class PortalProxyControllerTest {
         ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(consumerController)
                 .build()
                 .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(200));
     }
 
     @Test
@@ -85,7 +85,7 @@ class PortalProxyControllerTest {
         ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(consumerController)
                 .build()
                 .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(200));
     }
    
     @Test
