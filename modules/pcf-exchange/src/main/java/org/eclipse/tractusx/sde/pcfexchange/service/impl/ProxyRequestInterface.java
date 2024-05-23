@@ -135,38 +135,32 @@ public class ProxyRequestInterface {
 
 	@SneakyThrows
 	private void sendNotification(JsonObject calculatedPCFValue, String productId, String bpnNumber, String requestId,
-			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status, String message, boolean isNeedToSendRequestIdtoConsumer) {
+			QueryDataOfferModel dtOffer, PCFRequestStatusEnum status, String message,
+			boolean isNeedToSendRequestIdtoConsumer) {
 		String sendNotificationStatus = "";
 		try {
 			EDRCachedByIdResponse edrToken = edcAssetUrlCacheService.verifyAndGetToken(bpnNumber, dtOffer);
 
 			if (edrToken != null) {
-				
-				String url = edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId;
-				
+
+				URI pcfpushEnpoint = new URI(
+						edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId);
+
 				Map<String, String> header = new HashMap<>();
 				header.put("authorization", edrToken.getAuthorization());
 				header.put("Edc-Bpn", bpnNumber);
-				
+
 				String sendRequestId = requestId;
 				if (!isNeedToSendRequestIdtoConsumer)
 					sendRequestId = "";
-				
-				if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(sendRequestId))
-					url = url + "?requestId=" + sendRequestId + "&message=" + message;
-				else if (StringUtils.isNotBlank(sendRequestId)) {
-					url = url + "?requestId=" + sendRequestId;
-				} else if (StringUtils.isNotBlank(message)) {
-					url = url + "?message=" + message;
-				}
-					
-				URI pcfpushEnpoint = new URI(url);
-				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
+
+				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, sendRequestId, message,
+						jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
 
 				sendNotificationStatus = "SUCCESS";
 			} else {
-				String warn="EDC connector " + dtOffer.getConnectorOfferUrl()
-				+ ", The EDR token is null to find pcf exchange asset";
+				String warn = "EDC connector " + dtOffer.getConnectorOfferUrl()
+						+ ", The EDR token is null to find pcf exchange asset";
 				log.warn(warn);
 				sendNotificationStatus = warn;
 			}
