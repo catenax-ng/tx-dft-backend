@@ -142,9 +142,8 @@ public class ProxyRequestInterface {
 
 			if (edrToken != null) {
 				
-				URI pcfpushEnpoint = new URI(
-						edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId);
-
+				String url = edrToken.getEndpoint() + SLASH_DELIMETER + PRODUCT_IDS + SLASH_DELIMETER + productId;
+				
 				Map<String, String> header = new HashMap<>();
 				header.put("authorization", edrToken.getAuthorization());
 				header.put("Edc-Bpn", bpnNumber);
@@ -153,8 +152,16 @@ public class ProxyRequestInterface {
 				if (!isNeedToSendRequestIdtoConsumer)
 					sendRequestId = "";
 				
-				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, sendRequestId, message,
-						jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
+				if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(sendRequestId))
+					url = url + "?requestId=" + sendRequestId + "&message=" + message;
+				else if (StringUtils.isNotBlank(sendRequestId)) {
+					url = url + "?requestId=" + sendRequestId;
+				} else if (StringUtils.isNotBlank(message)) {
+					url = url + "?message=" + message;
+				}
+					
+				URI pcfpushEnpoint = new URI(url);
+				pcfExchangeProxy.uploadPcfSubmodel(pcfpushEnpoint, header, jsonObjectMapper.gsonObjectToJsonNode(calculatedPCFValue));
 
 				sendNotificationStatus = "SUCCESS";
 			} else {

@@ -38,8 +38,7 @@ public interface PCFExchangeProxy {
 
 	@PutMapping
 	public ResponseEntity<Object> uploadPcfSubmodel(URI url, @RequestHeader Map<String, String> requestHeader,
-			@RequestParam(value = "requestId", required = false) String requestId,
-			@RequestParam(value = "message", required = false) String message, @RequestBody JsonNode pcfData);
+			@RequestBody JsonNode pcfData);
 
 	@GetMapping
 	public ResponseEntity<Object> getPcfByProduct(URI url, @RequestHeader Map<String, String> requestHeader,
