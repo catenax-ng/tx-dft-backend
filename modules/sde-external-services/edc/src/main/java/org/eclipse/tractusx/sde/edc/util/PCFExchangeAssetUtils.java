@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.tractusx.sde.common.utils.LogUtil;
 import org.eclipse.tractusx.sde.edc.constants.EDCAssetConfigurableConstant;
+import org.eclipse.tractusx.sde.edc.entities.request.contractdefinition.Criterion;
 import org.eclipse.tractusx.sde.edc.model.response.QueryDataOfferModel;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,7 +43,7 @@ public class PCFExchangeAssetUtils {
 	
 	@Cacheable(value = "bpn-pcfexchange", key = "#bpnNumber")
 	public List<QueryDataOfferModel> getPCFExchangeUrl(String bpnNumber) {
-		return edcAssetLookUp.getEDCAssetsByType(bpnNumber, edcAssetConfigurableConstant.getAssetPropTypePCFExchangeType());
+		return edcAssetLookUp.getEDCAssetsByType(bpnNumber, getFilterCriteria());
 	}
 
 	@CacheEvict(value = "bpn-pcfexchange", key = "#bpnNumber")
@@ -53,6 +54,16 @@ public class PCFExchangeAssetUtils {
 	@CacheEvict(value = "bpn-pcfexchange", allEntries = true)
 	public void clearePCFExchangeAllCache() {
 		log.info("Cleared All bpn-pcfexchange cache");
+	}
+	
+	private List<Criterion> getFilterCriteria() {
+
+		return List.of(
+				Criterion.builder()
+				.operandLeft("'http://purl.org/dc/terms/type'.'@id'")
+				.operator("=")
+				.operandRight("https://w3id.org/catenax/taxonomy#"+edcAssetConfigurableConstant.getAssetPropTypePCFExchangeType())
+				.build());
 	}
 
 }
