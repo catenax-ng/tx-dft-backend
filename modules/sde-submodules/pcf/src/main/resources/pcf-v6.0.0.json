@@ -6,7 +6,7 @@
 	"idShort": "PCFExchangeEndpoint",
 	"submodelUriPath":"productIds",
 	"submodelDataPlaneUrl":"https://edc.data.plane",
-	"sematicIdReference":"GlobalReference",
+	"sematicIdReference":"Submodel",
 	"interfaceName":"PCF-1.1",
 	"version": "6.0.0",
 	"semantic_id": "urn:samm:io.catenax.pcf:6.0.0#Pcf",
