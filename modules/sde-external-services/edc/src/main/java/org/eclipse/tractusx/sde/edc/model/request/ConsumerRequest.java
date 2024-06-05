@@ -51,6 +51,6 @@ public class ConsumerRequest {
 	private List<Policies> usagePolicies;
 
 	@Builder.Default
-	private String downloadDataAs = "csv";
+	private String downloadDataAs = "json";
 
 }
